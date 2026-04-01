@@ -1,19 +1,19 @@
 {
   "project": "openfleet-v2",
   "status": "building",
-  "current_state": "foundation",
-  "current_milestone": null,
-  "current_story": null,
+  "current_state": "generating-change-spec",
+  "current_milestone": "map-core",
+  "current_story": "map-persistence",
   "milestones": [
     {
       "name": "foundation",
-      "status": "pending",
+      "status": "complete",
       "depends_on_milestones": [],
       "stories": []
     },
     {
       "name": "map-core",
-      "status": "pending",
+      "status": "in-progress",
       "depends_on_milestones": [
         "foundation"
       ],
@@ -21,7 +21,7 @@
         {
           "id": "map-render",
           "name": "Live map renders with vehicle markers",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [],
           "affected_entities": [
@@ -35,12 +35,28 @@
             "Map loads in <2s with 50 vehicle markers",
             "Vehicle markers color-coded by traffic light status",
             "Map clusters markers at low zoom levels"
+          ],
+          "completed_at": "2026-04-01T08:44:54.701Z",
+          "files_changed": [
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx",
+            "src/lib/map-utils.ts",
+            "src/lib/map-utils.test.ts",
+            "src/lib/vehicles.ts",
+            "src/lib/vehicles.test.ts",
+            "src/app/(admin)/dashboard/page.tsx",
+            "src/app/api/vehicles/route.ts",
+            "package.json",
+            "package-lock.json"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — component tests mock the map library. Visual verification of map rendering, marker colors, and clustering behavior requires a browser environment (not possible in jsdom/vitest)."
           ]
         },
         {
           "id": "map-realtime",
           "name": "Real-time position updates",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "map-render"
@@ -55,12 +71,35 @@
           "acceptance_criteria": [
             "Vehicle positions update in real-time via WebSocket (<5s latency)",
             "Vehicle markers show direction of travel when moving"
+          ],
+          "completed_at": "2026-04-01T08:55:34.917Z",
+          "files_changed": [
+            "src/lib/position-events.ts",
+            "src/lib/position-events.test.ts",
+            "src/app/api/positions/stream/route.ts",
+            "src/app/api/positions/stream/route.test.ts",
+            "src/app/api/positions/route.ts",
+            "src/hooks/use-realtime-vehicles.ts",
+            "src/hooks/use-realtime-vehicles.test.ts",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx",
+            "src/lib/map-utils.ts",
+            "src/lib/map-utils.test.ts",
+            "src/lib/vehicles.ts",
+            "src/lib/vehicles.test.ts",
+            "src/app/(admin)/dashboard/page.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — direction arrow rendering and rotation verified via MapLibre mock layer configuration, not visual rendering.",
+            "SSE stream test verifies headers and data format via mock; actual long-lived connection behavior requires a live server."
           ]
         },
         {
           "id": "map-popup",
           "name": "Vehicle marker popup with stats",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "map-render"
@@ -73,12 +112,17 @@
           ],
           "acceptance_criteria": [
             "Clicking vehicle marker opens popup with key stats and link to detail"
+          ],
+          "completed_at": "2026-04-01T09:14:10.260Z",
+          "files_changed": [],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — popup rendering verified via MapLibre mock (Popup constructor, setHTML, setLngLat, addTo), not visual rendering."
           ]
         },
         {
           "id": "map-persistence",
           "name": "Map remembers zoom and center",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "map-render"
@@ -89,6 +133,16 @@
           ],
           "acceptance_criteria": [
             "Map remembers zoom level and center between sessions"
+          ],
+          "completed_at": "2026-04-01T09:24:21.106Z",
+          "files_changed": [
+            "src/lib/map-utils.ts",
+            "src/lib/map-utils.test.ts",
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
           ]
         }
       ]
@@ -138,7 +192,7 @@
         },
         {
           "id": "dashboard-responsive",
-          "name": "Responsive layout \u2014 tablet with sidebar collapse",
+          "name": "Responsive layout — tablet with sidebar collapse",
           "status": "pending",
           "attempts": 0,
           "depends_on": [
@@ -521,7 +575,7 @@
   "consecutive_failures": 0,
   "milestone_learnings": [],
   "foundation": {
-    "status": "pending",
+    "status": "complete",
     "scope": [
       "postgresql-postgis",
       "prisma-schema",
@@ -530,11 +584,12 @@
       "docker-compose",
       "seed-data"
     ],
-    "completed_at": null
+    "completed_at": "2026-04-01T08:32:10.754Z"
   },
   "detected_profile": "full-stack",
   "seeded_at": "2026-04-01T10:00:00Z",
   "seeded_by": "manual-v2-transform",
   "human_approved": true,
-  "timestamp": "2026-04-01T10:00:00Z"
+  "timestamp": "2026-04-01T10:25:35.486Z",
+  "last_build_delta": 0
 }
