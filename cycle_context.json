@@ -523,10 +523,10 @@
     {
       "task": "auth-session",
       "category": "auth",
-      "acceptance_criteria": ["Session-based auth with iron-session", "bcrypt password hashing (12 rounds)", "Admin/driver role guards", "Login/logout/me API routes"],
-      "files_changed": ["src/lib/auth.ts", "src/lib/session.ts", "src/app/api/auth/login/route.ts", "src/app/api/auth/logout/route.ts", "src/app/api/auth/me/route.ts"],
-      "tests_added": 9,
-      "tests_passing": 9,
+      "acceptance_criteria": ["Session-based auth with iron-session", "bcrypt password hashing (12 rounds)", "Admin/driver role guards wired to real session in route layouts", "Login/logout/me API routes", "Root page redirects based on role", "Admin layout rejects non-admin", "Driver layout rejects non-driver"],
+      "files_changed": ["src/lib/auth.ts", "src/lib/session.ts", "src/lib/validators.ts", "src/app/api/auth/login/route.ts", "src/app/api/auth/logout/route.ts", "src/app/api/auth/me/route.ts", "src/app/page.tsx", "src/app/(admin)/layout.tsx", "src/app/(driver)/layout.tsx"],
+      "tests_added": 14,
+      "tests_passing": 14,
       "serves_feature_areas": ["FA1", "FA2", "FA3", "FA4", "FA5", "FA6"]
     },
     {
@@ -534,15 +534,15 @@
       "category": "ui-scaffold",
       "acceptance_criteria": ["Admin sidebar with 6 nav items", "Driver simplified nav bar", "Traffic light status component", "Loading/empty state/error boundary components", "Admin and driver layout wrappers", "Login page with form", "Route groups for admin and driver roles"],
       "files_changed": ["src/components/sidebar.tsx", "src/components/driver-nav.tsx", "src/components/admin-layout.tsx", "src/components/driver-layout.tsx", "src/components/traffic-light.tsx", "src/components/loading.tsx", "src/components/empty-state.tsx", "src/components/error-boundary.tsx", "src/app/layout.tsx", "src/app/page.tsx", "src/app/login/page.tsx", "src/app/(admin)/layout.tsx", "src/app/(admin)/dashboard/page.tsx", "src/app/(driver)/layout.tsx", "src/app/(driver)/driver/page.tsx", "src/app/(driver)/driver/inspection/page.tsx"],
-      "tests_added": 10,
-      "tests_passing": 10,
+      "tests_added": 15,
+      "tests_passing": 15,
       "serves_feature_areas": ["FA1", "FA2", "FA3", "FA4", "FA5", "FA6"]
     },
     {
       "task": "docker-compose",
       "category": "deploy",
-      "acceptance_criteria": ["3-service Docker Compose (app, db, simulator)", "Multi-stage Dockerfile for app", "PostGIS database with healthcheck", "Simulator placeholder service", "Health check endpoint"],
-      "files_changed": ["docker-compose.yml", "Dockerfile", "Dockerfile.simulator", "simulator/index.ts", "simulator/index.js", "simulator/package.json", "src/app/api/health/route.ts"],
+      "acceptance_criteria": ["3-service Docker Compose (app, db, simulator)", "Multi-stage Dockerfile for app", "PostGIS database with healthcheck", "Simulator wired to POST /api/positions", "Health check endpoint", "Vehicles list API for simulator ID resolution"],
+      "files_changed": ["docker-compose.yml", "Dockerfile", "Dockerfile.simulator", "simulator/index.ts", "simulator/index.js", "simulator/package.json", "src/app/api/health/route.ts", "src/app/api/vehicles/route.ts"],
       "tests_added": 0,
       "tests_passing": 0,
       "serves_feature_areas": ["FA1", "FA2", "FA3", "FA4", "FA5", "FA6"]
@@ -616,7 +616,8 @@
       "prisma": true,
       "iron-session": true,
       "maplibre-gl": false,
-      "gps-ingestion": true
+      "gps-ingestion": true,
+      "gps-simulator": true
     },
     "ui_scaffold_ready": true,
     "deploy_ready": true,
