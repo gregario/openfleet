@@ -20,7 +20,15 @@ export function useRealtimeVehicles(initialVehicles: VehicleWithPosition[]): Veh
     const es = new EventSource('/api/positions/stream');
 
     es.onmessage = (event: MessageEvent) => {
-      const { vehicles: updates }: { vehicles: PositionUpdate[] } = JSON.parse(event.data as string);
+      let updates: PositionUpdate[];
+      try {
+        const parsed = JSON.parse(event.data as string);
+        updates = parsed.vehicles;
+      } catch {
+        // Malformed SSE data — ignore and keep listening
+        return;
+      }
+      if (!Array.isArray(updates)) return;
 
       setVehicles((prev) => {
         // Build a lookup map for O(1) access

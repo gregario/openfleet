@@ -139,6 +139,19 @@ describe('useRealtimeVehicles', () => {
     expect(result.current).toEqual(baseVehicles);
   });
 
+  it('AC-fa1-json-safety-001: does not crash on malformed SSE data', () => {
+    const { result } = renderHook(() => useRealtimeVehicles(baseVehicles));
+
+    // Send malformed JSON — should not throw or change state
+    act(() => {
+      const es = MockEventSource.instances[0];
+      es.onmessage?.(new MessageEvent('message', { data: 'not-valid-json' }));
+    });
+
+    // Vehicles should remain unchanged
+    expect(result.current).toEqual(baseVehicles);
+  });
+
   it('REGRESSION: fix-qa-sse-mismatch — unwraps {vehicles:[...]} envelope from server', () => {
     const { result } = renderHook(() => useRealtimeVehicles(baseVehicles));
 
@@ -160,6 +173,18 @@ describe('useRealtimeVehicles', () => {
 
     const v1 = result.current.find((v) => v.id === 'v1')!;
     expect(v1.latestPosition!.latitude).toBe(51.47);
+  });
+
+  it('REGRESSION: fix-qa-json-parse-safety — survives missing vehicles key in parsed JSON', () => {
+    const { result } = renderHook(() => useRealtimeVehicles(baseVehicles));
+
+    // Valid JSON but missing the vehicles key
+    act(() => {
+      const es = MockEventSource.instances[0];
+      es.onmessage?.(new MessageEvent('message', { data: JSON.stringify({ data: [] }) }));
+    });
+
+    expect(result.current).toEqual(baseVehicles);
   });
 
   it('cleans up EventSource on unmount', () => {
