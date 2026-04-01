@@ -608,6 +608,111 @@
   "evaluator_observations": [],
   "previous_evaluations": [],
   "evaluation_deltas": [],
+  "foundation_eval_report": {
+    "verdict": "PASS",
+    "dimensions": {
+      "schema_completeness": {
+        "status": "PASS",
+        "findings": [
+          "18-model Prisma schema covers all 6 feature areas: User, Session, Vehicle, Position, Trip, DriverAssignment, ServiceType, ServiceSchedule, MaintenanceRecord, InspectionTemplate, InspectionTemplateItem, Inspection, InspectionResponse, Document, Alert, AuditLog, Setting.",
+          "FA1 (Dashboard/Map): Vehicle, Position, Alert — all present with trafficLight, motionState fields.",
+          "FA2 (Vehicle Registry): Vehicle with all required fields (make, model, year, vin, licensePlate, color, photoUrl, status, odometer) — present.",
+          "FA3 (GPS/Trips): Position (lat, lon, speed, heading, timestamp, vehicleId), Trip (distance, duration, start/end coords, isActive) — present.",
+          "FA4 (Maintenance): ServiceType, ServiceSchedule (mileage/time/dual triggers, warnings), MaintenanceRecord (cost, vendor, receiptUrl) — present.",
+          "FA5 (Driver Auth): User with role enum (ADMIN/DRIVER), licenseNumber, licenseExpiry, privacyAckedAt. DriverAssignment with type (ASSIGNED/POOL), temporal tracking — present.",
+          "FA6 (Inspections): InspectionTemplate, InspectionTemplateItem, Inspection with result enum (PASS/FAIL/NA), InspectionResponse with photoUrl — present.",
+          "All foreign keys properly defined with onDelete: Cascade. Indexes on query-hot columns (vehicleId+timestamp, userId+isActive, severity+isDismissed, etc.).",
+          "No feature area would need ALTER TABLE to function. Schema is complete for all 6 FAs."
+        ]
+      },
+      "integration_scaffolds": {
+        "status": "PASS",
+        "findings": [
+          "PostgreSQL + PostGIS: docker-compose.yml uses postgis/postgis:16-3.4 image. Prisma schema enables postgis extension. Connection via env var DATABASE_URL — no hardcoded credentials.",
+          "Prisma ORM: Client generated with postgresqlExtensions preview. Global singleton in src/lib/db.ts prevents connection exhaustion in dev. Seed script present.",
+          "iron-session: Session wrapper in src/lib/session.ts. Uses env var SESSION_SECRET with dev fallback. Cookie config: httpOnly, sameSite:lax, secure in production, 7-day TTL.",
+          "GPS Ingestion API: POST /api/positions with Zod validation, batch support, vehicle existence check, motion state auto-update. 16 tests passing.",
+          "GPS Simulator: Configurable via env vars (API_URL, VEHICLE_COUNT, INTERVAL_MS). Generates Bristol-area GPS coordinates with speed profiles (urban/suburban/highway), trip state machine, heading-based movement. Resolves vehicle IDs from API.",
+          "MapLibre GL JS: Installed as dependency but not initialized — documented as blocking_gap. Map rendering is FA1 scope, not foundation scope. ACCEPTABLE.",
+          "Health check endpoint: GET /api/health verifies database connectivity."
+        ]
+      },
+      "auth_flows": {
+        "status": "PASS",
+        "findings": [
+          "Login: POST /api/auth/login — validates with Zod, finds user by email, bcrypt.compare password, saves session with userId/role/name. Returns 401 on invalid credentials.",
+          "Logout: POST /api/auth/logout — calls session.destroy(). Clean implementation.",
+          "Session check: GET /api/auth/me — returns session data or 401.",
+          "Session persistence: iron-session with 7-day TTL, httpOnly cookie, sameSite:lax.",
+          "Protected routes: Admin layout (src/app/(admin)/layout.tsx) checks session — redirects to /login if unauthenticated, redirects to /driver if not ADMIN. Driver layout (src/app/(driver)/layout.tsx) mirrors with DRIVER check, redirects to /dashboard if not DRIVER.",
+          "Role-based access: ADMIN and DRIVER roles enforced at layout level. requireAdmin() and requireDriver() helpers in src/lib/auth.ts.",
+          "Login page: Client component with form, error handling, loading state, role-based redirect after login.",
+          "Password hashing: bcrypt with 12 rounds in auth.ts, 10 rounds in seed (acceptable for dev data).",
+          "14 auth tests passing."
+        ]
+      },
+      "shared_components": {
+        "status": "PASS",
+        "findings": [
+          "Admin sidebar: 6 nav items (Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings) — covers all feature areas. SVG icons, active state highlighting.",
+          "Driver nav: Simplified header with My Vehicle and Inspection links. Tracking-active indicator. End Shift / Start Shift toggle.",
+          "TrafficLight component: GREEN/ORANGE/RED with sm/md/lg sizes. Clean, reusable.",
+          "Loading component: Animated spinner with customizable message.",
+          "EmptyState component: Title, description, optional action link. Dashed border styling.",
+          "ErrorBoundary: Class component with retry button. Custom fallback support.",
+          "Admin layout wrapper and Driver layout wrapper present.",
+          "Login page with form, error states, loading state.",
+          "Route groups: (admin) and (driver) with session-checking layouts.",
+          "Stub pages: /dashboard, /driver, /driver/inspection exist as mount points for feature cycles.",
+          "15 component tests passing."
+        ]
+      },
+      "deployment_pipeline": {
+        "status": "SKIP",
+        "findings": [
+          "No deployment_url in cycle_context.json — staging deployment not in foundation scope.",
+          "Docker Compose file defines 3 services (db, app, simulator) with healthchecks and dependency ordering.",
+          "Multi-stage Dockerfile: deps → builder (prisma generate, next build) → runner (standalone output, non-root user, healthcheck).",
+          "Dockerfile.simulator present for simulator service.",
+          "Environment variables documented in docker-compose.yml (DATABASE_URL, SESSION_SECRET, NEXT_PUBLIC_APP_URL, VEHICLE_COUNT, INTERVAL_MS).",
+          "SKIP reason: deployment_url is null, no staging environment configured. Docker Compose structure is sound but untested end-to-end in this evaluation."
+        ]
+      },
+      "test_fixtures": {
+        "status": "PASS",
+        "findings": [
+          "Seed data represents a realistic business: Clearwater Plumbing Services, Bristol, UK.",
+          "5 users: 1 admin (Sarah Mitchell), 4 drivers (James Cooper, Priya Patel, Marcus Williams, Ling Chen) — realistic names, UK phone numbers, UK driving license formats.",
+          "8 vehicles: Ford Transit Custom 300/280, Mercedes Sprinter 314 CDI, Vauxhall Vivaro 2900, VW Caddy Cargo, Mercedes Vito 114 CDI. UK plates (WR71 HJK, etc.), realistic odometers (15k–132k km), varied statuses (6 active, 1 in-shop, 1 decommissioned).",
+          "7 default service types: Oil Change, Tire Rotation, Brake Inspection, Air Filter, Fluid Top-up, Belt Inspection, Battery Check.",
+          "14 service schedules with mileage-based and time-based triggers, realistic costs (£25–£95), approaching-due schedules for testing alerts.",
+          "2 inspection templates: Daily Pre-Trip Check (9 items), Weekly Vehicle Check (14 items) — plumbing-specific items included (tool inventory: pipe wrenches, fittings bag, torch).",
+          "5 driver assignments (4 active, 1 historical) with timestamps.",
+          "Documents: V5C registrations, insurance policies, MOT certificates with varying expiry dates (8 days to 360+ days).",
+          "5 alerts at varying severity (INFO, WARNING, CRITICAL) — tire rotation, battery check, MOT expiring, insurance renewal, inspection overdue.",
+          "4 app settings: tracking schedule, data retention, company name, timezone.",
+          "No placeholder data — all emails, phone numbers, VINs, license plates are realistic and domain-appropriate."
+        ]
+      }
+    },
+    "silent_degradation_check": {
+      "status": "PASS",
+      "evidence": [
+        "DOCUMENTED DIVERGENCE (not silent): Position model uses float lat/lon instead of PostGIS geometry type. This is explicitly documented in cycle_context.json divergences array with rationale (Prisma DSL limitation). Raw SQL migration planned for FA3. Reversible. NOT silent degradation — it was flagged by the builder.",
+        "No JSON blob columns substituted for typed columns — all fields are properly typed.",
+        "No mock services — simulator is a real service that POSTs to the real API. Auth uses real bcrypt and real iron-session.",
+        "No TODO/FIXME/HACK comments found in source code.",
+        "No test stubs that always return true — all 46 tests make real assertions.",
+        "MapLibre GL JS not yet initialized — documented as blocking_gap. This is feature scope (FA1), not foundation scope. ACCEPTABLE.",
+        "Session secret has a dev fallback string in session.ts — acceptable for dev, production uses env var."
+      ]
+    },
+    "structural_gaps": [],
+    "integration_gaps": [
+      "PostGIS geometry columns deferred to FA3 — positions stored as float lat/lon. Spatial indexing and ST_Distance calculations unavailable until raw SQL migration is added. This is a known, documented trade-off."
+    ],
+    "recommendations": []
+  },
   "foundation_completion": {
     "schema_ready": true,
     "auth_ready": true,
