@@ -17,9 +17,9 @@ class MockEventSource {
     MockEventSource.instances.push(this);
   }
 
-  /** Helper: push a server-sent message into the hook */
+  /** Helper: push a server-sent message into the hook (matches real server format) */
   simulateMessage(updates: PositionUpdate[]) {
-    this.onmessage?.(new MessageEvent('message', { data: JSON.stringify(updates) }));
+    this.onmessage?.(new MessageEvent('message', { data: JSON.stringify({ vehicles: updates }) }));
   }
 }
 
@@ -34,6 +34,8 @@ const baseVehicles: VehicleWithPosition[] = [
     name: 'Van 1',
     trafficLight: 'GREEN',
     motionState: 'MOVING',
+    licensePlate: 'WR71 HJK',
+    driverName: 'James Cooper',
     latestPosition: { latitude: 51.45, longitude: -2.59 },
   },
   {
@@ -41,6 +43,8 @@ const baseVehicles: VehicleWithPosition[] = [
     name: 'Van 2',
     trafficLight: 'RED',
     motionState: 'PARKED',
+    licensePlate: 'WR72 ABC',
+    driverName: null,
     latestPosition: null,
   },
 ];
@@ -48,6 +52,8 @@ const baseVehicles: VehicleWithPosition[] = [
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
+// @criterion: fa1-realtime-004
+// @criterion-hash: 7116d7554b27
 describe('useRealtimeVehicles', () => {
   beforeEach(() => {
     MockEventSource.instances = [];
@@ -131,6 +137,29 @@ describe('useRealtimeVehicles', () => {
 
     // State must be identical to initial — deep equality
     expect(result.current).toEqual(baseVehicles);
+  });
+
+  it('REGRESSION: fix-qa-sse-mismatch — unwraps {vehicles:[...]} envelope from server', () => {
+    const { result } = renderHook(() => useRealtimeVehicles(baseVehicles));
+
+    const update: PositionUpdate = {
+      vehicleId: 'v1',
+      latitude: 51.47,
+      longitude: -2.61,
+      speed: 30,
+      heading: 45,
+      motionState: 'MOVING',
+      timestamp: '2026-04-01T12:05:00Z',
+    };
+
+    // Directly send the raw server format to verify the hook unwraps it
+    act(() => {
+      const es = MockEventSource.instances[0];
+      es.onmessage?.(new MessageEvent('message', { data: JSON.stringify({ vehicles: [update] }) }));
+    });
+
+    const v1 = result.current.find((v) => v.id === 'v1')!;
+    expect(v1.latestPosition!.latitude).toBe(51.47);
   });
 
   it('cleans up EventSource on unmount', () => {

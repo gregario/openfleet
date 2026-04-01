@@ -20,7 +20,7 @@ export function useRealtimeVehicles(initialVehicles: VehicleWithPosition[]): Veh
     const es = new EventSource('/api/positions/stream');
 
     es.onmessage = (event: MessageEvent) => {
-      const updates: PositionUpdate[] = JSON.parse(event.data as string);
+      const { vehicles: updates }: { vehicles: PositionUpdate[] } = JSON.parse(event.data as string);
 
       setVehicles((prev) => {
         // Build a lookup map for O(1) access
