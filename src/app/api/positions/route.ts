@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       : [parsed.data];
 
     // Validate all vehicle IDs exist
-    const vehicleIds = [...new Set(positions.map((p) => p.vehicle_id))];
+    const vehicleIds = Array.from(new Set(positions.map((p) => p.vehicle_id)));
     const vehicles = await prisma.vehicle.findMany({
       where: { id: { in: vehicleIds }, status: "ACTIVE" },
       select: { id: true },
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     }
 
     await Promise.all(
-      [...latestByVehicle.entries()].map(([vehicleId, pos]) => {
+      Array.from(latestByVehicle.entries()).map(([vehicleId, pos]) => {
         const speed = pos.speed ?? 0;
         let motionState: "MOVING" | "IDLE" | "PARKED";
         if (speed > 5) {
