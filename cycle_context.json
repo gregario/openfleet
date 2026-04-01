@@ -1669,5 +1669,93 @@
       }
     ],
     "gaps_escalated": []
-  }
+  },
+  "story_result": {
+    "story_id": "openfleet-loop-1-dashboard-ux-states",
+    "outcome": "pass",
+    "files_changed": [
+      "src/components/dashboard-map.tsx",
+      "src/components/dashboard-map.test.tsx",
+      "src/components/fleet-map.tsx"
+    ],
+    "tests_added": 9,
+    "tests_passing": 12,
+    "env_limitations": [
+      "MapLibre GL requires WebGL — loading skeleton visibility, error boundary catch, and empty state rendering verified via component mocks (FleetMap mocked). Visual rendering of skeleton animation and error styling requires browser environment."
+    ],
+    "symptom": null,
+    "diagnosis": null,
+    "classification": null,
+    "fix_attempted": null,
+    "blocked_by": null,
+    "escalation": null
+  },
+  "deployment_url": null,
+  "implemented": [
+    {
+      "task": "openfleet-loop-1-dashboard-ux-states",
+      "acceptance_criteria": [
+        "gap-loading-skeleton-001: Pulsing skeleton placeholder visible in map container while MapLibre initializes",
+        "gap-loading-skeleton-002: Skeleton disappears when map fires load event and live map becomes visible",
+        "gap-error-boundary-001: Error boundary catches FleetMap failures and shows Unable to load map with Try again button",
+        "gap-error-boundary-002: Clicking Try again resets error boundary and re-initializes FleetMap",
+        "gap-error-boundary-003: Sidebar and page header remain functional when map error state is displayed",
+        "gap-empty-state-001: When zero active vehicles exist, map area shows EmptyState with No vehicles to display and link to /vehicles",
+        "gap-empty-state-002: When vehicles exist but have no positions, map renders normally (empty state NOT shown)"
+      ],
+      "files_changed": [
+        "src/components/dashboard-map.tsx",
+        "src/components/dashboard-map.test.tsx",
+        "src/components/fleet-map.tsx"
+      ],
+      "tests_added": 9,
+      "tests_passing": 12
+    }
+  ],
+  "skipped": [],
+  "divergences": [],
+  "factory_decisions": [
+    {
+      "decision": "Added optional onLoad prop to FleetMap despite it being listed as out-of-scope for this story",
+      "context": "Loading skeleton AC requires knowing when MapLibre finishes initializing. Without modifying FleetMap, the only alternatives are fragile DOM observation (MutationObserver watching for canvas element) or arbitrary timeouts.",
+      "alternatives_considered": [
+        "MutationObserver on FleetMap container watching for canvas — fragile, hard to test, couples to MapLibre internals",
+        "setTimeout-based skeleton removal — arbitrary delay, poor UX, not spec-compliant",
+        "React.lazy + Suspense for FleetMap — only covers JS chunk loading, not MapLibre tile initialization"
+      ],
+      "rationale": "Adding a single optional onLoad prop is backward-compatible (existing callers unaffected), testable, and directly maps to MapLibre's load event. The building phase permits blast-radius fixes to one-hop imports. This is a 2-line change to support a properly-architected loading state.",
+      "confidence": "high",
+      "affects": ["src/components/fleet-map.tsx", "src/components/dashboard-map.tsx"]
+    },
+    {
+      "decision": "Error boundary retry implemented via React key remount pattern instead of modifying ErrorBoundary component",
+      "context": "ErrorBoundary's fallback prop is a static ReactNode — it cannot call the boundary's internal handleRetry method. The AC requires a retry button that re-initializes FleetMap.",
+      "alternatives_considered": [
+        "Modify ErrorBoundary to accept a render function fallback — out of scope, would change foundation component API",
+        "Use ErrorBoundary's built-in default fallback — doesn't match AC text 'Unable to load map'"
+      ],
+      "rationale": "Using a key prop on ErrorBoundary (incremented on retry click) causes React to unmount/remount the boundary, resetting its error state. The custom fallback JSX is defined in DashboardMap's render function, closing over the setErrorKey setter. This is a well-known React pattern that requires no foundation component changes.",
+      "confidence": "high",
+      "affects": ["src/components/dashboard-map.tsx"]
+    },
+    {
+      "decision": "Empty state checks initialVehicles.length === 0, not markers.length === 0",
+      "context": "AC-empty-state-002 specifies: when vehicles exist but have no positions, map renders normally. mapVehiclesToMarkers filters out vehicles without positions, so markers could be empty while vehicles exist.",
+      "alternatives_considered": [
+        "Check markers.length — would incorrectly show empty state when vehicles exist but lack GPS data"
+      ],
+      "rationale": "The empty state represents 'no fleet configured', not 'no GPS data yet'. A fleet with vehicles but no positions is a normal operating state (GPS not yet reporting). The check on initialVehicles.length correctly distinguishes these cases.",
+      "confidence": "high",
+      "affects": ["src/components/dashboard-map.tsx"]
+    },
+    {
+      "decision": "Search Before Building audit for cycle 1 story openfleet-loop-1-dashboard-ux-states",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 0 BUILD, 1 EXTEND (DashboardMap), 3 REUSE (ErrorBoundary, EmptyState, FleetMap onLoad callback addition), 0 REFACTOR-THEN-BUILD. Key reuse: ErrorBoundary from src/components/error-boundary.tsx (foundation), EmptyState from src/components/empty-state.tsx (foundation). Extended DashboardMap with loading/error/empty state orchestration.",
+      "confidence": "high",
+      "affects": ["src/components/dashboard-map.tsx", "src/components/dashboard-map.test.tsx", "src/components/fleet-map.tsx"]
+    }
+  ],
+  "factory_questions": []
 }
