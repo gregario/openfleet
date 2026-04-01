@@ -5,6 +5,7 @@ export interface VehicleMarker {
   longitude: number;
   trafficLight: 'GREEN' | 'ORANGE' | 'RED';
   motionState: 'MOVING' | 'IDLE' | 'PARKED';
+  heading: number | null;
 }
 
 const TRAFFIC_LIGHT_COLORS: Record<VehicleMarker['trafficLight'], string> = {
@@ -29,6 +30,7 @@ export interface VehicleFeature {
     trafficLight: string;
     color: string;
     motionState: string;
+    heading: number | null;
   };
 }
 
@@ -52,6 +54,7 @@ export function vehiclesToGeoJSON(vehicles: VehicleMarker[]): VehicleFeatureColl
         trafficLight: v.trafficLight,
         color: trafficLightColor(v.trafficLight),
         motionState: v.motionState,
+        heading: v.heading,
       },
     })),
   };

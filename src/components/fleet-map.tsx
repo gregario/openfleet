@@ -87,6 +87,29 @@ export function FleetMap({ vehicles }: FleetMapProps) {
         },
       });
 
+      // Direction of travel arrow — only for moving vehicles
+      map.addLayer({
+        id: 'vehicle-direction',
+        type: 'symbol',
+        source: 'vehicles',
+        filter: [
+          'all',
+          ['!', ['has', 'point_count']],
+          ['==', ['get', 'motionState'], 'MOVING'],
+        ],
+        layout: {
+          'text-field': '▲',
+          'text-size': 14,
+          'text-rotate': ['get', 'heading'],
+          'text-rotation-alignment': 'map',
+          'text-allow-overlap': true,
+          'text-offset': [0, -1.8],
+        },
+        paint: {
+          'text-color': ['get', 'color'],
+        },
+      });
+
       // Vehicle name labels
       map.addLayer({
         id: 'vehicle-labels',

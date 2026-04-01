@@ -40,6 +40,7 @@ const vehicles: VehicleMarker[] = [
     longitude: -2.5879,
     trafficLight: 'GREEN',
     motionState: 'PARKED',
+    heading: null,
   },
   {
     id: 'v2',
@@ -48,6 +49,7 @@ const vehicles: VehicleMarker[] = [
     longitude: -2.59,
     trafficLight: 'RED',
     motionState: 'MOVING',
+    heading: 90,
   },
 ];
 
@@ -89,8 +91,8 @@ describe('FleetMap component', () => {
       type: 'geojson',
       cluster: true,
     }));
-    // Should add 4 layers: clusters, cluster-count, markers, labels
-    expect(mockAddLayer).toHaveBeenCalledTimes(4);
+    // Should add 5 layers: clusters, cluster-count, markers, direction arrows, labels
+    expect(mockAddLayer).toHaveBeenCalledTimes(5);
   });
 
   it('configures clustering on the vehicle source', () => {
@@ -116,5 +118,24 @@ describe('FleetMap component', () => {
     expect(markerLayerCall).toBeTruthy();
     // circle-color should use ['get', 'color'] expression to read from feature properties
     expect(markerLayerCall![0].paint['circle-color']).toEqual(['get', 'color']);
+  });
+
+  it('adds direction arrow layer for moving vehicles', () => {
+    render(<FleetMap vehicles={vehicles} />);
+    const loadCall = mockOn.mock.calls.find((call) => call[0] === 'load');
+    if (loadCall) loadCall[1]();
+
+    const directionLayerCall = mockAddLayer.mock.calls.find(
+      (call) => call[0].id === 'vehicle-direction',
+    );
+    expect(directionLayerCall).toBeTruthy();
+    // Should only show for non-clustered moving vehicles
+    expect(directionLayerCall![0].filter).toEqual([
+      'all',
+      ['!', ['has', 'point_count']],
+      ['==', ['get', 'motionState'], 'MOVING'],
+    ]);
+    // Should rotate by heading
+    expect(directionLayerCall![0].layout['text-rotate']).toEqual(['get', 'heading']);
   });
 });

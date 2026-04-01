@@ -21,6 +21,7 @@ describe('mapVehiclesToMarkers', () => {
       longitude: -2.58,
       trafficLight: 'GREEN',
       motionState: 'PARKED',
+      heading: null,
     });
   });
 

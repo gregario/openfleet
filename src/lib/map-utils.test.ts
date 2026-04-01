@@ -12,6 +12,7 @@ const makeVehicle = (overrides: Partial<VehicleMarker> = {}): VehicleMarker => (
   longitude: -2.5879,
   trafficLight: 'GREEN',
   motionState: 'PARKED',
+  heading: null,
   ...overrides,
 });
 
@@ -57,6 +58,18 @@ describe('vehiclesToGeoJSON', () => {
     expect(props.trafficLight).toBe('RED');
     expect(props.color).toBe('#ef4444');
     expect(props.motionState).toBe('MOVING');
+  });
+
+  it('includes heading in GeoJSON properties for direction of travel', () => {
+    const vehicle = makeVehicle({ motionState: 'MOVING', heading: 135 });
+    const result = vehiclesToGeoJSON([vehicle]);
+    expect(result.features[0].properties.heading).toBe(135);
+  });
+
+  it('includes null heading for parked vehicles', () => {
+    const vehicle = makeVehicle({ motionState: 'PARKED', heading: null });
+    const result = vehiclesToGeoJSON([vehicle]);
+    expect(result.features[0].properties.heading).toBeNull();
   });
 
   it('handles 50 vehicles for performance AC', () => {

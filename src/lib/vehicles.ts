@@ -5,7 +5,13 @@ export interface VehicleWithPosition {
   name: string;
   trafficLight: 'GREEN' | 'ORANGE' | 'RED';
   motionState: 'MOVING' | 'IDLE' | 'PARKED';
-  latestPosition: { latitude: number; longitude: number } | null;
+  latestPosition: {
+    latitude: number;
+    longitude: number;
+    speed?: number | null;
+    heading?: number | null;
+    timestamp?: string | null;
+  } | null;
 }
 
 export function mapVehiclesToMarkers(vehicles: VehicleWithPosition[]): VehicleMarker[] {
@@ -20,5 +26,6 @@ export function mapVehiclesToMarkers(vehicles: VehicleWithPosition[]): VehicleMa
       longitude: v.latestPosition.longitude,
       trafficLight: v.trafficLight,
       motionState: v.motionState,
+      heading: v.latestPosition.heading ?? null,
     }));
 }
