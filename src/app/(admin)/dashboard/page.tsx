@@ -1,6 +1,5 @@
 import { prisma } from '@/lib/db';
-import { mapVehiclesToMarkers } from '@/lib/vehicles';
-import { FleetMap } from '@/components/fleet-map';
+import { DashboardMap } from '@/components/dashboard-map';
 
 export default async function DashboardPage() {
   const vehicles = await prisma.vehicle.findMany({
@@ -13,7 +12,13 @@ export default async function DashboardPage() {
       positions: {
         orderBy: { timestamp: 'desc' },
         take: 1,
-        select: { latitude: true, longitude: true },
+        select: {
+          latitude: true,
+          longitude: true,
+          speed: true,
+          heading: true,
+          timestamp: true,
+        },
       },
     },
     orderBy: { name: 'asc' },
@@ -24,16 +29,22 @@ export default async function DashboardPage() {
     name: v.name,
     trafficLight: v.trafficLight,
     motionState: v.motionState,
-    latestPosition: v.positions[0] ?? null,
+    latestPosition: v.positions[0]
+      ? {
+          latitude: v.positions[0].latitude,
+          longitude: v.positions[0].longitude,
+          speed: v.positions[0].speed,
+          heading: v.positions[0].heading,
+          timestamp: v.positions[0].timestamp.toISOString(),
+        }
+      : null,
   }));
-
-  const markers = mapVehiclesToMarkers(vehiclesWithPosition);
 
   return (
     <div className="flex h-full gap-4">
       {/* Map area — ~70% width */}
       <div className="flex-[7] rounded-lg border border-slate-200 bg-white overflow-hidden">
-        <FleetMap vehicles={markers} />
+        <DashboardMap initialVehicles={vehiclesWithPosition} />
       </div>
 
       {/* Status sidebar — ~30% width */}
