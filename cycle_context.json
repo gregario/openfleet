@@ -2,9 +2,20 @@
   "_schema_version": "2.0",
   "_project_name": "openfleet-v2",
   "_cycle_number": 1,
+  "diff_scope": {
+    "frontend": true,
+    "backend": true,
+    "prompts": false,
+    "tests": true,
+    "docs": false,
+    "config": true
+  },
+  "evaluation_tier": "full",
+  "cycle_type": "re-evaluation",
+  "tier_rationale": "Re-evaluation after analyzing phase generated change specs (dashboard UX states) that were built. Story openfleet-loop-1-dashboard-ux-states completed \u2014 added loading skeleton, error boundary, empty state. Previous PO confidence 0.79 < 0.80 threshold requires full tier. 38 files changed from main across all map-core stories + 3 QA fixes + 3 UX fix stories.",
   "vision": {
     "product_name": "OpenFleet",
-    "one_liner": "Open-source fleet management for small businesses — see your vehicles, track your maintenance, own your data.",
+    "one_liner": "Open-source fleet management for small businesses \u2014 see your vehicles, track your maintenance, own your data.",
     "tagline": "Fleet management that doesn't charge you per van.",
     "license": "AGPL-3.0",
     "target_audience": {
@@ -21,11 +32,11 @@
     },
     "deploy_model": "Self-hosted, single-tenant, Docker Compose",
     "differentiators": [
-      "Open source — no per-vehicle SaaS fees",
-      "Self-hosted — your data stays on your server",
-      "No hardware lock-in — works with any GPS source",
-      "Simple UX — designed for owner-operators, not enterprise fleet managers",
-      "Built-in simulator — try it without owning a fleet"
+      "Open source \u2014 no per-vehicle SaaS fees",
+      "Self-hosted \u2014 your data stays on your server",
+      "No hardware lock-in \u2014 works with any GPS source",
+      "Simple UX \u2014 designed for owner-operators, not enterprise fleet managers",
+      "Built-in simulator \u2014 try it without owning a fleet"
     ],
     "competitive_positioning": "Nextcloud for fleet management. Credible open-source alternative that gives small operators enterprise-grade capability without enterprise pricing or complexity.",
     "feature_areas": [
@@ -33,7 +44,7 @@
         "id": "FA1",
         "name": "Fleet Dashboard & Live Map",
         "priority": 1,
-        "summary": "Hero screen — live map with all vehicle positions, fleet status sidebar with alerts and upcoming services"
+        "summary": "Hero screen \u2014 live map with all vehicle positions, fleet status sidebar with alerts and upcoming services"
       },
       {
         "id": "FA2",
@@ -87,7 +98,17 @@
       "Live map shows simulated vehicles moving in real-time",
       "Driver can log in, see their vehicle, complete an inspection",
       "Admin can see fleet dashboard, drill into any vehicle, view trips on map"
-    ]
+    ],
+    "infrastructure": {
+      "needs_database": true,
+      "needs_auth": true,
+      "needs_payments": false,
+      "deployment_target": "docker-compose",
+      "services": [
+        "postgresql",
+        "postgis"
+      ]
+    }
   },
   "product_standard": {
     "product": "openfleet",
@@ -130,8 +151,8 @@
       "vehicle_status": {
         "system": "Traffic light (green/orange/red)",
         "green": "All clear, no action needed",
-        "orange": "Requires attention — service approaching, document expiring, minor alert",
-        "red": "Overdue — past service interval, outside leasing terms, compliance failure"
+        "orange": "Requires attention \u2014 service approaching, document expiring, minor alert",
+        "red": "Overdue \u2014 past service interval, outside leasing terms, compliance failure"
       },
       "map": "Dominant element on dashboard (~70% width), collapsible status sidebar (~30%)",
       "voice_and_tone": {
@@ -165,25 +186,25 @@
         {
           "id": "FA1-J1",
           "name": "View live fleet map",
-          "steps": "Owner opens app → sees live map with all vehicle positions → vehicles color-coded by traffic light status (green/orange/red) and motion state (moving/idle/parked)",
+          "steps": "Owner opens app \u2192 sees live map with all vehicle positions \u2192 vehicles color-coded by traffic light status (green/orange/red) and motion state (moving/idle/parked)",
           "clicks": 0
         },
         {
           "id": "FA1-J2",
           "name": "Inspect vehicle from map",
-          "steps": "Owner clicks vehicle marker on map → popup shows vehicle name, driver, status, speed, last trip, traffic light, any alerts → link to full vehicle detail view",
+          "steps": "Owner clicks vehicle marker on map \u2192 popup shows vehicle name, driver, status, speed, last trip, traffic light, any alerts \u2192 link to full vehicle detail view",
           "clicks": 1
         },
         {
           "id": "FA1-J3",
           "name": "Review fleet status sidebar",
-          "steps": "Owner glances at sidebar → sees vehicles due for service (count + list), overdue inspections, expiring documents, active alerts sorted by urgency",
+          "steps": "Owner glances at sidebar \u2192 sees vehicles due for service (count + list), overdue inspections, expiring documents, active alerts sorted by urgency",
           "clicks": 0
         },
         {
           "id": "FA1-J4",
           "name": "Filter map by status",
-          "steps": "Owner filters map → by traffic light status, by driver, by motion state (moving/idle/parked)",
+          "steps": "Owner filters map \u2192 by traffic light status, by driver, by motion state (moving/idle/parked)",
           "clicks": 1
         }
       ],
@@ -216,13 +237,13 @@
         {
           "id": "FA2-J1",
           "name": "Add a vehicle",
-          "steps": "Owner clicks Add Vehicle → enters make, model, year, VIN, license plate, color, current odometer, photo → saves",
+          "steps": "Owner clicks Add Vehicle \u2192 enters make, model, year, VIN, license plate, color, current odometer, photo \u2192 saves",
           "clicks": 2
         },
         {
           "id": "FA2-J2",
           "name": "View vehicle detail",
-          "steps": "Owner opens vehicle from list or map → sees tabbed view with Overview, Trips, Maintenance, Inspections, Documents",
+          "steps": "Owner opens vehicle from list or map \u2192 sees tabbed view with Overview, Trips, Maintenance, Inspections, Documents",
           "clicks": 2
         },
         {
@@ -234,7 +255,7 @@
         {
           "id": "FA2-J4",
           "name": "Change vehicle status",
-          "steps": "Owner edits vehicle status → active, in-shop, decommissioned → decommissioned vehicles hidden from map/dashboard by default",
+          "steps": "Owner edits vehicle status \u2192 active, in-shop, decommissioned \u2192 decommissioned vehicles hidden from map/dashboard by default",
           "clicks": 3
         }
       ],
@@ -259,31 +280,31 @@
         {
           "id": "FA3-J1",
           "name": "Simulator feeds fleet data",
-          "steps": "Simulator service runs → generates realistic GPS coordinates for N configured vehicles → POSTs to ingestion API → vehicles appear on map moving along roads",
+          "steps": "Simulator service runs \u2192 generates realistic GPS coordinates for N configured vehicles \u2192 POSTs to ingestion API \u2192 vehicles appear on map moving along roads",
           "clicks": 0
         },
         {
           "id": "FA3-J2",
           "name": "System detects trip start",
-          "steps": "Vehicle moves >5km/h for >30s → system creates trip record → trip appears in vehicle's trip list as 'active'",
+          "steps": "Vehicle moves >5km/h for >30s \u2192 system creates trip record \u2192 trip appears in vehicle's trip list as 'active'",
           "clicks": 0
         },
         {
           "id": "FA3-J3",
           "name": "System detects trip end",
-          "steps": "Vehicle stationary for >3min → system closes trip → calculates distance (from GPS points, not straight-line) and duration",
+          "steps": "Vehicle stationary for >3min \u2192 system closes trip \u2192 calculates distance (from GPS points, not straight-line) and duration",
           "clicks": 0
         },
         {
           "id": "FA3-J4",
           "name": "View trip on map",
-          "steps": "Owner opens vehicle → Trips tab → clicks trip → sees route line on map with start/end markers, timestamps, distance, duration",
+          "steps": "Owner opens vehicle \u2192 Trips tab \u2192 clicks trip \u2192 sees route line on map with start/end markers, timestamps, distance, duration",
           "clicks": 3
         },
         {
           "id": "FA3-J5",
           "name": "Browse trip history",
-          "steps": "Owner views trip list for a vehicle → filters by date range → sorts by distance or duration",
+          "steps": "Owner views trip list for a vehicle \u2192 filters by date range \u2192 sorts by distance or duration",
           "clicks": 2
         }
       ],
@@ -312,31 +333,31 @@
         {
           "id": "FA4-J1",
           "name": "Create service schedule",
-          "steps": "Owner creates service schedule for a vehicle → selects type (oil change, tires, brakes...) → sets interval by mileage OR time OR both → sets estimated cost",
+          "steps": "Owner creates service schedule for a vehicle \u2192 selects type (oil change, tires, brakes...) \u2192 sets interval by mileage OR time OR both \u2192 sets estimated cost",
           "clicks": 3
         },
         {
           "id": "FA4-J2",
           "name": "Receive service alert",
-          "steps": "System detects service approaching threshold (e.g., 500mi before due, 2 weeks before) → alert appears on dashboard sidebar and vehicle detail",
+          "steps": "System detects service approaching threshold (e.g., 500mi before due, 2 weeks before) \u2192 alert appears on dashboard sidebar and vehicle detail",
           "clicks": 0
         },
         {
           "id": "FA4-J3",
           "name": "Log completed service",
-          "steps": "Owner logs service → date, odometer, cost, vendor, notes, receipt photo → service record added to history → next service due recalculated",
+          "steps": "Owner logs service \u2192 date, odometer, cost, vendor, notes, receipt photo \u2192 service record added to history \u2192 next service due recalculated",
           "clicks": 3
         },
         {
           "id": "FA4-J4",
           "name": "View maintenance history",
-          "steps": "Owner opens vehicle → Maintenance tab → sees chronological history filterable by type → running cost total",
+          "steps": "Owner opens vehicle \u2192 Maintenance tab \u2192 sees chronological history filterable by type \u2192 running cost total",
           "clicks": 2
         },
         {
           "id": "FA4-J5",
           "name": "Fleet-wide maintenance overview",
-          "steps": "Owner opens Maintenance from sidebar → sees what's due this week/month across all vehicles → sorted by urgency",
+          "steps": "Owner opens Maintenance from sidebar \u2192 sees what's due this week/month across all vehicles \u2192 sorted by urgency",
           "clicks": 1
         }
       ],
@@ -367,31 +388,31 @@
         {
           "id": "FA5-J1",
           "name": "Create driver profile",
-          "steps": "Owner creates driver → name, phone, email, license number, license expiry, photo → driver receives login credentials",
+          "steps": "Owner creates driver \u2192 name, phone, email, license number, license expiry, photo \u2192 driver receives login credentials",
           "clicks": 2
         },
         {
           "id": "FA5-J2",
           "name": "Assign driver to vehicle (assigned model)",
-          "steps": "Owner assigns driver to vehicle → one driver per vehicle at a time → assignment history tracked",
+          "steps": "Owner assigns driver to vehicle \u2192 one driver per vehicle at a time \u2192 assignment history tracked",
           "clicks": 3
         },
         {
           "id": "FA5-J3",
           "name": "Driver logs in (assigned model)",
-          "steps": "Driver logs in → sees their assigned vehicle → current status, next service due, pending inspections → tracking-active indicator visible",
+          "steps": "Driver logs in \u2192 sees their assigned vehicle \u2192 current status, next service due, pending inspections \u2192 tracking-active indicator visible",
           "clicks": 1
         },
         {
           "id": "FA5-J4",
           "name": "Driver checks into pool vehicle",
-          "steps": "Driver logs in → sees available vehicles list → picks one → system creates temporal assignment → pre-trip inspection prompted",
+          "steps": "Driver logs in \u2192 sees available vehicles list \u2192 picks one \u2192 system creates temporal assignment \u2192 pre-trip inspection prompted",
           "clicks": 2
         },
         {
           "id": "FA5-J5",
           "name": "View driver history",
-          "steps": "Owner opens driver detail → sees all vehicles they've driven, duration per vehicle, assignment history",
+          "steps": "Owner opens driver detail \u2192 sees all vehicles they've driven, duration per vehicle, assignment history",
           "clicks": 2
         }
       ],
@@ -405,8 +426,8 @@
         "Assigned mode: driver sees their primary vehicle on login",
         "First-login privacy notice shown and must be acknowledged before tracking begins",
         "Tracking-active indicator visible in driver UI at all times when tracking is on",
-        "End-shift toggle available to driver — stops tracking until next shift",
-        "Tracking schedule configurable by admin (e.g., 07:00-18:00 Mon-Fri) — on by default",
+        "End-shift toggle available to driver \u2014 stops tracking until next shift",
+        "Tracking schedule configurable by admin (e.g., 07:00-18:00 Mon-Fri) \u2014 on by default",
         "Per-driver data export (JSON/CSV) for GDPR right of access",
         "Per-driver data hard delete for GDPR right to erasure"
       ]
@@ -423,25 +444,25 @@
         {
           "id": "FA6-J1",
           "name": "Create inspection template",
-          "steps": "Owner creates template → name, list of check items (tires, lights, brakes, fluids, seatbelt...) → assigns to vehicle type",
+          "steps": "Owner creates template \u2192 name, list of check items (tires, lights, brakes, fluids, seatbelt...) \u2192 assigns to vehicle type",
           "clicks": 2
         },
         {
           "id": "FA6-J2",
           "name": "Driver completes pre-trip inspection",
-          "steps": "Driver opens inspection → sees checklist → marks each item pass/fail/NA → adds notes and photos for failures → submits",
+          "steps": "Driver opens inspection \u2192 sees checklist \u2192 marks each item pass/fail/NA \u2192 adds notes and photos for failures \u2192 submits",
           "clicks": 2
         },
         {
           "id": "FA6-J3",
           "name": "Admin reviews inspections",
-          "steps": "Owner views inspections → sees pass rate, outstanding failures → clicks inspection to see detail with photos",
+          "steps": "Owner views inspections \u2192 sees pass rate, outstanding failures \u2192 clicks inspection to see detail with photos",
           "clicks": 3
         },
         {
           "id": "FA6-J4",
           "name": "Compliance tracking",
-          "steps": "System tracks inspection frequency per vehicle → alerts if vehicle hasn't been inspected on schedule → compliance view shows current/overdue status",
+          "steps": "System tracks inspection frequency per vehicle \u2192 alerts if vehicle hasn't been inspected on schedule \u2192 compliance view shows current/overdue status",
           "clicks": 1
         }
       ],
@@ -458,10 +479,83 @@
   },
   "library_heuristics": [],
   "reference_products": [],
-  "factory_decisions": [],
+  "factory_decisions": [
+    {
+      "decision": "Added optional onLoad prop to FleetMap despite it being listed as out-of-scope for this story",
+      "context": "Loading skeleton AC requires knowing when MapLibre finishes initializing. Without modifying FleetMap, the only alternatives are fragile DOM observation (MutationObserver watching for canvas element) or arbitrary timeouts.",
+      "alternatives_considered": [
+        "MutationObserver on FleetMap container watching for canvas \u2014 fragile, hard to test, couples to MapLibre internals",
+        "setTimeout-based skeleton removal \u2014 arbitrary delay, poor UX, not spec-compliant",
+        "React.lazy + Suspense for FleetMap \u2014 only covers JS chunk loading, not MapLibre tile initialization"
+      ],
+      "rationale": "Adding a single optional onLoad prop is backward-compatible (existing callers unaffected), testable, and directly maps to MapLibre's load event. The building phase permits blast-radius fixes to one-hop imports. This is a 2-line change to support a properly-architected loading state.",
+      "confidence": "high",
+      "affects": [
+        "src/components/fleet-map.tsx",
+        "src/components/dashboard-map.tsx"
+      ]
+    },
+    {
+      "decision": "Error boundary retry implemented via React key remount pattern instead of modifying ErrorBoundary component",
+      "context": "ErrorBoundary's fallback prop is a static ReactNode \u2014 it cannot call the boundary's internal handleRetry method. The AC requires a retry button that re-initializes FleetMap.",
+      "alternatives_considered": [
+        "Modify ErrorBoundary to accept a render function fallback \u2014 out of scope, would change foundation component API",
+        "Use ErrorBoundary's built-in default fallback \u2014 doesn't match AC text 'Unable to load map'"
+      ],
+      "rationale": "Using a key prop on ErrorBoundary (incremented on retry click) causes React to unmount/remount the boundary, resetting its error state. The custom fallback JSX is defined in DashboardMap's render function, closing over the setErrorKey setter. This is a well-known React pattern that requires no foundation component changes.",
+      "confidence": "high",
+      "affects": [
+        "src/components/dashboard-map.tsx"
+      ]
+    },
+    {
+      "decision": "Empty state checks initialVehicles.length === 0, not markers.length === 0",
+      "context": "AC-empty-state-002 specifies: when vehicles exist but have no positions, map renders normally. mapVehiclesToMarkers filters out vehicles without positions, so markers could be empty while vehicles exist.",
+      "alternatives_considered": [
+        "Check markers.length \u2014 would incorrectly show empty state when vehicles exist but lack GPS data"
+      ],
+      "rationale": "The empty state represents 'no fleet configured', not 'no GPS data yet'. A fleet with vehicles but no positions is a normal operating state (GPS not yet reporting). The check on initialVehicles.length correctly distinguishes these cases.",
+      "confidence": "high",
+      "affects": [
+        "src/components/dashboard-map.tsx"
+      ]
+    },
+    {
+      "decision": "Search Before Building audit for cycle 1 story openfleet-loop-1-dashboard-ux-states",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 0 BUILD, 1 EXTEND (DashboardMap), 3 REUSE (ErrorBoundary, EmptyState, FleetMap onLoad callback addition), 0 REFACTOR-THEN-BUILD. Key reuse: ErrorBoundary from src/components/error-boundary.tsx (foundation), EmptyState from src/components/empty-state.tsx (foundation). Extended DashboardMap with loading/error/empty state orchestration.",
+      "confidence": "high",
+      "affects": [
+        "src/components/dashboard-map.tsx",
+        "src/components/dashboard-map.test.tsx",
+        "src/components/fleet-map.tsx"
+      ]
+    }
+  ],
   "factory_questions": [],
-  "deployment_url": null,
-  "implemented": [],
+  "deployment_url": "https://openfleet-v2-staging.gregj64.workers.dev",
+  "implemented": [
+    {
+      "task": "openfleet-loop-1-dashboard-ux-states",
+      "acceptance_criteria": [
+        "gap-loading-skeleton-001: Pulsing skeleton placeholder visible in map container while MapLibre initializes",
+        "gap-loading-skeleton-002: Skeleton disappears when map fires load event and live map becomes visible",
+        "gap-error-boundary-001: Error boundary catches FleetMap failures and shows Unable to load map with Try again button",
+        "gap-error-boundary-002: Clicking Try again resets error boundary and re-initializes FleetMap",
+        "gap-error-boundary-003: Sidebar and page header remain functional when map error state is displayed",
+        "gap-empty-state-001: When zero active vehicles exist, map area shows EmptyState with No vehicles to display and link to /vehicles",
+        "gap-empty-state-002: When vehicles exist but have no positions, map renders normally (empty state NOT shown)"
+      ],
+      "files_changed": [
+        "src/components/dashboard-map.tsx",
+        "src/components/dashboard-map.test.tsx",
+        "src/components/fleet-map.tsx"
+      ],
+      "tests_added": 9,
+      "tests_passing": 12
+    }
+  ],
   "skipped": [],
   "divergences": [],
   "decomposition_strategy": {
@@ -483,16 +577,1970 @@
   "infrastructure": {
     "deployment_method": "docker-compose",
     "database_type": "postgresql+postgis",
-    "staging_url": null,
+    "staging_url": "https://openfleet-v2-staging.gregj64.workers.dev",
     "readiness": {
       "posthog": true,
       "sentry": false,
-      "supabase": false,
-      "cloudflare": false
+      "supabase": true,
+      "cloudflare": true
+    },
+    "supabase_url": "https://vbjygbozhkjetufirrpv.supabase.co",
+    "supabase_anon_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZianlnYm96aGtqZXR1ZmlycnB2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwNDc3MDcsImV4cCI6MjA5MDYyMzcwN30.VQeuV3AoQsZpkPPWuJ4k3uqs_AgIqRBgcPn6euIsXWE"
+  },
+  "dual_voice_po_review": true,
+  "review_readiness_dashboard": {
+    "test_integrity": {
+      "passed": true,
+      "timestamp": "2026-04-01T14:42:00.148901+00:00"
+    },
+    "qa_gate": {
+      "passed": false,
+      "timestamp": "2026-04-01T14:42:00.148903+00:00"
+    },
+    "ai_code_audit": {
+      "passed": false,
+      "timestamp": null
+    },
+    "security_review": {
+      "passed": false,
+      "timestamp": "2026-04-01T14:42:00.148904+00:00"
+    },
+    "a11y_review": {
+      "passed": false,
+      "timestamp": null
+    },
+    "design_review": {
+      "passed": false,
+      "timestamp": null
+    },
+    "po_review": {
+      "passed": false,
+      "timestamp": null,
+      "skipped": true,
+      "skip_reason": "QA gate failed \u2014 PO Review requires passing QA"
     }
   },
-  "retry_counts": {},
-  "evaluator_observations": [],
+  "qa_fix_results": {
+    "phase": "qa-fixing",
+    "cycle": 1,
+    "timestamp": "2026-04-01T10:48:00.000Z",
+    "criteria_fixed": [
+      {
+        "criterion_id": "fix-qa-sse-mismatch",
+        "root_cause": "code_bug",
+        "hypothesis": "Server wraps SSE updates in {vehicles:[...]} envelope but client destructures as bare PositionUpdate[]",
+        "fix_description": "Changed JSON.parse destructuring in useRealtimeVehicles to unwrap {vehicles} key; updated test mock to match real server format",
+        "files_changed": [
+          "src/hooks/use-realtime-vehicles.ts",
+          "src/hooks/use-realtime-vehicles.test.ts"
+        ],
+        "test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 REGRESSION: fix-qa-sse-mismatch \u2014 unwraps {vehicles:[...]} envelope from server",
+        "regression_test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 REGRESSION: fix-qa-sse-mismatch \u2014 unwraps {vehicles:[...]} envelope from server",
+        "commit_sha": "74b0826"
+      },
+      {
+        "criterion_id": "fix-qa-xss-popup",
+        "root_cause": "code_bug",
+        "hypothesis": "buildPopupHTML interpolates user-controllable strings (name, licensePlate, driverName) into HTML template literals without escaping",
+        "fix_description": "Added escapeHTML helper function; applied to name, licensePlate, and driverName before HTML interpolation",
+        "files_changed": [
+          "src/lib/map-utils.ts",
+          "src/lib/map-utils.test.ts"
+        ],
+        "test_added": "src/lib/map-utils.test.ts \u2014 AC-fa1-xss-001: escapes HTML in user-controllable fields to prevent XSS",
+        "regression_test_added": "src/lib/map-utils.test.ts \u2014 REGRESSION: fix-qa-xss-popup \u2014 ampersands and quotes in names are escaped",
+        "commit_sha": "140fd05"
+      },
+      {
+        "criterion_id": "fix-qa-json-parse-safety",
+        "root_cause": "code_bug",
+        "hypothesis": "JSON.parse in useRealtimeVehicles SSE handler has no error handling \u2014 malformed data crashes the hook and kills the stream",
+        "fix_description": "Wrapped JSON.parse in try/catch with early return; added Array.isArray guard on parsed.vehicles",
+        "files_changed": [
+          "src/hooks/use-realtime-vehicles.ts",
+          "src/hooks/use-realtime-vehicles.test.ts"
+        ],
+        "test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 AC-fa1-json-safety-001: does not crash on malformed SSE data",
+        "regression_test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 REGRESSION: fix-qa-json-parse-safety \u2014 survives missing vehicles key in parsed JSON",
+        "commit_sha": "bc2ebde"
+      }
+    ],
+    "criteria_escalated": [],
+    "criteria_skipped": [],
+    "deployment_url": null,
+    "total_commits": 3,
+    "escalation_needed": false
+  },
+  "retry_counts": {
+    "fix-qa-sse-mismatch": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "qa-fixing",
+          "what_tried": "Destructured {vehicles} from parsed SSE data instead of bare array; updated test mock to send wrapped format",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-qa-xss-popup": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "qa-fixing",
+          "what_tried": "Added escapeHTML helper and applied to all user-controllable fields in buildPopupHTML",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-qa-json-parse-safety": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "qa-fixing",
+          "what_tried": "Wrapped JSON.parse in try/catch with early return; added Array.isArray guard",
+          "result": "fixed"
+        }
+      ]
+    }
+  },
+  "evaluator_observations": [
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:35:00.000Z",
+      "decision": "Classified as initial-build \u2192 full evaluation tier. All 7 dashboard gates reset.",
+      "reasoning": "state.json.current_state=milestone-check, all 4 stories are new features (map-render, map-realtime, map-popup, map-persistence), no prior evaluation for map-core milestone.",
+      "alternatives_considered": [],
+      "confidence": 0.98
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:38:40.122494+00:00",
+      "decision": "Test Integrity PASS. All 7 map-core acceptance criteria and 2 PO checks have test coverage. 102 tests pass across 14 files.",
+      "reasoning": "All tests existed functionally but lacked @criterion annotations. Added traceability annotations to 7 test files (10 describe blocks). No coverage gaps, no orphaned tests, no stale tests. Test suite runs green.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:42:42.599180+00:00",
+      "decision": "QA Gate FAIL. 2 CRITICAL findings: SSE data mismatch (real-time broken) and XSS in popup HTML. 5/7 criteria pass (71%). Routing to qa-fixing.",
+      "reasoning": "SSE mismatch is a functional correctness bug \u2014 the core real-time feature is broken in production despite tests passing (test mocks mask the integration bug). XSS is a security vulnerability. Both are blocking. Auth absence is expected (milestone scope). Product Walk skipped (no staging URL). PO Review deferred per protocol (QA must pass first).",
+      "alternatives_considered": [
+        "Could downgrade XSS to HIGH since data currently comes from seed DB, but spec requires popup to work safely with any data source"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:43:17.148590+00:00",
+      "decision": "Evaluation complete. Verdict: FAIL. Gates: test_integrity=PASS, qa_gate=FAIL, ai_code_audit=FAIL, security_review=FAIL, a11y_review=SKIPPED, design_review=SKIPPED, po_review=SKIPPED",
+      "reasoning": "QA Gate failed with 2 CRITICAL findings (SSE data mismatch, XSS in popup). Routing to qa-fixing with 3 fix tasks. PO Review skipped per protocol \u2014 QA must pass before quality assessment. Design/a11y reviews skipped \u2014 no deployment URL for browser testing.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:55:00.000Z",
+      "decision": "Re-evaluation after qa-fix. Classified as qa-fix cycle, upgraded to full tier (no prior PO Review verdict). All 7 dashboard gates reset.",
+      "reasoning": "Previous phase was qa-fixing (3 bugs fixed). Normally qa-fix \u2192 gate tier, but no prior PO Review exists to carry forward. Upgrading to full tier for complete evaluation.",
+      "alternatives_considered": [
+        "Gate tier with PO Review skip \u2014 rejected because PO Review never ran"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:56:00.000Z",
+      "decision": "Test Integrity PASS. 9 FA1 acceptance criteria checked, 7 covered (2 out-of-scope for map-core: sidebar alerts, responsive tablet). 2 PO checks covered. 107 tests pass across 14 files. QA-fix regression tests properly annotated.",
+      "reasoning": "All map-core criteria have test coverage. The 2 gaps (fa1-sidebar-alerts, fa1-responsive-tablet) belong to dashboard-features milestone, not map-core. 5 new tests added during qa-fix phase. No orphaned tests. Suite green.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:00:08.000Z",
+      "decision": "QA Gate PASS (no critical findings, 79/100 code audit, all 3 QA bug fixes verified). PO Review: NEEDS_IMPROVEMENT (confidence 0.75, recommended action: continue). Quality gaps are UX polish (loading/error/empty states), not functional bugs.",
+      "reasoning": "All map-core acceptance criteria met (6 pass, 1 partial due to untestable perf). Code review found no critical issues. QA bug fixes (SSE mismatch, XSS, JSON parse) all correctly implemented. PO gaps are enhancement specs: loading skeleton, error boundary, empty state. These belong to dashboard-features or as polish stories, not blockers for map-core milestone scope.",
+      "alternatives_considered": [
+        "Could route to shipping since recommended_action is 'continue' and all ACs are met \u2014 but NEEDS_IMPROVEMENT protocol requires routing to analyzing",
+        "Could classify loading/error/empty states as QA bugs \u2014 but these are UX quality improvements, not functional regressions"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:00:41.994044+00:00",
+      "decision": "Evaluation complete. Verdict: PARTIAL PASS. Gates: test_integrity=PASS, qa_gate=PASS, ai_code_audit=PASS, security_review=PASS, a11y_review=PASS(deferred), design_review=PASS(deferred), po_review=FAIL(NEEDS_IMPROVEMENT). Routing to analyzing.",
+      "reasoning": "QA Gate passed \u2014 all 3 prior bug fixes verified, no new critical findings. PO Review: NEEDS_IMPROVEMENT (confidence 0.75, recommended_action: continue). 5 quality gaps identified (loading skeleton, error boundary, empty state, SSE reconnect UI, perf benchmark). These are UX polish specs, not bugs \u2014 routing to analyzing per protocol.",
+      "alternatives_considered": [],
+      "confidence": 0.92
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "run": 3,
+      "observation": "Test integrity check #3: 107 tests (same as run #2), 14 test files, all passing. Full traceability \u2014 9/9 in-scope criteria covered with correct hashes. No gaps, orphans, or stale annotations. Test suite is stable and clean.",
+      "timestamp": "2026-04-01T11:14:05Z"
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:21:37.719125+00:00",
+      "decision": "Evaluation complete. Verdict: PARTIAL PASS. Gates: test_integrity=PASS, qa_gate=PASS, ai_code_audit=PASS, security_review=PASS, a11y_review=PASS(deferred), design_review=PASS(deferred), po_review=FAIL(NEEDS_IMPROVEMENT). Routing to building.",
+      "reasoning": "QA Gate passed cleanly \u2014 all 3 prior critical bugs verified fixed, code audit improved 57\u219271, no new critical findings. PO Review: NEEDS_IMPROVEMENT (confidence 0.79, up from 0.75). Same 3 medium-priority UX gaps persist (loading skeleton, error boundary, empty state) because fix stories generated by analyzing phase are still pending \u2014 builder has not implemented them yet. The analyzing phase already produced well-scoped change specs and fix stories. Routing to building to implement the 3 pending fix stories, NOT back to analyzing (which would regenerate the same specs).",
+      "alternatives_considered": [
+        "Route to analyzing \u2014 rejected because analyzing already ran and produced the correct fix stories. Re-analyzing would waste a cycle.",
+        "Route to shipping \u2014 rejected because PO confidence 0.79 < 0.90 threshold and 3 product-standard UX gaps remain."
+      ],
+      "confidence": 0.95
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 2,
+      "timestamp": "2026-04-01T12:45:00.000Z",
+      "decision": "Re-analysis confirms deepen:S3-fleet-dashboard. Confidence 0.79 (up from 0.75). Same 3 UX gaps, same fix stories ready. Route to building immediately \u2014 do NOT re-evaluate or re-analyze.",
+      "reasoning": "This is the 2nd analyzing run for the same 3 gaps. The previous run correctly diagnosed root causes (all missing_context), generated change specs, and produced fix stories. QA bugs were fixed between runs (+0.04 confidence), but the UX gaps are unchanged because the fix stories were never built. The system is in a ready-to-build state. Continuing to analyze or evaluate without building will create a pointless loop. Next action: story-building phase picks up fix-dashboard-loading, fix-dashboard-error, fix-dashboard-empty.",
+      "alternatives_considered": [],
+      "confidence": 0.98
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "run": 4,
+      "observation": "Test integrity check #4 (verification pass): 107 tests across 14 files, all passing. 7/7 map-core acceptance criteria and 2/2 PO checks covered with @criterion annotations and matching hashes. No coverage gaps, no orphaned tests, no stale annotations. Suite stable at 107 tests since run #2. Duration 3.36s. Verdict: PASS.",
+      "timestamp": "2026-04-01T11:30:00Z"
+    },
+    {
+      "phase": "evaluation",
+      "cycle": 1,
+      "timestamp": "2026-04-01T11:45:00Z",
+      "decision": "QA Gate: PASS. All 7 map-core acceptance criteria verified via test coverage (6 pass, 1 partial). Code audit 71/100, security PASS, 0 critical findings. Health score 74.",
+      "reasoning": "Re-evaluation with no code changes since last evaluation run. Evidence: 107/107 tests pass, 100% spec coverage, 3 previously-critical bugs remain resolved (SSE mismatch, XSS popup, JSON parse safety). Criteria pass rate 93% (6 full pass + 1 partial for perf criterion that cannot be empirically verified without browser). Code audit holds at 71 (>= 70 threshold). Security review PASS \u2014 auth absence expected per milestone scope, XSS fixed, input validation via Zod. Design and a11y reviews DEFERRED (no deployment URL). PO review set to null (handled separately). Health score 74 reflects: strong test coverage and no critical issues, offset by partial perf criterion, deferred design/a11y, and tech debt items (duplicated types, no rate limiting, no ESLint config)."
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "timestamp": "2026-04-01T15:20:50.000Z",
+      "decision": "Test Integrity PASS (re-evaluation). All 7 in-scope map-core acceptance criteria and 2 PO checks have test coverage. 2 criteria (sidebar alerts, responsive tablet) correctly deferred to dashboard-features milestone. 119 tests pass across 14 files.",
+      "reasoning": "Added @criterion annotations to 5 test files that were missing them (traffic-light, empty-state, loading, vehicles, dashboard-map). Generated 3 new tests: explicit PO-check-001 verification at both FleetMap and DashboardMap levels, and 50-vehicle capacity test at component level. No orphaned or stale tests. All gap criteria (loading-skeleton, error-boundary, empty-state) from previous QA fix stories are fully covered with annotations.",
+      "alternatives_considered": [
+        "Could have generated WebGL rendering tests using canvas mocks, but these would be tautological since jsdom cannot validate actual visual rendering"
+      ],
+      "confidence": 0.96
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T14:42:00.148821+00:00",
+      "decision": "Evaluation complete. Verdict: FAIL. Gates: test_integrity=PASS, qa_gate=FAIL (4 CRITICAL security findings), security_review=FAIL, po_review=SKIPPED (QA failed first). PO Review skipped per anti-pattern: never run PO Review after QA failure.",
+      "reasoning": "QA gate failed due to 4 CRITICAL security findings from code review: (1) three API routes have zero authentication, (2) login route exposes password_hash via select('*'), (3) no rate limiting on any endpoint, (4) positions query won't scale. Test suite passes (119/119) and acceptance criteria test coverage is solid, but security posture blocks shipping. Routing to qa-fixing with 4 fix_tasks.",
+      "alternatives_considered": [
+        "Could have run PO Review regardless but orchestrator anti-pattern explicitly prohibits this \u2014 reviewing quality on broken software wastes a cycle"
+      ],
+      "confidence": 0.95
+    }
+  ],
+  "code_review_report": {
+    "code_quality_baseline": {
+      "typescript_compiles": true,
+      "eslint_errors": "N/A \u2014 ESLint not configured",
+      "eslint_warnings": "N/A",
+      "duplication_pct": 2,
+      "circular_deps": 0,
+      "dead_code_items": 0,
+      "files_over_300_lines": 1,
+      "files_over_300_lines_detail": [
+        "src/components/fleet-map.test.tsx (378 lines, test file)"
+      ],
+      "npm_audit": {
+        "critical": 0,
+        "high": 0,
+        "moderate": 5,
+        "low": 0
+      },
+      "degraded": false
+    },
+    "ai_code_audit": {
+      "score": 78,
+      "dimensions": {
+        "architecture": {
+          "weight": 0.2,
+          "score": 82,
+          "notes": "Clean separation: lib/ for pure logic, hooks/ for state, components/ for presentation, api/ for routes. Dependency direction is correct \u2014 components depend on lib, not vice versa. Server components (dashboard page) fetch data and pass to client components. Supabase proxy in db.ts is clever but uses a non-standard pattern that could confuse contributors. Position event emitter uses Node EventEmitter which won't scale beyond a single process \u2014 acceptable for v1 but will need Redis/Supabase Realtime for production multi-instance."
+        },
+        "consistency": {
+          "weight": 0.1,
+          "score": 85,
+          "notes": "Consistent naming (camelCase props, snake_case DB columns with explicit mapping). File structure follows Next.js conventions. API routes consistently use NextResponse, Zod validation, and error shapes. Minor inconsistency: dashboard page.tsx uses inline type assertions instead of shared types from vehicles.ts."
+        },
+        "robustness": {
+          "weight": 0.15,
+          "score": 80,
+          "notes": "Good null coalescing throughout (?? operators). SSE stream has proper cleanup (abort listener, clearInterval, unsubscribe). Error boundary wraps map. localStorage access guarded with try/catch. Position ingestion validates vehicle existence. Edge case: dashboard fetches ALL positions ordered by timestamp to find latest per vehicle \u2014 will degrade with data growth (needs DISTINCT ON or a latest_position materialized view)."
+        },
+        "production_risks": {
+          "weight": 0.15,
+          "score": 72,
+          "notes": "console.error calls in API routes are acceptable for server-side logging but should use a structured logger in production. No request body size limits on POST /api/positions \u2014 a malicious client could send an unbounded array. EventEmitter-based SSE will not work across multiple server instances. The positions query in dashboard page fetches all positions for all vehicles to find the latest \u2014 this is an N+1 concern that will become a performance bottleneck. No timeout on Supabase queries."
+        },
+        "security": {
+          "weight": 0.2,
+          "score": 62,
+          "notes": "CRITICAL: POST /api/positions has NO authentication \u2014 anyone can submit fake GPS data for any vehicle. GET /api/vehicles has NO authentication \u2014 fleet data (names, plates, locations) is publicly accessible. GET /api/positions/stream has NO authentication \u2014 SSE stream of all vehicle movements is public. Login route uses select('*') which fetches the password_hash column (needed for verification but wider than necessary). No rate limiting on any endpoint. No CSRF protection on position ingestion. HTML in popup is properly escaped via escapeHTML()."
+        },
+        "dead_hallucinated_code": {
+          "weight": 0.1,
+          "score": 90,
+          "notes": "No unused imports detected. All exported functions are consumed. The 'idle' tripState in simulator never triggers (transitions go parked\u2192driving\u2192parked). PositionUpdate type is duplicated between position-events.ts and use-realtime-vehicles.ts \u2014 not dead code but could share a single definition."
+        },
+        "tech_debt": {
+          "weight": 0.1,
+          "score": 78,
+          "notes": "Inline type assertions in dashboard page (e.g., 'as GREEN | ORANGE | RED') instead of deriving from Prisma or shared types. Supabase client used directly instead of through a repository pattern \u2014 acceptable for project size but will create coupling if it grows. The positionBatchSchema validator is separate from the Prisma schema \u2014 drift risk. EventEmitter for pub/sub is a single-process limitation that will need rework."
+        }
+      },
+      "critical_findings": [
+        "POST /api/positions has no authentication \u2014 any client can inject fake GPS positions for any vehicle ID",
+        "GET /api/vehicles exposes fleet data (names, license plates, locations) without authentication",
+        "GET /api/positions/stream SSE endpoint has no authentication \u2014 real-time vehicle tracking data is publicly accessible",
+        "No rate limiting on position ingestion endpoint \u2014 vulnerable to abuse/DoS",
+        "Dashboard positions query fetches ALL positions to find latest per vehicle \u2014 will degrade at scale"
+      ]
+    },
+    "security_review": {
+      "ran": true,
+      "verdict": "FAIL",
+      "categories": {
+        "input_validation": {
+          "score": 80,
+          "notes": "Login uses Zod schema validation. Position ingestion uses positionBatchSchema with Zod. Vehicle IDs are validated against DB before insert. Popup HTML is escaped. However, no request body size limits."
+        },
+        "auth_and_authorization": {
+          "score": 40,
+          "notes": "CRITICAL GAPS: Three data API routes (GET /api/vehicles, POST /api/positions, GET /api/positions/stream) have zero authentication. Layout-level auth guards exist for pages but API routes bypass them entirely. Login correctly uses iron-session. Auth check endpoints (me, logout) correctly verify session."
+        },
+        "data_exposure": {
+          "score": 55,
+          "notes": "Login route uses select('*') fetching all user columns including password_hash (needed for verification but should select only required fields). Vehicle API returns comprehensive vehicle data without auth. SSE stream exposes real-time GPS tracking without auth. Error responses correctly avoid leaking internal details."
+        },
+        "dependencies": {
+          "score": 85,
+          "notes": "5 moderate vulnerabilities (all in esbuild/vite dev dependency chain \u2014 not production-affecting). No critical or high severity issues. Fix requires major version bump of vitest."
+        },
+        "configuration": {
+          "score": 75,
+          "notes": "Supabase credentials loaded from env vars (good). Fallback to empty string if env vars missing could cause silent failures. SSE headers correctly set no-cache. No CORS configuration visible (Next.js defaults). TypeScript strict mode enabled."
+        }
+      },
+      "critical_findings": [
+        "Three API routes lack authentication: POST /api/positions, GET /api/vehicles, GET /api/positions/stream",
+        "select('*') in login route fetches password_hash \u2014 should whitelist columns and add password_hash explicitly",
+        "No rate limiting on any API endpoint"
+      ]
+    },
+    "changed_files": [
+      "prisma/schema.prisma",
+      "simulator/index.ts",
+      "src/app/(admin)/dashboard/page.tsx",
+      "src/app/(admin)/layout.tsx",
+      "src/app/(driver)/driver/inspection/page.tsx",
+      "src/app/(driver)/driver/page.tsx",
+      "src/app/(driver)/layout.tsx",
+      "src/app/api/auth/login/route.ts",
+      "src/app/api/health/route.ts",
+      "src/app/api/positions/route.ts",
+      "src/app/api/positions/stream/route.ts",
+      "src/app/api/vehicles/route.ts",
+      "src/app/page.tsx",
+      "src/components/dashboard-map.tsx",
+      "src/components/fleet-map.tsx",
+      "src/hooks/use-realtime-vehicles.ts",
+      "src/lib/db.ts",
+      "src/lib/map-utils.ts",
+      "src/lib/position-events.ts",
+      "src/lib/vehicles.ts",
+      "src/components/dashboard-map.test.tsx",
+      "src/components/fleet-map.test.tsx",
+      "src/components/empty-state.test.tsx",
+      "src/components/loading.test.tsx",
+      "src/components/traffic-light.test.tsx",
+      "src/hooks/use-realtime-vehicles.test.ts",
+      "src/lib/auth.test.ts",
+      "src/lib/map-utils.test.ts",
+      "src/lib/position-events.test.ts",
+      "src/lib/schema.test.ts",
+      "src/lib/session.test.ts",
+      "src/lib/vehicles.test.ts",
+      "src/app/api/positions/stream/route.test.ts",
+      "package.json",
+      "tsconfig.json",
+      "vision.json",
+      "specs/changes/openfleet-loop-1-dashboard-ux-states.md"
+    ],
+    "evaluator_observations": "TypeScript compiles cleanly with zero errors. ESLint is not configured. Code architecture is clean with good separation of concerns \u2014 server components for data fetching, client components for interactivity, pure utility functions in lib/. The SSE-based real-time update pipeline (EventEmitter \u2192 ReadableStream \u2192 EventSource hook) is well-implemented for single-process deployment. The most significant issue is the complete absence of authentication on three data API routes (vehicles list, position ingestion, position stream), which means anyone with the URL can read fleet locations and inject fake GPS data. This is the single highest-priority fix needed before any production use. Secondary concerns: the positions query pattern (fetch all, filter in JS) will not scale, and the EventEmitter pub/sub is process-local. Overall code quality is solid for a cycle-1 product \u2014 the auth gaps are the only blocking issue."
+  },
+  "test_integrity_report": {
+    "spec_coverage_pct": 100,
+    "po_check_coverage_pct": 100,
+    "total_criteria": 9,
+    "total_criteria_breakdown": {
+      "in_scope_tested": 7,
+      "not_yet_implemented": 2,
+      "not_yet_implemented_criteria": [
+        "fa1-sidebar-alerts (AC#5 - sidebar alerts sorted by urgency, belongs to dashboard-features milestone)",
+        "fa1-responsive-tablet (AC#7 - responsive tablet with sidebar collapsing, belongs to dashboard-features milestone)"
+      ]
+    },
+    "total_po_checks": 2,
+    "total_tests": 119,
+    "total_test_files": 14,
+    "criteria_map": {
+      "fa1-map-load-001": {
+        "criterion": "Map loads in <2s with 50 vehicle markers",
+        "status": "covered",
+        "test_files": [
+          "src/lib/map-utils.test.ts",
+          "src/components/fleet-map.test.tsx",
+          "src/lib/vehicles.test.ts"
+        ],
+        "test_count": 5,
+        "env_limitation": "WebGL rendering performance cannot be measured in jsdom; tests verify data layer handles 50 markers correctly"
+      },
+      "fa1-traffic-light-002": {
+        "criterion": "Vehicle markers color-coded by traffic light status",
+        "status": "covered",
+        "test_files": [
+          "src/lib/map-utils.test.ts",
+          "src/components/fleet-map.test.tsx",
+          "src/components/traffic-light.test.tsx"
+        ],
+        "test_count": 8
+      },
+      "fa1-clustering-003": {
+        "criterion": "Map clusters markers at low zoom levels",
+        "status": "covered",
+        "test_files": [
+          "src/components/fleet-map.test.tsx"
+        ],
+        "test_count": 1,
+        "env_limitation": "Cluster visual behavior requires WebGL; test verifies cluster config is set on GeoJSON source"
+      },
+      "fa1-realtime-004": {
+        "criterion": "Vehicle positions update in real-time via SSE (<5s latency)",
+        "status": "covered",
+        "test_files": [
+          "src/app/api/positions/stream/route.test.ts",
+          "src/lib/position-events.test.ts",
+          "src/hooks/use-realtime-vehicles.test.ts"
+        ],
+        "test_count": 14
+      },
+      "fa1-direction-005": {
+        "criterion": "Vehicle markers show direction of travel when moving",
+        "status": "covered",
+        "test_files": [
+          "src/components/fleet-map.test.tsx",
+          "src/lib/map-utils.test.ts"
+        ],
+        "test_count": 3
+      },
+      "fa1-popup-006": {
+        "criterion": "Clicking vehicle marker opens popup with key stats and link to detail",
+        "status": "covered",
+        "test_files": [
+          "src/components/fleet-map.test.tsx",
+          "src/lib/map-utils.test.ts"
+        ],
+        "test_count": 12
+      },
+      "fa1-persistence-007": {
+        "criterion": "Map remembers zoom level and center between sessions",
+        "status": "covered",
+        "test_files": [
+          "src/lib/map-utils.test.ts",
+          "src/components/fleet-map.test.tsx"
+        ],
+        "test_count": 6
+      },
+      "fa1-sidebar-alerts": {
+        "criterion": "Sidebar shows top-priority alerts sorted by urgency",
+        "status": "not-yet-implemented",
+        "milestone": "dashboard-features",
+        "test_files": [],
+        "test_count": 0
+      },
+      "fa1-responsive-tablet": {
+        "criterion": "Responsive: usable on tablet with sidebar collapsing to bottom sheet",
+        "status": "not-yet-implemented",
+        "milestone": "dashboard-features",
+        "test_files": [],
+        "test_count": 0
+      }
+    },
+    "po_checks_map": {
+      "po-check-001": {
+        "check": "Can I see all my vehicles on a map right now?",
+        "status": "covered",
+        "test_files": [
+          "src/components/fleet-map.test.tsx",
+          "src/components/dashboard-map.test.tsx",
+          "src/lib/vehicles.test.ts"
+        ],
+        "test_count": 4
+      },
+      "po-check-002": {
+        "check": "Can I click a vehicle and see its details without leaving the map?",
+        "status": "covered",
+        "test_files": [
+          "src/lib/map-utils.test.ts",
+          "src/components/fleet-map.test.tsx"
+        ],
+        "test_count": 8
+      }
+    },
+    "gap_criteria_coverage": {
+      "gap-loading-skeleton": {
+        "status": "covered",
+        "test_files": [
+          "src/components/dashboard-map.test.tsx",
+          "src/components/loading.test.tsx"
+        ],
+        "test_count": 5
+      },
+      "gap-error-boundary": {
+        "status": "covered",
+        "test_files": [
+          "src/components/dashboard-map.test.tsx"
+        ],
+        "test_count": 3
+      },
+      "gap-empty-state": {
+        "status": "covered",
+        "test_files": [
+          "src/components/dashboard-map.test.tsx",
+          "src/components/empty-state.test.tsx"
+        ],
+        "test_count": 6
+      }
+    },
+    "orphaned_count": 0,
+    "stale_regenerated_count": 0,
+    "newly_generated_count": 4,
+    "newly_generated_tests": [
+      "fleet-map.test.tsx: 'PO-CHECK: all vehicles appear as markers on the map source'",
+      "fleet-map.test.tsx: 'handles 50 vehicle markers without error'",
+      "dashboard-map.test.tsx: 'PO-CHECK: all vehicles with positions are visible on the map'"
+    ],
+    "annotations_added": [
+      "traffic-light.test.tsx: added @criterion fa1-traffic-light-002",
+      "empty-state.test.tsx: added @criterion gap-empty-state-001",
+      "loading.test.tsx: added @criterion gap-loading-skeleton-001",
+      "vehicles.test.ts: added @criterion fa1-map-load-001, po-check-001",
+      "dashboard-map.test.tsx: added @criterion for all covered FA1 and gap criteria"
+    ],
+    "test_suite_pass": true,
+    "test_run_summary": "14 files, 119 tests, 0 failures, 3.51s",
+    "verdict": "PASS"
+  },
   "previous_evaluations": [],
-  "evaluation_deltas": []
+  "evaluation_deltas": [],
+  "foundation_eval_report": {
+    "verdict": "PASS",
+    "dimensions": {
+      "schema_completeness": {
+        "status": "PASS",
+        "findings": [
+          "18-model Prisma schema covers all 6 feature areas: User, Session, Vehicle, Position, Trip, DriverAssignment, ServiceType, ServiceSchedule, MaintenanceRecord, InspectionTemplate, InspectionTemplateItem, Inspection, InspectionResponse, Document, Alert, AuditLog, Setting.",
+          "FA1 (Dashboard/Map): Vehicle, Position, Alert \u2014 all present with trafficLight, motionState fields.",
+          "FA2 (Vehicle Registry): Vehicle with all required fields (make, model, year, vin, licensePlate, color, photoUrl, status, odometer) \u2014 present.",
+          "FA3 (GPS/Trips): Position (lat, lon, speed, heading, timestamp, vehicleId), Trip (distance, duration, start/end coords, isActive) \u2014 present.",
+          "FA4 (Maintenance): ServiceType, ServiceSchedule (mileage/time/dual triggers, warnings), MaintenanceRecord (cost, vendor, receiptUrl) \u2014 present.",
+          "FA5 (Driver Auth): User with role enum (ADMIN/DRIVER), licenseNumber, licenseExpiry, privacyAckedAt. DriverAssignment with type (ASSIGNED/POOL), temporal tracking \u2014 present.",
+          "FA6 (Inspections): InspectionTemplate, InspectionTemplateItem, Inspection with result enum (PASS/FAIL/NA), InspectionResponse with photoUrl \u2014 present.",
+          "All foreign keys properly defined with onDelete: Cascade. Indexes on query-hot columns (vehicleId+timestamp, userId+isActive, severity+isDismissed, etc.).",
+          "No feature area would need ALTER TABLE to function. Schema is complete for all 6 FAs."
+        ]
+      },
+      "integration_scaffolds": {
+        "status": "PASS",
+        "findings": [
+          "PostgreSQL + PostGIS: docker-compose.yml uses postgis/postgis:16-3.4 image. Prisma schema enables postgis extension. Connection via env var DATABASE_URL \u2014 no hardcoded credentials.",
+          "Prisma ORM: Client generated with postgresqlExtensions preview. Global singleton in src/lib/db.ts prevents connection exhaustion in dev. Seed script present.",
+          "iron-session: Session wrapper in src/lib/session.ts. Uses env var SESSION_SECRET with dev fallback. Cookie config: httpOnly, sameSite:lax, secure in production, 7-day TTL.",
+          "GPS Ingestion API: POST /api/positions with Zod validation, batch support, vehicle existence check, motion state auto-update. 16 tests passing.",
+          "GPS Simulator: Configurable via env vars (API_URL, VEHICLE_COUNT, INTERVAL_MS). Generates Bristol-area GPS coordinates with speed profiles (urban/suburban/highway), trip state machine, heading-based movement. Resolves vehicle IDs from API.",
+          "MapLibre GL JS: Installed as dependency but not initialized \u2014 documented as blocking_gap. Map rendering is FA1 scope, not foundation scope. ACCEPTABLE.",
+          "Health check endpoint: GET /api/health verifies database connectivity."
+        ]
+      },
+      "auth_flows": {
+        "status": "PASS",
+        "findings": [
+          "Login: POST /api/auth/login \u2014 validates with Zod, finds user by email, bcrypt.compare password, saves session with userId/role/name. Returns 401 on invalid credentials.",
+          "Logout: POST /api/auth/logout \u2014 calls session.destroy(). Clean implementation.",
+          "Session check: GET /api/auth/me \u2014 returns session data or 401.",
+          "Session persistence: iron-session with 7-day TTL, httpOnly cookie, sameSite:lax.",
+          "Protected routes: Admin layout (src/app/(admin)/layout.tsx) checks session \u2014 redirects to /login if unauthenticated, redirects to /driver if not ADMIN. Driver layout (src/app/(driver)/layout.tsx) mirrors with DRIVER check, redirects to /dashboard if not DRIVER.",
+          "Role-based access: ADMIN and DRIVER roles enforced at layout level. requireAdmin() and requireDriver() helpers in src/lib/auth.ts.",
+          "Login page: Client component with form, error handling, loading state, role-based redirect after login.",
+          "Password hashing: bcrypt with 12 rounds in auth.ts, 10 rounds in seed (acceptable for dev data).",
+          "14 auth tests passing."
+        ]
+      },
+      "shared_components": {
+        "status": "PASS",
+        "findings": [
+          "Admin sidebar: 6 nav items (Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings) \u2014 covers all feature areas. SVG icons, active state highlighting.",
+          "Driver nav: Simplified header with My Vehicle and Inspection links. Tracking-active indicator. End Shift / Start Shift toggle.",
+          "TrafficLight component: GREEN/ORANGE/RED with sm/md/lg sizes. Clean, reusable.",
+          "Loading component: Animated spinner with customizable message.",
+          "EmptyState component: Title, description, optional action link. Dashed border styling.",
+          "ErrorBoundary: Class component with retry button. Custom fallback support.",
+          "Admin layout wrapper and Driver layout wrapper present.",
+          "Login page with form, error states, loading state.",
+          "Route groups: (admin) and (driver) with session-checking layouts.",
+          "Stub pages: /dashboard, /driver, /driver/inspection exist as mount points for feature cycles.",
+          "15 component tests passing."
+        ]
+      },
+      "deployment_pipeline": {
+        "status": "SKIP",
+        "findings": [
+          "No deployment_url in cycle_context.json \u2014 staging deployment not in foundation scope.",
+          "Docker Compose file defines 3 services (db, app, simulator) with healthchecks and dependency ordering.",
+          "Multi-stage Dockerfile: deps \u2192 builder (prisma generate, next build) \u2192 runner (standalone output, non-root user, healthcheck).",
+          "Dockerfile.simulator present for simulator service.",
+          "Environment variables documented in docker-compose.yml (DATABASE_URL, SESSION_SECRET, NEXT_PUBLIC_APP_URL, VEHICLE_COUNT, INTERVAL_MS).",
+          "SKIP reason: deployment_url is null, no staging environment configured. Docker Compose structure is sound but untested end-to-end in this evaluation."
+        ]
+      },
+      "test_fixtures": {
+        "status": "PASS",
+        "findings": [
+          "Seed data represents a realistic business: Clearwater Plumbing Services, Bristol, UK.",
+          "5 users: 1 admin (Sarah Mitchell), 4 drivers (James Cooper, Priya Patel, Marcus Williams, Ling Chen) \u2014 realistic names, UK phone numbers, UK driving license formats.",
+          "8 vehicles: Ford Transit Custom 300/280, Mercedes Sprinter 314 CDI, Vauxhall Vivaro 2900, VW Caddy Cargo, Mercedes Vito 114 CDI. UK plates (WR71 HJK, etc.), realistic odometers (15k\u2013132k km), varied statuses (6 active, 1 in-shop, 1 decommissioned).",
+          "7 default service types: Oil Change, Tire Rotation, Brake Inspection, Air Filter, Fluid Top-up, Belt Inspection, Battery Check.",
+          "14 service schedules with mileage-based and time-based triggers, realistic costs (\u00a325\u2013\u00a395), approaching-due schedules for testing alerts.",
+          "2 inspection templates: Daily Pre-Trip Check (9 items), Weekly Vehicle Check (14 items) \u2014 plumbing-specific items included (tool inventory: pipe wrenches, fittings bag, torch).",
+          "5 driver assignments (4 active, 1 historical) with timestamps.",
+          "Documents: V5C registrations, insurance policies, MOT certificates with varying expiry dates (8 days to 360+ days).",
+          "5 alerts at varying severity (INFO, WARNING, CRITICAL) \u2014 tire rotation, battery check, MOT expiring, insurance renewal, inspection overdue.",
+          "4 app settings: tracking schedule, data retention, company name, timezone.",
+          "No placeholder data \u2014 all emails, phone numbers, VINs, license plates are realistic and domain-appropriate."
+        ]
+      }
+    },
+    "silent_degradation_check": {
+      "status": "PASS",
+      "evidence": [
+        "DOCUMENTED DIVERGENCE (not silent): Position model uses float lat/lon instead of PostGIS geometry type. This is explicitly documented in cycle_context.json divergences array with rationale (Prisma DSL limitation). Raw SQL migration planned for FA3. Reversible. NOT silent degradation \u2014 it was flagged by the builder.",
+        "No JSON blob columns substituted for typed columns \u2014 all fields are properly typed.",
+        "No mock services \u2014 simulator is a real service that POSTs to the real API. Auth uses real bcrypt and real iron-session.",
+        "No TODO/FIXME/HACK comments found in source code.",
+        "No test stubs that always return true \u2014 all 46 tests make real assertions.",
+        "MapLibre GL JS not yet initialized \u2014 documented as blocking_gap. This is feature scope (FA1), not foundation scope. ACCEPTABLE.",
+        "Session secret has a dev fallback string in session.ts \u2014 acceptable for dev, production uses env var."
+      ]
+    },
+    "structural_gaps": [],
+    "integration_gaps": [
+      "PostGIS geometry columns deferred to FA3 \u2014 positions stored as float lat/lon. Spatial indexing and ST_Distance calculations unavailable until raw SQL migration is added. This is a known, documented trade-off."
+    ],
+    "recommendations": []
+  },
+  "foundation_completion": {
+    "schema_ready": true,
+    "auth_ready": true,
+    "integrations_ready": {
+      "postgresql-postgis": true,
+      "prisma": true,
+      "iron-session": true,
+      "maplibre-gl": false,
+      "gps-ingestion": true,
+      "gps-simulator": true
+    },
+    "ui_scaffold_ready": true,
+    "deploy_ready": true,
+    "fixtures_ready": true,
+    "blocking_gaps": [
+      "PostGIS geometry columns not yet in schema \u2014 Prisma stores lat/lon as floats. Raw SQL migration for geometry type + spatial index will be added in FA3 (GPS/Trips) feature cycle."
+    ]
+  },
+  "story_result": {
+    "story_id": "openfleet-loop-1-dashboard-ux-states",
+    "outcome": "pass",
+    "files_changed": [
+      "src/components/dashboard-map.tsx",
+      "src/components/dashboard-map.test.tsx",
+      "src/components/fleet-map.tsx"
+    ],
+    "tests_added": 9,
+    "tests_passing": 12,
+    "env_limitations": [
+      "MapLibre GL requires WebGL \u2014 loading skeleton visibility, error boundary catch, and empty state rendering verified via component mocks (FleetMap mocked). Visual rendering of skeleton animation and error styling requires browser environment."
+    ],
+    "symptom": null,
+    "diagnosis": null,
+    "classification": null,
+    "fix_attempted": null,
+    "blocked_by": null,
+    "escalation": null
+  },
+  "evaluation_report": {
+    "qa": {
+      "verdict": "FAIL",
+      "evaluation_run": 5,
+      "note": "QA FAIL driven by CRITICAL security findings from code review. Three API routes have zero authentication (positions POST, vehicles GET, positions/stream GET), login route exposes password_hash via select(\"*\"), and no rate limiting exists on any endpoint. Security review FAIL overrides test suite PASS per evaluation rules: zero CRITICAL findings required for QA PASS.",
+      "criteria_results": [
+        {
+          "criterion": "FA1-1: Map loads in <2s with 50 vehicle markers",
+          "verdict": "partial",
+          "evidence": "Dashboard load observed at 84ms. Architecture supports scale: CARTO vector tiles, single GeoJSON source with clustering. Tests verify 50 markers handled without error. Visual rendering cannot be verified \u2014 WebGL unavailable in headless. Data/config layer PASS, visual layer UNVERIFIABLE (env_limitation)."
+        },
+        {
+          "criterion": "FA1-2: Vehicle positions update in real-time via SSE (<5s latency)",
+          "verdict": "partial",
+          "evidence": "SSE endpoint /api/positions/stream establishes connection (confirmed in product walk \u2014 status pending). useRealtimeVehicles hook with EventSource, JSON.parse with try/catch, {vehicles} envelope correctly unwrapped, 30s heartbeat. 14 tests pass. Latency is effectively instant (in-process EventEmitter). Partial because live SSE data flow not visually observed in walk (vehicles had no positions). CRITICAL: endpoint has NO authentication."
+        },
+        {
+          "criterion": "FA1-3: Vehicle markers show direction of travel when moving",
+          "verdict": "partial",
+          "evidence": "vehicle-direction symbol layer filters by motionState MOVING, rotates triangle icon by heading, rotation-alignment: map. 3 tests pass. Cannot visually verify \u2014 WebGL env_limitation."
+        },
+        {
+          "criterion": "FA1-4: Vehicle markers color-coded by traffic light status",
+          "verdict": "partial",
+          "evidence": "trafficLightColor() maps GREEN->#22c55e, ORANGE->#f59e0b, RED->#ef4444. vehicle-markers layer uses [get, color]. 8 tests pass. Cannot visually verify \u2014 WebGL env_limitation."
+        },
+        {
+          "criterion": "FA1-5: Sidebar shows top-priority alerts sorted by urgency",
+          "verdict": "not_built",
+          "evidence": "Fleet Status panel shows placeholder text only: Vehicle statuses and alerts will appear here. No vehicle data displayed despite /api/vehicles returning 7 vehicles. Belongs to dashboard-features milestone."
+        },
+        {
+          "criterion": "FA1-6: Map remembers zoom level and center between sessions",
+          "verdict": "partial",
+          "evidence": "saveMapViewState/loadMapViewState persist zoom and center to localStorage. FleetMap saves on moveend/zoomend, restores on mount. 6 tests pass. Cannot visually verify \u2014 WebGL env_limitation."
+        },
+        {
+          "criterion": "FA1-7: Responsive: usable on tablet with sidebar collapsing to bottom sheet",
+          "verdict": "not_built",
+          "evidence": "At 768px tablet, sidebar nav labels are clipped at left edge. At 320px mobile, map and Fleet Status remain side-by-side instead of stacking. No bottom sheet behavior implemented. Belongs to dashboard-features milestone."
+        },
+        {
+          "criterion": "FA1-8: Clicking vehicle marker opens popup with key stats and link to detail",
+          "verdict": "partial",
+          "evidence": "buildPopupHTML generates popup with vehicle name, license plate, driver, status, speed, link to /vehicles/{id}. XSS prevention via escapeHTML(). 12 tests pass. Cannot visually verify \u2014 WebGL env_limitation."
+        },
+        {
+          "criterion": "FA1-9: Map clusters markers at low zoom levels",
+          "verdict": "partial",
+          "evidence": "GeoJSON source configured with cluster:true, clusterMaxZoom:14, clusterRadius:50. Three cluster layers with click-to-expand. 1 test passes. Cannot visually verify \u2014 WebGL env_limitation."
+        }
+      ],
+      "criteria_pass_rate": 0,
+      "criteria_summary": {
+        "total": 9,
+        "partial": 6,
+        "not_built": 2,
+        "pass": 0,
+        "fail": 0,
+        "note": "6 criteria are PARTIAL because visual rendering requires WebGL (unavailable in headless). All 6 have passing tests verifying data/config layer. The visual gap is an env_limitation, not a code deficiency. 2 criteria belong to dashboard-features milestone and are not yet implemented."
+      },
+      "functional_correctness": {
+        "console_errors": 6,
+        "console_errors_detail": "All 6 are WebGL context creation failures in headless Chromium \u2014 not production bugs. Error boundary catches them correctly.",
+        "dead_elements": 5,
+        "dead_elements_detail": "5 nav links (Vehicles, Drivers, Maintenance, Inspections, Settings) return 404 \u2014 expected, those features are not built yet.",
+        "broken_links": 0,
+        "pages_checked": 4,
+        "login_works": true,
+        "api_health": true,
+        "api_vehicles": "200 \u2014 7 vehicles returned with correct data",
+        "sse_stream": "Connection established and held open",
+        "forms_tested": 3,
+        "forms_passed": 3
+      },
+      "code_quality_baseline": {
+        "typescript_compiles": true,
+        "eslint_errors": "N/A \u2014 ESLint not configured",
+        "eslint_warnings": "N/A",
+        "duplication_pct": 2,
+        "circular_deps": 0,
+        "dead_code_items": 0,
+        "files_over_300_lines": 1,
+        "files_over_300_lines_detail": [
+          "src/components/fleet-map.test.tsx (378 lines, test file)"
+        ],
+        "npm_audit": {
+          "critical": 0,
+          "high": 0,
+          "moderate": 5,
+          "low": 0
+        },
+        "test_suite": {
+          "files": 14,
+          "tests": 119,
+          "passed": 119,
+          "failed": 0,
+          "duration_s": 3.51
+        },
+        "degraded": false
+      },
+      "ai_code_audit": {
+        "score": 78,
+        "dimensions": {
+          "architecture": {
+            "score": 82,
+            "weight": 0.2
+          },
+          "consistency": {
+            "score": 85,
+            "weight": 0.1
+          },
+          "robustness": {
+            "score": 80,
+            "weight": 0.15
+          },
+          "production_risks": {
+            "score": 72,
+            "weight": 0.15
+          },
+          "security": {
+            "score": 62,
+            "weight": 0.2
+          },
+          "dead_hallucinated_code": {
+            "score": 90,
+            "weight": 0.1
+          },
+          "tech_debt": {
+            "score": 78,
+            "weight": 0.1
+          }
+        },
+        "critical_findings": [
+          "POST /api/positions has no authentication \u2014 any client can inject fake GPS positions for any vehicle ID",
+          "GET /api/vehicles exposes fleet data (names, license plates, locations) without authentication",
+          "GET /api/positions/stream SSE endpoint has no authentication \u2014 real-time vehicle tracking data is publicly accessible",
+          "No rate limiting on position ingestion endpoint \u2014 vulnerable to abuse/DoS",
+          "Dashboard positions query fetches ALL positions to find latest per vehicle \u2014 will degrade at scale"
+        ]
+      },
+      "security_review": {
+        "ran": true,
+        "verdict": "FAIL",
+        "categories": {
+          "input_validation": {
+            "score": 80,
+            "status": "PASS",
+            "detail": "Login uses Zod schema validation. Position ingestion uses positionBatchSchema with Zod. Vehicle IDs validated against DB. Popup HTML escaped. No request body size limits."
+          },
+          "auth_and_authorization": {
+            "score": 40,
+            "status": "FAIL",
+            "detail": "CRITICAL: Three data API routes (GET /api/vehicles, POST /api/positions, GET /api/positions/stream) have zero authentication. Layout-level auth guards protect pages but API routes bypass them entirely. Anyone with the URL can read fleet locations, inject fake GPS data, and subscribe to real-time tracking."
+          },
+          "data_exposure": {
+            "score": 55,
+            "status": "FAIL",
+            "detail": "Login route uses select(\"*\") fetching all user columns including password_hash \u2014 should whitelist columns and add password_hash explicitly. Vehicle API and SSE stream expose operational data without auth."
+          },
+          "dependencies": {
+            "score": 85,
+            "status": "PASS",
+            "detail": "5 moderate vulnerabilities in dev dependency chain (esbuild/vite). No critical or high in production dependencies."
+          },
+          "configuration": {
+            "score": 75,
+            "status": "PASS",
+            "detail": "Credentials via env vars. Session secret has dev fallback. No hardcoded keys. SSE headers correctly set no-cache."
+          }
+        },
+        "critical_findings": [
+          "Three API routes lack authentication: POST /api/positions, GET /api/vehicles, GET /api/positions/stream",
+          "select(\"*\") in login route fetches password_hash \u2014 should whitelist columns",
+          "No rate limiting on any API endpoint"
+        ]
+      },
+      "code_quality_warning": true
+    },
+    "design": {
+      "design_review": {
+        "overall_score": 62,
+        "category_scores": {
+          "visual_design": {
+            "score": 72,
+            "notes": "Login page is clean with centered card, good typography hierarchy (h1 + subtitle), rounded inputs with proper labels, dark CTA button. Dashboard at 1440px has clean 3-column layout with proper proportions \u2014 dark sidebar with icons, map area (~65% width), Fleet Status panel (~25% width). Color palette is consistent (dark navy sidebar, light gray backgrounds, white cards). Error boundary uses appropriate red tones with clear messaging."
+          },
+          "layout_and_spacing": {
+            "score": 55,
+            "notes": "Desktop 1440px layout is well-proportioned. At 768px tablet the sidebar nav labels are clipped at the left edge \u2014 text starts mid-word. At 320px mobile, map and Fleet Status remain side-by-side instead of stacking vertically, making both panels unusably narrow."
+          },
+          "information_hierarchy": {
+            "score": 60,
+            "notes": "Dashboard establishes correct layout intent \u2014 map as hero (~70% width), status sidebar as secondary. But Fleet Status panel shows only placeholder text, breaking the information hierarchy promise. Error boundary messaging is clear and actionable."
+          },
+          "interaction_design": {
+            "score": 65,
+            "notes": "Login form has proper error handling. Error boundary retry button is prominently placed. Mobile hamburger menu works. 5 nav links lead to 404 pages losing sidebar chrome."
+          },
+          "responsiveness": {
+            "score": 50,
+            "notes": "Mobile (320px, 375px): map and Fleet Status side-by-side instead of stacking \u2014 both cramped. Tablet (768px): sidebar labels clipped. Only 1440px renders correctly. Login page is responsive at all breakpoints."
+          }
+        }
+      },
+      "a11y_review": {
+        "verdict": "PARTIAL",
+        "findings": [
+          {
+            "severity": "medium",
+            "finding": "Login form has no wrapping form landmark \u2014 relies on alert landmark for error messages. No main landmark on login page.",
+            "evidence": "Walk accessibility data shows landmarks: [alert] only on login page."
+          },
+          {
+            "severity": "low",
+            "finding": "Dashboard has proper landmark structure: navigation, main, complementary. Tab order progresses logically through sidebar then main content.",
+            "evidence": "Walk shows landmarks: [alert, complementary, navigation, main] with aria-label Open sidebar on hamburger."
+          },
+          {
+            "severity": "medium",
+            "finding": "Form inputs have visible labels (Email, Password) with required attribute and placeholder text. Focus indicators not visually verified in headless.",
+            "evidence": "Walk accessibility data shows form_labels: [Email, Password]."
+          },
+          {
+            "severity": "low",
+            "finding": "Heading hierarchy is correct \u2014 login uses h1, dashboard uses h2 for section headings.",
+            "evidence": "Walk headings data confirmed."
+          }
+        ]
+      }
+    },
+    "po": {
+      "journey_quality": [
+        {
+          "journey_id": "FA1-J1",
+          "name": "View live fleet map",
+          "outcome": "partially-observable",
+          "score": 55,
+          "notes": "Auth flow works end-to-end (login -> redirect to dashboard). Dashboard layout renders with 3-column structure. Map area shows error boundary due to WebGL limitation (expected in headless). SSE stream connection established. 7 vehicles exist in database. However: Fleet Status panel is placeholder only, map rendering unverifiable, and all API endpoints serving this journey lack authentication."
+        },
+        {
+          "journey_id": "FA1-J2",
+          "name": "Inspect vehicle from map",
+          "outcome": "not-observable",
+          "score": 30,
+          "notes": "Cannot test \u2014 map did not render due to WebGL limitation. Popup implementation exists with tests (buildPopupHTML, escapeHTML). Vehicle data available via API (7 vehicles). Journey cannot be verified end-to-end without WebGL."
+        },
+        {
+          "journey_id": "FA1-J3",
+          "name": "Review fleet status sidebar",
+          "outcome": "not-built",
+          "score": 10,
+          "notes": "Fleet Status panel shows placeholder text only. No vehicle data, no alerts, no urgency sorting. Belongs to dashboard-features milestone."
+        },
+        {
+          "journey_id": "FA1-J4",
+          "name": "Filter map by status",
+          "outcome": "not-built",
+          "score": 0,
+          "notes": "No filter UI exists on the dashboard. Belongs to dashboard-features milestone."
+        }
+      ],
+      "screen_quality": [
+        {
+          "screen": "S1-login",
+          "score": 78,
+          "notes": "Clean, functional login screen. Centered card layout, proper form labels, responsive across breakpoints. Error handling works (invalid credentials show clear red message). Minor: no main landmark, no forgot-password link."
+        },
+        {
+          "screen": "S3-fleet-dashboard",
+          "score": 45,
+          "notes": "Layout structure is correct (sidebar + map hero + status panel). Error boundary works properly. Loading skeleton and empty state implemented. However: Fleet Status is placeholder, map rendering unverifiable in headless, responsive breakpoints broken (mobile side-by-side, tablet sidebar clipped), 5 nav links lead to 404 without app chrome. Security: all data endpoints lack authentication."
+        }
+      ],
+      "heuristic_results": {
+        "total": 10,
+        "passed": 5,
+        "pass_rate_pct": 50,
+        "details": [
+          {
+            "heuristic": "H1: Visibility of system status",
+            "pass": true,
+            "notes": "Loading skeleton shows during map init. Error boundary shows clear error state. SSE connection provides real-time updates."
+          },
+          {
+            "heuristic": "H2: Match between system and real world",
+            "pass": true,
+            "notes": "Vehicle terminology matches real-world fleet management language."
+          },
+          {
+            "heuristic": "H3: User control and freedom",
+            "pass": false,
+            "notes": "404 pages lose app chrome \u2014 no way back to sidebar without browser back button."
+          },
+          {
+            "heuristic": "H4: Consistency and standards",
+            "pass": true,
+            "notes": "Consistent dark sidebar, card-based layouts, color palette throughout."
+          },
+          {
+            "heuristic": "H5: Error prevention",
+            "pass": true,
+            "notes": "Login validates inputs. API validates with Zod. Popup HTML escaped against XSS."
+          },
+          {
+            "heuristic": "H6: Recognition rather than recall",
+            "pass": false,
+            "notes": "Fleet Status panel is placeholder \u2014 owner cannot see which vehicles need attention at a glance."
+          },
+          {
+            "heuristic": "H7: Flexibility and efficiency",
+            "pass": false,
+            "notes": "No keyboard shortcuts, no map filters, no quick actions."
+          },
+          {
+            "heuristic": "H8: Aesthetic and minimalist design",
+            "pass": true,
+            "notes": "Dashboard layout is clean. Login is minimal."
+          },
+          {
+            "heuristic": "H9: Help users recover from errors",
+            "pass": false,
+            "notes": "Map error boundary has good recovery. Login error is generic."
+          },
+          {
+            "heuristic": "H10: Help and documentation",
+            "pass": false,
+            "notes": "No help text, no onboarding, no tooltips."
+          }
+        ]
+      },
+      "verdict": "NEEDS_IMPROVEMENT",
+      "confidence": 0.65,
+      "recommended_action": "deepen:security-and-api-auth",
+      "quality_gaps": [
+        {
+          "id": "gap-api-auth-missing",
+          "priority": "critical",
+          "description": "Three API routes (POST /api/positions, GET /api/vehicles, GET /api/positions/stream) have zero authentication. Anyone with the URL can read fleet locations, inject fake GPS data, and subscribe to real-time vehicle tracking.",
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "affected_journeys": [
+            "FA1-J1",
+            "FA1-J2"
+          ]
+        },
+        {
+          "id": "gap-login-password-hash-exposure",
+          "priority": "critical",
+          "description": "Login route uses select(\"*\") which fetches password_hash column. Should whitelist specific columns.",
+          "affected_screens": [
+            "S1-login"
+          ],
+          "affected_journeys": []
+        },
+        {
+          "id": "gap-no-rate-limiting",
+          "priority": "high",
+          "description": "No rate limiting on any endpoint. Position ingestion and login endpoints are particularly vulnerable.",
+          "affected_screens": [],
+          "affected_journeys": []
+        },
+        {
+          "id": "gap-positions-query-scale",
+          "priority": "medium",
+          "description": "Dashboard positions query fetches ALL positions to find latest per vehicle. Will degrade with data growth. Needs DISTINCT ON or latest_position materialized view.",
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "affected_journeys": [
+            "FA1-J1"
+          ]
+        },
+        {
+          "id": "gap-responsive-mobile-layout",
+          "priority": "medium",
+          "description": "At 320px and 375px mobile, map and Fleet Status panel remain side-by-side instead of stacking vertically. Both panels are unusably narrow.",
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "affected_journeys": [
+            "FA1-J1"
+          ]
+        },
+        {
+          "id": "gap-sidebar-text-clipping",
+          "priority": "medium",
+          "description": "At 768px tablet and 1280px desktop, sidebar nav labels are partially clipped at the left edge.",
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "affected_journeys": []
+        },
+        {
+          "id": "gap-404-loses-app-chrome",
+          "priority": "low",
+          "description": "Clicking sidebar nav links to unbuilt pages shows default Next.js 404 without preserving admin sidebar layout.",
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "affected_journeys": []
+        }
+      ]
+    },
+    "health_score": 42,
+    "fix_tasks": [
+      {
+        "id": "fix-api-auth",
+        "priority": "critical",
+        "title": "Add authentication middleware to all data API routes",
+        "description": "POST /api/positions, GET /api/vehicles, and GET /api/positions/stream must require a valid session. Use existing requireAdmin() helper from src/lib/auth.ts. Position ingestion endpoint should accept either admin session or a configurable API key for the simulator.",
+        "affected_files": [
+          "src/app/api/positions/route.ts",
+          "src/app/api/vehicles/route.ts",
+          "src/app/api/positions/stream/route.ts"
+        ],
+        "closes_gaps": [
+          "gap-api-auth-missing"
+        ]
+      },
+      {
+        "id": "fix-login-select",
+        "priority": "critical",
+        "title": "Whitelist columns in login route query",
+        "description": "Replace select(\"*\") with explicit column selection: select(\"id, email, name, role, password_hash\"). This limits exposure to only the columns needed for authentication.",
+        "affected_files": [
+          "src/app/api/auth/login/route.ts"
+        ],
+        "closes_gaps": [
+          "gap-login-password-hash-exposure"
+        ]
+      },
+      {
+        "id": "fix-rate-limiting",
+        "priority": "high",
+        "title": "Add rate limiting to API endpoints",
+        "description": "Add basic rate limiting to position ingestion (100 requests/minute per IP), login (5 attempts/minute per IP). Can use a simple in-memory rate limiter for V1 single-process deployment.",
+        "affected_files": [
+          "src/app/api/positions/route.ts",
+          "src/app/api/auth/login/route.ts"
+        ],
+        "closes_gaps": [
+          "gap-no-rate-limiting"
+        ]
+      },
+      {
+        "id": "fix-positions-query",
+        "priority": "medium",
+        "title": "Optimize dashboard positions query",
+        "description": "Replace the fetch-all-positions approach with a DISTINCT ON query or maintain a latest_position column on the Vehicle model. Current approach will not scale beyond a few thousand position records.",
+        "affected_files": [
+          "src/app/(admin)/dashboard/page.tsx"
+        ],
+        "closes_gaps": [
+          "gap-positions-query-scale"
+        ]
+      }
+    ],
+    "re_walk_requests": [
+      {
+        "reason": "Security fixes applied \u2014 need to verify API endpoints return 401 without session",
+        "routes": [
+          "/api/vehicles",
+          "/api/positions/stream"
+        ],
+        "when": "after fix-api-auth is implemented"
+      }
+    ]
+  },
+  "analysis_recommendation": {
+    "action": "deepen:S3-fleet-dashboard",
+    "rationale": "Re-analysis confirms deepen. Confidence improved 0.75\u21920.79 from QA bug fixes, but 3 medium-priority UX gaps (loading/error/empty) remain unbuilt. Fix stories exist and are well-scoped. One more build cycle will close all 3 gaps and bring confidence above 0.90 threshold. No structural issues, no new gaps, no regressions."
+  },
+  "analysis_result": {
+    "phase": "analyzing",
+    "cycle": 1,
+    "analysis_run": 2,
+    "timestamp": "2026-04-01T12:45:00.000Z",
+    "confidence_trend": {
+      "current": 0.79,
+      "previous": 0.75,
+      "delta": 0.04,
+      "direction": "improving",
+      "consecutive_same_direction": 1,
+      "flags": [
+        "none"
+      ]
+    },
+    "recommendation": "deepen:S3-fleet-dashboard",
+    "recommendation_reasoning": "PO Review verdict is NEEDS_IMPROVEMENT with confidence 0.79 (up from 0.75). All 4 map-core stories are done and all functional ACs pass. 3 QA critical bugs were fixed (SSE mismatch, XSS, JSON parse safety), improving code audit score 57\u219271. However, the same 3 medium-priority UX gaps from run #2 remain unimplemented: loading skeleton, error boundary, empty state. Fix stories were correctly generated in the previous analyzing run but have not been built. The gaps are concentrated in S3-fleet-dashboard, bounded, and addressable without new capabilities. Confidence trend is improving, not regressing. The system is self-correcting \u2014 it needs one build cycle to execute the existing fix stories. No insert-foundation needed (decomposition health is clean). 2 low-priority gaps (SSE reconnect UI, perf benchmark) remain deferred pending staging infrastructure.",
+    "decomposition_health": {
+      "foundation_gaps": [],
+      "integration_gaps": [
+        "PostGIS geometry columns deferred to FA3 \u2014 positions stored as float lat/lon. Documented trade-off, not blocking map-core."
+      ],
+      "schema_debt": [],
+      "silent_degradation": [
+        "SSE used instead of WebSocket \u2014 documented divergence with rationale. Functionally equivalent for server-to-client push."
+      ],
+      "restructure_scope": "0% \u2014 no structural changes needed",
+      "structural_issues_found": false
+    },
+    "root_cause_analysis": [
+      {
+        "gap_id": "gap-loading-skeleton",
+        "gap_description": "No loading skeleton during map initialization \u2014 owner sees blank container while tiles load",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.85,
+        "evidence": "Product standard requires loading_states_handled: true. No map-core story AC specified loading states. The builder implemented what was specified. A different builder would make the same omission. Persists from run 2 \u2014 fix story exists but was not built.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-error-boundary",
+        "gap_description": "No error boundary around FleetMap \u2014 WebGL or tile failures crash map area with no recovery",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.85,
+        "evidence": "Product standard requires error_states_handled: true. ErrorBoundary component exists in foundation shared UI but was not wired into FleetMap \u2014 no story AC required it. Persists from run 2 \u2014 fix story exists but was not built.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-empty-state",
+        "gap_description": "No empty state when no vehicles have positions \u2014 owner sees blank map with no guidance",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.85,
+        "evidence": "Product standard requires empty_states_handled: true. EmptyState component exists in foundation shared UI but was not wired into dashboard map flow \u2014 no story AC required it. Persists from run 2 \u2014 fix story exists but was not built.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-sse-reconnect-ui",
+        "gap_description": "No visual feedback for SSE disconnect/reconnect \u2014 deferred until staging available",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.75,
+        "evidence": "No AC or spec language mentions reconnection UI. EventSource provides native auto-reconnect but no user-facing feedback was specified. Product standard visibility-of-system-status heuristic expects this. Deferred \u2014 requires live SSE connection for testing.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-perf-benchmark",
+        "gap_description": "No browser-based performance test for <2s load with 50 markers \u2014 deferred until staging available",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.9,
+        "evidence": "The <2s AC exists but is untestable without staging/browser environment. deployment_url is null. Infrastructure gap, not implementation gap. Deferred.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      }
+    ],
+    "cross_cycle_patterns": [
+      {
+        "pattern": "Product standard UX requirements (loading/error/empty states) not decomposed into story ACs",
+        "frequency": 2,
+        "systemic_cause": "Story decomposition does not cross-reference product_standard.quality_standards.reliability against each story's affected_screens to generate UX state ACs",
+        "recommended_action": "Instruct story-building phase to include loading, error, and empty state ACs for every story that adds a new screen or component. These are product-standard requirements, not optional polish."
+      },
+      {
+        "pattern": "Fix stories generated but not executed between analysis runs",
+        "frequency": 1,
+        "systemic_cause": "The analyzing phase generated fix stories and change specs, but the launcher re-triggered evaluation before routing to the build phase. Fix stories exist in cycle_context.json but were never picked up by the story-building loop.",
+        "recommended_action": "Ensure the launcher routes to story-building after analyzing produces fix stories, rather than re-triggering evaluation. The fix stories (fix-dashboard-loading, fix-dashboard-error, fix-dashboard-empty) are ready to build."
+      }
+    ],
+    "change_spec_briefs": [
+      {
+        "gap_id": "gap-loading-skeleton",
+        "root_cause": "missing_context",
+        "priority": "medium",
+        "affected_screens": [
+          "S3-fleet-dashboard"
+        ],
+        "affected_journeys": [
+          "FA1-J1"
+        ],
+        "what_good_looks_like": "Map container shows a loading skeleton (pulsing placeholder matching map dimensions) while tiles load. Skeleton disappears when map fires 'load' event. User sees immediate visual feedback that the map is loading.",
+        "requires_design_mode": false,
+        "approach_hint": "Add a loading state to DashboardMap that shows before FleetMap mounts. Use MapLibre 'load' event to transition. The Loading component from foundation can be used, or a skeleton div with animate-pulse.",
+        "do_not_repeat": []
+      },
+      {
+        "gap_id": "gap-error-boundary",
+        "root_cause": "missing_context",
+        "priority": "medium",
+        "affected_screens": [
+          "S3-fleet-dashboard"
+        ],
+        "affected_journeys": [
+          "FA1-J1"
+        ],
+        "what_good_looks_like": "If FleetMap throws (WebGL unsupported, tile load failure), an error boundary catches it and shows a retry button with a helpful message. The rest of the dashboard remains functional.",
+        "requires_design_mode": false,
+        "approach_hint": "Wrap FleetMap in the existing ErrorBoundary component from foundation shared UI. Add a map-specific fallback message. Test with a deliberately failing map initialization.",
+        "do_not_repeat": []
+      },
+      {
+        "gap_id": "gap-empty-state",
+        "root_cause": "missing_context",
+        "priority": "medium",
+        "affected_screens": [
+          "S3-fleet-dashboard"
+        ],
+        "affected_journeys": [
+          "FA1-J1"
+        ],
+        "what_good_looks_like": "When no vehicles exist or none have positions, the map area shows an empty state message: 'No vehicles to display. Add vehicles to see them on the map.' with a link to /vehicles. Follows the EmptyState component pattern from foundation.",
+        "requires_design_mode": false,
+        "approach_hint": "Check vehicles array length in DashboardMap. If empty, render EmptyState component instead of FleetMap. The EmptyState component already exists in shared UI with title, description, and optional action link.",
+        "do_not_repeat": []
+      }
+    ],
+    "escalations": []
+  },
+  "phase_decisions": [
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "timestamp": "2026-04-01T11:10:00.000Z",
+      "decision": "Recommend deepen:S3-fleet-dashboard over promote",
+      "reasoning": "Confidence 0.75 is below the 0.90 threshold for promote. Although all map-core functional ACs pass and the evaluator noted gaps 'belong to dashboard-features or as polish stories', the product standard explicitly requires loading/error/empty states. These are 3 bounded changes that bring the milestone to standard quality. Promoting now would carry forward gaps that are cheaper to fix in the map-core context than in dashboard-features.",
+      "alternatives_considered": [
+        "promote \u2014 rejected because confidence < 0.90 and 3 medium-priority product-standard gaps remain",
+        "notify-human \u2014 not warranted, gaps are well-understood and bounded"
+      ]
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "timestamp": "2026-04-01T11:10:00.000Z",
+      "decision": "Defer gap-sse-reconnect-ui and gap-perf-benchmark from deepen scope",
+      "reasoning": "Both low-priority gaps require infrastructure not yet available (staging URL for browser testing, long-lived SSE connections for reconnect testing). Including them in deepen would add scope without testable outcomes. They should be addressed when staging deployment is configured.",
+      "alternatives_considered": [
+        "Include all 5 gaps in deepen \u2014 rejected because 2 gaps are untestable without staging"
+      ]
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "timestamp": "2026-04-01T11:10:00.000Z",
+      "decision": "Flagged systemic pattern: product-standard UX requirements not decomposed into story ACs",
+      "reasoning": "All 5 gaps share root cause missing_context. The product standard defines loading/error/empty state requirements but the story decomposition phase did not generate ACs for them. This pattern will recur in every future milestone unless the story-building phase is instructed to cross-reference product_standard.quality_standards.reliability.",
+      "alternatives_considered": []
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 2,
+      "timestamp": "2026-04-01T12:45:00.000Z",
+      "decision": "Re-confirm deepen:S3-fleet-dashboard \u2014 fix stories ready, need build cycle",
+      "reasoning": "Confidence improved 0.75\u21920.79 from QA fixes but same 3 UX gaps persist unbuilt. Fix stories (fix-dashboard-loading, fix-dashboard-error, fix-dashboard-empty) exist with clear ACs and scope boundaries. No new gaps discovered. No regressions. The system correctly diagnosed the problem last time \u2014 it just needs to execute the fix stories. Promoting would carry forward 3 medium-priority product-standard violations. Notify-human not warranted \u2014 gaps are well-understood and bounded.",
+      "alternatives_considered": [
+        "promote \u2014 rejected: confidence 0.79 < 0.90 threshold, 3 medium gaps remain, 3 Nielsen heuristics failing (H1, H5, H9)",
+        "broaden \u2014 rejected: no missing capabilities, gaps are UX polish on existing screen",
+        "notify-human \u2014 rejected: gaps are well-understood, fix stories already scoped, no ambiguity"
+      ]
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 2,
+      "timestamp": "2026-04-01T12:45:00.000Z",
+      "decision": "Flagged launcher routing issue: fix stories generated but not built between evaluation runs",
+      "reasoning": "The previous analyzing run generated 3 fix stories and a change spec. However, evaluation was re-triggered before the stories were built. This created a loop where the same gaps are analyzed repeatedly without progress. The launcher should route to story-building after analyzing produces fix stories.",
+      "alternatives_considered": []
+    },
+    {
+      "phase": "change-spec-generation",
+      "decision": "Grouped 3 medium-priority gaps (loading-skeleton, error-boundary, empty-state) into 1 change spec producing 3 fix stories",
+      "reasoning": "All 3 gaps affect the same screen (S3-fleet-dashboard) and journey (FA1-J1) with the same root cause (missing_context). Grouped per phase rules: multiple gaps on same screen = single spec. Split into 3 fix stories for V2 story loop \u2014 each story is independently implementable and testable.",
+      "timestamp": "2026-04-01T10:07:49.000Z"
+    },
+    {
+      "phase": "change-spec-generation",
+      "decision": "Deferred 2 low-priority gaps (gap-sse-reconnect-ui, gap-perf-benchmark) to future cycle",
+      "reasoning": "Both require infrastructure not yet available: staging deployment for browser testing. SSE reconnect UI needs a live SSE connection to test disconnect/reconnect behavior. Perf benchmark needs browser + staging to measure <2s load. Cannot be meaningfully specified or tested without environment changes.",
+      "timestamp": "2026-04-01T10:07:49.000Z"
+    },
+    {
+      "phase": "change-spec-generation",
+      "cycle": 1,
+      "analysis_run": 2,
+      "decision": "Re-validated existing change spec and fix stories after analysis run 2 \u2014 no changes needed",
+      "reasoning": "Analysis run 2 confirmed the same 3 briefs (gap-loading-skeleton, gap-error-boundary, gap-empty-state) with identical root causes, priorities, and approaches. The existing change spec (openfleet-loop-1-dashboard-ux-states.md) and 3 fix stories pass all quality checklist items. No new gaps, no changed approaches, no vision conflicts. The spec and fix stories are ready for the story-building loop. The cross-cycle pattern (fix stories generated but not built) is a launcher routing issue, not a spec issue.",
+      "timestamp": "2026-04-01T12:50:00.000Z"
+    },
+    {
+      "phase": "change-spec-generation",
+      "cycle": 1,
+      "timestamp": "2026-04-01T12:50:00.000Z",
+      "decision": "Revalidated existing change spec \u2014 no regeneration needed",
+      "reasoning": "Analysis run 2 produced identical briefs to run 1 for the same 3 gaps (gap-loading-skeleton, gap-error-boundary, gap-empty-state). The existing change spec at specs/changes/openfleet-loop-1-dashboard-ux-states.md is comprehensive with 7 ACs, all with MEASUREMENT lines and CLOSES_GAP references. Fix stories exist with status pending. The spec was not rebuilt because the briefs are unchanged, the root causes are identical, and there are no do_not_repeat entries. The cross-cycle pattern confirms the gap: fix stories were generated but the launcher re-triggered evaluation before routing to story-building. The fix is routing, not re-speccing.",
+      "alternatives_considered": [
+        "Regenerate the spec from scratch \u2014 rejected because briefs are identical and existing spec meets all quality checks",
+        "Add additional criteria \u2014 rejected because the 7 existing criteria fully cover the 3 gaps with proper measurement methods"
+      ]
+    }
+  ],
+  "change_specs_pending": [
+    {
+      "spec_path": "specs/changes/openfleet-loop-1-dashboard-ux-states.md",
+      "gap_ids": [
+        "gap-loading-skeleton",
+        "gap-error-boundary",
+        "gap-empty-state"
+      ],
+      "priority": "medium",
+      "requires_design_mode": false,
+      "design_passes_needed": [],
+      "criteria_count": 7,
+      "root_cause": "missing_context",
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "affected_journeys": [
+        "FA1-J1"
+      ],
+      "approach_summary": "Add loading skeleton, error boundary, and empty state to DashboardMap using existing foundation components"
+    }
+  ],
+  "fix_stories": [
+    {
+      "id": "fix-dashboard-loading",
+      "name": "Add loading skeleton to dashboard map",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [
+        "map-render"
+      ],
+      "affected_entities": [],
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "acceptance_criteria": [
+        "Pulsing skeleton placeholder visible in map container while MapLibre initializes (data-testid='map-loading-skeleton')",
+        "Skeleton disappears when map fires 'load' event and live map becomes visible"
+      ],
+      "source": "change-spec:openfleet-loop-1-dashboard-ux-states",
+      "closes_gaps": [
+        "gap-loading-skeleton"
+      ],
+      "root_cause": "missing_context",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/components/dashboard-map.tsx",
+          "src/components/dashboard-map.test.tsx"
+        ],
+        "out_of_scope": [
+          "src/components/fleet-map.tsx",
+          "src/components/error-boundary.tsx",
+          "src/components/empty-state.tsx"
+        ]
+      }
+    },
+    {
+      "id": "fix-dashboard-error",
+      "name": "Add error boundary around dashboard map",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [
+        "map-render"
+      ],
+      "affected_entities": [],
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "acceptance_criteria": [
+        "Error boundary catches FleetMap failures and shows 'Unable to load map' with 'Try again' button (data-testid='map-error-state')",
+        "Clicking 'Try again' resets error boundary and re-initializes FleetMap",
+        "Sidebar and page header remain functional when map error state is displayed"
+      ],
+      "source": "change-spec:openfleet-loop-1-dashboard-ux-states",
+      "closes_gaps": [
+        "gap-error-boundary"
+      ],
+      "root_cause": "missing_context",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/components/dashboard-map.tsx",
+          "src/components/dashboard-map.test.tsx"
+        ],
+        "out_of_scope": [
+          "src/components/fleet-map.tsx",
+          "src/components/error-boundary.tsx"
+        ]
+      }
+    },
+    {
+      "id": "fix-dashboard-empty",
+      "name": "Add empty state when no vehicles exist",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [
+        "map-render"
+      ],
+      "affected_entities": [
+        "vehicle"
+      ],
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "acceptance_criteria": [
+        "When zero active vehicles exist, map area shows EmptyState with 'No vehicles to display' and link to /vehicles (data-testid='map-empty-state')",
+        "When vehicles exist but have no positions, map renders normally (empty state NOT shown)"
+      ],
+      "source": "change-spec:openfleet-loop-1-dashboard-ux-states",
+      "closes_gaps": [
+        "gap-empty-state"
+      ],
+      "root_cause": "missing_context",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/components/dashboard-map.tsx",
+          "src/components/dashboard-map.test.tsx",
+          "src/app/(admin)/dashboard/page.tsx"
+        ],
+        "out_of_scope": [
+          "src/components/fleet-map.tsx",
+          "src/components/empty-state.tsx"
+        ]
+      }
+    }
+  ],
+  "change_spec_generation_summary": {
+    "phase": "change-spec-generation",
+    "cycle": 1,
+    "timestamp": "2026-04-01T12:50:00.000Z",
+    "total_specs_generated": 1,
+    "total_criteria_across_specs": 7,
+    "gaps_addressed": 3,
+    "gaps_deferred": [
+      {
+        "gap_id": "gap-sse-reconnect-ui",
+        "reason": "Low priority. Requires live SSE connection and staging environment for testing. EventSource provides native auto-reconnect. Deferred to future cycle when browser QA infrastructure is available."
+      },
+      {
+        "gap_id": "gap-perf-benchmark",
+        "reason": "Low priority. Infrastructure gap \u2014 requires staging deployment (deployment_url is null) and browser-based performance testing tools. Cannot be addressed without environment changes."
+      }
+    ],
+    "gaps_escalated": []
+  },
+  "supabase": {
+    "project_ref": "vbjygbozhkjetufirrpv",
+    "slot_acquired": true,
+    "connection_string": "https://vbjygbozhkjetufirrpv.supabase.co"
+  },
+  "product_walk": {
+    "timestamp": "2026-04-01T14:32:34.245251+00:00",
+    "scope": "full",
+    "screens_walked": 4,
+    "screens": [
+      {
+        "route": "/",
+        "actual_url": "/login",
+        "behavior": "Redirects to /login",
+        "title": "OpenFleet",
+        "load_time_ms": 253,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "screenshot": "screenshots/cycle-1/walk/login.png",
+        "accessibility": {
+          "landmarks": [
+            "alert"
+          ],
+          "headings": [
+            {
+              "level": 1,
+              "text": "OpenFleet"
+            }
+          ],
+          "aria_labels": [],
+          "form_labels": [
+            "Email",
+            "Password"
+          ],
+          "interactive_elements": 3,
+          "summary": "Login form with h1 heading, 2 labeled text inputs (email, password), 1 submit button, 1 empty alert container for error messages. No landmark nav wrapping the form."
+        },
+        "anomalies": []
+      },
+      {
+        "route": "/login",
+        "actual_url": "/login",
+        "behavior": "Renders login form",
+        "title": "OpenFleet",
+        "load_time_ms": 253,
+        "console_errors": 0,
+        "console_warnings": 1,
+        "screenshot": "screenshots/cycle-1/walk/login.png",
+        "accessibility": {
+          "landmarks": [
+            "alert"
+          ],
+          "headings": [
+            {
+              "level": 1,
+              "text": "OpenFleet"
+            }
+          ],
+          "aria_labels": [],
+          "form_labels": [
+            "Email",
+            "Password"
+          ],
+          "interactive_elements": 3,
+          "summary": "Login form with h1 heading, 2 labeled text inputs (email type, password type), both with required attribute and placeholder text. 1 submit button (Sign in). 1 empty alert container. Console warning about preloaded font not used within load window."
+        },
+        "anomalies": [
+          {
+            "id": "A1",
+            "type": "warning",
+            "description": "Console warning: preloaded font resource (woff2) not used within a few seconds of window load event",
+            "screenshot": null,
+            "severity_hint": "low"
+          }
+        ]
+      },
+      {
+        "route": "/dashboard",
+        "actual_url": "/dashboard",
+        "behavior": "Renders dashboard layout with sidebar, map area (error boundary triggered), and fleet status panel",
+        "title": "OpenFleet",
+        "load_time_ms": 84,
+        "console_errors": 6,
+        "console_warnings": 0,
+        "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+        "accessibility": {
+          "landmarks": [
+            "alert",
+            "complementary",
+            "navigation",
+            "main"
+          ],
+          "headings": [
+            {
+              "level": 2,
+              "text": "Unable to load map"
+            },
+            {
+              "level": 2,
+              "text": "Fleet Status"
+            }
+          ],
+          "aria_labels": [
+            "Open sidebar"
+          ],
+          "form_labels": [],
+          "interactive_elements": 7,
+          "summary": "3-column layout: left sidebar (complementary landmark with navigation containing 6 links: Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings + version text 'OpenFleet v0.1'), main content area showing error boundary ('Unable to load map' h2 + description + 'Try again' button), right panel ('Fleet Status' h2 + placeholder text). Alert landmark present but empty. Dashboard link shows active/highlighted state."
+        },
+        "anomalies": [
+          {
+            "id": "A2",
+            "type": "console-error",
+            "description": "WebGL context creation error: 'Failed to initialize WebGL' when map component attempts to render MapLibre GL. Error includes ANGLE/SwiftShader details. This is expected in headless Chromium without GPU \u2014 the error boundary catches it correctly and shows 'Unable to load map'",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+            "severity_hint": "info-headless-only"
+          },
+          {
+            "id": "A3",
+            "type": "network-404",
+            "description": "5 navigation routes return 404 when prefetched by Next.js RSC: /vehicles, /drivers, /maintenance, /inspections, /settings. These pages do not exist yet.",
+            "screenshot": null,
+            "severity_hint": "expected-not-yet-built"
+          },
+          {
+            "id": "A4",
+            "type": "network",
+            "description": "SSE endpoint GET /api/positions/stream shows 'pending' status \u2014 connection opened and held open for real-time position updates. This is expected SSE behavior.",
+            "screenshot": null,
+            "severity_hint": "info-expected"
+          },
+          {
+            "id": "A5",
+            "type": "layout",
+            "description": "Fleet Status panel shows placeholder text 'Vehicle statuses and alerts will appear here.' with no vehicle data populated, despite /api/vehicles returning 7 vehicles. The panel does not fetch or display vehicle status data.",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+            "severity_hint": "medium"
+          }
+        ]
+      },
+      {
+        "route": "/vehicles",
+        "actual_url": "/vehicles",
+        "behavior": "Renders Next.js default 404 page (no sidebar layout)",
+        "title": "OpenFleet",
+        "load_time_ms": null,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "screenshot": "screenshots/cycle-1/walk/vehicles-404.png",
+        "accessibility": {
+          "landmarks": [],
+          "headings": [
+            {
+              "level": 1,
+              "text": "404"
+            },
+            {
+              "level": 2,
+              "text": "This page could not be found."
+            }
+          ],
+          "aria_labels": [],
+          "form_labels": [],
+          "interactive_elements": 0,
+          "summary": "Next.js default 404 page. No sidebar layout. Two headings only."
+        },
+        "anomalies": [
+          {
+            "id": "A6",
+            "type": "navigation",
+            "description": "Clicking 'Vehicles' sidebar link navigates to /vehicles which shows Next.js default 404 page without the admin sidebar layout wrapper. The 404 page does not preserve the app chrome.",
+            "screenshot": "screenshots/cycle-1/walk/vehicles-404.png",
+            "severity_hint": "medium"
+          }
+        ]
+      }
+    ],
+    "journeys": [
+      {
+        "id": "FA1-J1",
+        "name": "View live fleet map",
+        "steps": [
+          {
+            "action": "Navigate to /",
+            "result": "Redirected to /login",
+            "screenshot": "screenshots/cycle-1/walk/login.png"
+          },
+          {
+            "action": "Enter valid credentials (sarah@clearwaterplumbing.co.uk / openfleet123)",
+            "result": "Login form accepted credentials",
+            "screenshot": null
+          },
+          {
+            "action": "Click Sign in",
+            "result": "POST /api/auth/login returns 200, redirected to /dashboard",
+            "screenshot": null
+          },
+          {
+            "action": "Observe dashboard",
+            "result": "Error boundary shown: 'Unable to load map' with 'Try again' button. WebGL failed in headless browser. Map component attempted MapLibre GL initialization but WebGL context creation failed. Error boundary caught the error and displayed fallback UI. In a real browser with GPU, the map would render.",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png"
+          }
+        ],
+        "outcome": "partially-observable",
+        "notes": "Map rendering cannot be verified in headless Chromium due to WebGL limitation. Error boundary UX is confirmed working. Login flow and auth redirect work correctly. SSE stream connection to /api/positions/stream is established (pending). 7 vehicles exist in database via /api/vehicles."
+      },
+      {
+        "id": "FA1-J2",
+        "name": "Inspect vehicle from map",
+        "steps": [
+          {
+            "action": "Attempt to click vehicle marker on map",
+            "result": "Not possible \u2014 map did not render due to WebGL failure in headless browser",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png"
+          }
+        ],
+        "outcome": "not-observable",
+        "notes": "Vehicle markers and popups cannot be tested in headless Chromium. Map requires WebGL which is unavailable in this environment. The /api/vehicles endpoint confirms 7 vehicles exist with data (name, make, model, year, licensePlate, status, odometer, motionState, trafficLight) but all have latestPosition: null."
+      }
+    ],
+    "responsive": {
+      "tested_routes": [
+        "/login",
+        "/dashboard"
+      ],
+      "breakpoints": [
+        {
+          "width": 320,
+          "height": 568,
+          "label": "mobile-small",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-320px.png",
+            "dashboard_sidebar_open": "screenshots/cycle-1/walk/dashboard-320px-sidebar-open.png"
+          },
+          "observations": [
+            "Sidebar collapses to off-screen, hamburger button ('Open sidebar') appears in top-left header bar",
+            "Hamburger button opens sidebar as overlay with semi-transparent backdrop",
+            "Map area and Fleet Status panel are displayed side-by-side, both very narrow and cramped",
+            "Error boundary text wraps across multiple lines due to narrow width",
+            "'Try again' button text wraps to two lines",
+            "Header shows 'OpenFleet' text next to hamburger icon"
+          ]
+        },
+        {
+          "width": 375,
+          "height": 812,
+          "label": "mobile",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-responsive-mobile.png",
+            "login": "screenshots/cycle-1/walk/login-responsive-mobile.png"
+          },
+          "observations": [
+            "Login: form card renders well, vertically centered, responsive width",
+            "Dashboard: sidebar visible but nav labels truncated (only icons and partial text visible), map and fleet status side-by-side but cramped"
+          ]
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "label": "tablet",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-responsive-tablet.png",
+            "login": "screenshots/cycle-1/walk/login-responsive-tablet.png"
+          },
+          "observations": [
+            "Login: form centered, good proportions",
+            "Dashboard: sidebar partially visible (shows icons, text clipped at left edge), main content shows error state, Fleet Status panel visible on right",
+            "Sidebar nav labels are clipped/truncated \u2014 only partial text visible"
+          ]
+        },
+        {
+          "width": 1280,
+          "height": 720,
+          "label": "desktop",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-responsive-desktop.png",
+            "login": "screenshots/cycle-1/walk/login-responsive-desktop.png"
+          },
+          "observations": [
+            "Login: centered card, clean layout",
+            "Dashboard: sidebar fully visible with icons and labels, nav text partially truncated on left edge, map area fills center, Fleet Status on right"
+          ]
+        },
+        {
+          "width": 1440,
+          "height": 900,
+          "label": "desktop-large",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-1440px.png"
+          },
+          "observations": [
+            "Full 3-column layout renders cleanly: sidebar (full nav with icons and labels), map area (center, large), Fleet Status panel (right)",
+            "All sidebar nav items fully readable",
+            "Good proportions between columns"
+          ]
+        }
+      ],
+      "anomalies": [
+        {
+          "id": "A7",
+          "type": "responsive",
+          "description": "At 320px and 375px mobile: map area and Fleet Status panel remain side-by-side instead of stacking vertically. Both panels are very narrow and content is cramped.",
+          "screenshot": "screenshots/cycle-1/walk/dashboard-320px.png",
+          "severity_hint": "medium"
+        },
+        {
+          "id": "A8",
+          "type": "responsive",
+          "description": "At 768px tablet and 1280px desktop: sidebar nav item labels appear partially clipped at the left edge of the viewport. Text starts mid-word for some items.",
+          "screenshot": "screenshots/cycle-1/walk/dashboard-responsive-tablet.png",
+          "severity_hint": "medium"
+        }
+      ]
+    },
+    "forms": [
+      {
+        "route": "/login",
+        "form_name": "Login form",
+        "tests": [
+          {
+            "scenario": "empty-submission",
+            "inputs": {
+              "email": "",
+              "password": ""
+            },
+            "expected": "Validation error shown",
+            "actual": "No network request made. HTML5 required attribute prevents submission via native browser validation. No custom error message shown in the alert container.",
+            "screenshot": "screenshots/cycle-1/walk/login-empty-submit.png",
+            "passed": true,
+            "notes": "Client-side validation via HTML5 required attribute. Native browser tooltip appears but is not visible in headless screenshot."
+          },
+          {
+            "scenario": "invalid-credentials",
+            "inputs": {
+              "email": "wrong@email.com",
+              "password": "wrongpassword"
+            },
+            "expected": "Error message shown",
+            "actual": "POST /api/auth/login returns 401. Error message 'Invalid email or password' appears in red text between password field and Sign in button. Alert landmark contains the error paragraph.",
+            "screenshot": "screenshots/cycle-1/walk/login-invalid-creds.png",
+            "passed": true,
+            "notes": "Clear error message, appropriate red color, good positioning."
+          },
+          {
+            "scenario": "valid-credentials",
+            "inputs": {
+              "email": "sarah@clearwaterplumbing.co.uk",
+              "password": "openfleet123"
+            },
+            "expected": "Redirect to /dashboard",
+            "actual": "POST /api/auth/login returns 200 (218ms response). Client redirects to /dashboard. Dashboard renders with sidebar, map area (error boundary due to WebGL), and fleet status panel.",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+            "passed": true,
+            "notes": "Auth flow works end-to-end. Session cookie set. Subsequent navigation to /dashboard succeeds without re-authentication."
+          }
+        ]
+      }
+    ],
+    "api_checks": [
+      {
+        "endpoint": "GET /api/health",
+        "status": 200,
+        "response_summary": "status: ok, database: connected",
+        "notes": "Health endpoint confirms database connectivity"
+      },
+      {
+        "endpoint": "GET /api/vehicles",
+        "status": 200,
+        "response_summary": "7 vehicles returned (Van 01-08, no Van 07). Makes: Ford, Mercedes-Benz, Vauxhall, Volkswagen. All motionState: PARKED, all latestPosition: null, 1 IN_SHOP (Van 06), 6 ACTIVE.",
+        "notes": "Vehicle data is seeded but no position data exists. All trafficLight values are GREEN."
+      },
+      {
+        "endpoint": "GET /api/positions",
+        "status": 405,
+        "response_summary": "Method not allowed",
+        "notes": "Positions endpoint likely accepts POST only for ingesting position data"
+      },
+      {
+        "endpoint": "GET /api/positions/stream",
+        "status": "pending (SSE)",
+        "response_summary": "Server-Sent Events connection stays open",
+        "notes": "SSE endpoint for real-time position streaming is active and holds connection open"
+      }
+    ],
+    "keyboard_navigation": {
+      "tested_on": "/dashboard",
+      "tab_order": "Tab cycles through sidebar navigation links (Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings) then to 'Try again' button in main content",
+      "observations": [
+        "Tab key navigates through sidebar links in order",
+        "Active element correctly reported as anchor tags with appropriate text content",
+        "Focus indicators not visually verified in headless screenshots"
+      ]
+    },
+    "anomalies_total": 8
+  }
 }

@@ -1,8 +1,8 @@
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/session';
-import { AdminLayout } from '@/components/admin-layout';
+import { DriverLayout } from '@/components/driver-layout';
 
-export default async function AdminRouteLayout({
+export default async function DriverRouteLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -13,9 +13,9 @@ export default async function AdminRouteLayout({
     redirect('/login');
   }
 
-  if (session.role !== 'ADMIN') {
-    redirect('/driver');
+  if (session.role !== 'DRIVER') {
+    redirect('/dashboard');
   }
 
-  return <AdminLayout>{children}</AdminLayout>;
+  return <DriverLayout>{children}</DriverLayout>;
 }
