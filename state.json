@@ -1,9 +1,9 @@
 {
   "project": "openfleet-v2",
-  "status": "building",
-  "current_state": "generating-change-spec",
+  "status": "fixing",
+  "current_state": "qa-fixing",
   "current_milestone": "map-core",
-  "current_story": "map-persistence",
+  "current_story": "openfleet-loop-1-dashboard-ux-states",
   "milestones": [
     {
       "name": "foundation",
@@ -50,7 +50,7 @@
             "package-lock.json"
           ],
           "env_limitations": [
-            "MapLibre GL requires WebGL — component tests mock the map library. Visual verification of map rendering, marker colors, and clustering behavior requires a browser environment (not possible in jsdom/vitest)."
+            "MapLibre GL requires WebGL \u2014 component tests mock the map library. Visual verification of map rendering, marker colors, and clustering behavior requires a browser environment (not possible in jsdom/vitest)."
           ]
         },
         {
@@ -92,7 +92,7 @@
             "src/app/(admin)/dashboard/page.tsx"
           ],
           "env_limitations": [
-            "MapLibre GL requires WebGL — direction arrow rendering and rotation verified via MapLibre mock layer configuration, not visual rendering.",
+            "MapLibre GL requires WebGL \u2014 direction arrow rendering and rotation verified via MapLibre mock layer configuration, not visual rendering.",
             "SSE stream test verifies headers and data format via mock; actual long-lived connection behavior requires a live server."
           ]
         },
@@ -116,7 +116,7 @@
           "completed_at": "2026-04-01T09:14:10.260Z",
           "files_changed": [],
           "env_limitations": [
-            "MapLibre GL requires WebGL — popup rendering verified via MapLibre mock (Popup constructor, setHTML, setLngLat, addTo), not visual rendering."
+            "MapLibre GL requires WebGL \u2014 popup rendering verified via MapLibre mock (Popup constructor, setHTML, setLngLat, addTo), not visual rendering."
           ]
         },
         {
@@ -142,7 +142,28 @@
             "src/components/fleet-map.test.tsx"
           ],
           "env_limitations": [
-            "MapLibre GL requires WebGL — persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
+            "MapLibre GL requires WebGL \u2014 persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-dashboard-ux-states",
+          "name": "Add loading skeleton, error boundary, and empty state to DashboardMap using existing foundation components",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-01T12:46:45.641Z",
+          "files_changed": [
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/components/fleet-map.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL \u2014 loading skeleton visibility, error boundary catch, and empty state rendering verified via component mocks (FleetMap mocked). Visual rendering of skeleton animation and error styling requires browser environment."
           ]
         }
       ]
@@ -192,7 +213,7 @@
         },
         {
           "id": "dashboard-responsive",
-          "name": "Responsive layout — tablet with sidebar collapse",
+          "name": "Responsive layout \u2014 tablet with sidebar collapse",
           "status": "pending",
           "attempts": 0,
           "depends_on": [
@@ -590,6 +611,60 @@
   "seeded_at": "2026-04-01T10:00:00Z",
   "seeded_by": "manual-v2-transform",
   "human_approved": true,
-  "timestamp": "2026-04-01T10:25:35.486Z",
-  "last_build_delta": 0
+  "timestamp": "2026-04-01T14:42:00.151155+00:00",
+  "last_build_delta": 0,
+  "previous_state": "milestone-check",
+  "fix_tasks": [
+    {
+      "id": "fix-api-auth",
+      "priority": "critical",
+      "title": "Add authentication middleware to all data API routes",
+      "description": "POST /api/positions, GET /api/vehicles, and GET /api/positions/stream must require a valid session. Use existing requireAdmin() helper from src/lib/auth.ts. Position ingestion endpoint should accept either admin session or a configurable API key for the simulator.",
+      "affected_files": [
+        "src/app/api/positions/route.ts",
+        "src/app/api/vehicles/route.ts",
+        "src/app/api/positions/stream/route.ts"
+      ],
+      "closes_gaps": [
+        "gap-api-auth-missing"
+      ]
+    },
+    {
+      "id": "fix-login-select",
+      "priority": "critical",
+      "title": "Whitelist columns in login route query",
+      "description": "Replace select(\"*\") with explicit column selection: select(\"id, email, name, role, password_hash\"). This limits exposure to only the columns needed for authentication.",
+      "affected_files": [
+        "src/app/api/auth/login/route.ts"
+      ],
+      "closes_gaps": [
+        "gap-login-password-hash-exposure"
+      ]
+    },
+    {
+      "id": "fix-rate-limiting",
+      "priority": "high",
+      "title": "Add rate limiting to API endpoints",
+      "description": "Add basic rate limiting to position ingestion (100 requests/minute per IP), login (5 attempts/minute per IP). Can use a simple in-memory rate limiter for V1 single-process deployment.",
+      "affected_files": [
+        "src/app/api/positions/route.ts",
+        "src/app/api/auth/login/route.ts"
+      ],
+      "closes_gaps": [
+        "gap-no-rate-limiting"
+      ]
+    },
+    {
+      "id": "fix-positions-query",
+      "priority": "medium",
+      "title": "Optimize dashboard positions query",
+      "description": "Replace the fetch-all-positions approach with a DISTINCT ON query or maintain a latest_position column on the Vehicle model. Current approach will not scale beyond a few thousand position records.",
+      "affected_files": [
+        "src/app/(admin)/dashboard/page.tsx"
+      ],
+      "closes_gaps": [
+        "gap-positions-query-scale"
+      ]
+    }
+  ]
 }
