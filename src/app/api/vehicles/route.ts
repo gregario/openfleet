@@ -17,11 +17,26 @@ export async function GET() {
         odometer: true,
         motionState: true,
         trafficLight: true,
+        positions: {
+          orderBy: { timestamp: "desc" },
+          take: 1,
+          select: {
+            latitude: true,
+            longitude: true,
+          },
+        },
       },
       orderBy: { name: "asc" },
     });
 
-    return NextResponse.json({ vehicles });
+    // Flatten the latest position into the vehicle object
+    const result = vehicles.map((v) => ({
+      ...v,
+      latestPosition: v.positions[0] ?? null,
+      positions: undefined,
+    }));
+
+    return NextResponse.json({ vehicles: result });
   } catch (error) {
     console.error("Vehicles list error:", error);
     return NextResponse.json(
