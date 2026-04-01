@@ -4,7 +4,7 @@
   "_cycle_number": 1,
   "vision": {
     "product_name": "OpenFleet",
-    "one_liner": "Open-source fleet management for small businesses — see your vehicles, track your maintenance, own your data.",
+    "one_liner": "Open-source fleet management for small businesses \u2014 see your vehicles, track your maintenance, own your data.",
     "tagline": "Fleet management that doesn't charge you per van.",
     "license": "AGPL-3.0",
     "target_audience": {
@@ -21,11 +21,11 @@
     },
     "deploy_model": "Self-hosted, single-tenant, Docker Compose",
     "differentiators": [
-      "Open source — no per-vehicle SaaS fees",
-      "Self-hosted — your data stays on your server",
-      "No hardware lock-in — works with any GPS source",
-      "Simple UX — designed for owner-operators, not enterprise fleet managers",
-      "Built-in simulator — try it without owning a fleet"
+      "Open source \u2014 no per-vehicle SaaS fees",
+      "Self-hosted \u2014 your data stays on your server",
+      "No hardware lock-in \u2014 works with any GPS source",
+      "Simple UX \u2014 designed for owner-operators, not enterprise fleet managers",
+      "Built-in simulator \u2014 try it without owning a fleet"
     ],
     "competitive_positioning": "Nextcloud for fleet management. Credible open-source alternative that gives small operators enterprise-grade capability without enterprise pricing or complexity.",
     "feature_areas": [
@@ -33,7 +33,7 @@
         "id": "FA1",
         "name": "Fleet Dashboard & Live Map",
         "priority": 1,
-        "summary": "Hero screen — live map with all vehicle positions, fleet status sidebar with alerts and upcoming services"
+        "summary": "Hero screen \u2014 live map with all vehicle positions, fleet status sidebar with alerts and upcoming services"
       },
       {
         "id": "FA2",
@@ -130,8 +130,8 @@
       "vehicle_status": {
         "system": "Traffic light (green/orange/red)",
         "green": "All clear, no action needed",
-        "orange": "Requires attention — service approaching, document expiring, minor alert",
-        "red": "Overdue — past service interval, outside leasing terms, compliance failure"
+        "orange": "Requires attention \u2014 service approaching, document expiring, minor alert",
+        "red": "Overdue \u2014 past service interval, outside leasing terms, compliance failure"
       },
       "map": "Dominant element on dashboard (~70% width), collapsible status sidebar (~30%)",
       "voice_and_tone": {
@@ -165,25 +165,25 @@
         {
           "id": "FA1-J1",
           "name": "View live fleet map",
-          "steps": "Owner opens app → sees live map with all vehicle positions → vehicles color-coded by traffic light status (green/orange/red) and motion state (moving/idle/parked)",
+          "steps": "Owner opens app \u2192 sees live map with all vehicle positions \u2192 vehicles color-coded by traffic light status (green/orange/red) and motion state (moving/idle/parked)",
           "clicks": 0
         },
         {
           "id": "FA1-J2",
           "name": "Inspect vehicle from map",
-          "steps": "Owner clicks vehicle marker on map → popup shows vehicle name, driver, status, speed, last trip, traffic light, any alerts → link to full vehicle detail view",
+          "steps": "Owner clicks vehicle marker on map \u2192 popup shows vehicle name, driver, status, speed, last trip, traffic light, any alerts \u2192 link to full vehicle detail view",
           "clicks": 1
         },
         {
           "id": "FA1-J3",
           "name": "Review fleet status sidebar",
-          "steps": "Owner glances at sidebar → sees vehicles due for service (count + list), overdue inspections, expiring documents, active alerts sorted by urgency",
+          "steps": "Owner glances at sidebar \u2192 sees vehicles due for service (count + list), overdue inspections, expiring documents, active alerts sorted by urgency",
           "clicks": 0
         },
         {
           "id": "FA1-J4",
           "name": "Filter map by status",
-          "steps": "Owner filters map → by traffic light status, by driver, by motion state (moving/idle/parked)",
+          "steps": "Owner filters map \u2192 by traffic light status, by driver, by motion state (moving/idle/parked)",
           "clicks": 1
         }
       ],
@@ -216,13 +216,13 @@
         {
           "id": "FA2-J1",
           "name": "Add a vehicle",
-          "steps": "Owner clicks Add Vehicle → enters make, model, year, VIN, license plate, color, current odometer, photo → saves",
+          "steps": "Owner clicks Add Vehicle \u2192 enters make, model, year, VIN, license plate, color, current odometer, photo \u2192 saves",
           "clicks": 2
         },
         {
           "id": "FA2-J2",
           "name": "View vehicle detail",
-          "steps": "Owner opens vehicle from list or map → sees tabbed view with Overview, Trips, Maintenance, Inspections, Documents",
+          "steps": "Owner opens vehicle from list or map \u2192 sees tabbed view with Overview, Trips, Maintenance, Inspections, Documents",
           "clicks": 2
         },
         {
@@ -234,7 +234,7 @@
         {
           "id": "FA2-J4",
           "name": "Change vehicle status",
-          "steps": "Owner edits vehicle status → active, in-shop, decommissioned → decommissioned vehicles hidden from map/dashboard by default",
+          "steps": "Owner edits vehicle status \u2192 active, in-shop, decommissioned \u2192 decommissioned vehicles hidden from map/dashboard by default",
           "clicks": 3
         }
       ],
@@ -259,31 +259,31 @@
         {
           "id": "FA3-J1",
           "name": "Simulator feeds fleet data",
-          "steps": "Simulator service runs → generates realistic GPS coordinates for N configured vehicles → POSTs to ingestion API → vehicles appear on map moving along roads",
+          "steps": "Simulator service runs \u2192 generates realistic GPS coordinates for N configured vehicles \u2192 POSTs to ingestion API \u2192 vehicles appear on map moving along roads",
           "clicks": 0
         },
         {
           "id": "FA3-J2",
           "name": "System detects trip start",
-          "steps": "Vehicle moves >5km/h for >30s → system creates trip record → trip appears in vehicle's trip list as 'active'",
+          "steps": "Vehicle moves >5km/h for >30s \u2192 system creates trip record \u2192 trip appears in vehicle's trip list as 'active'",
           "clicks": 0
         },
         {
           "id": "FA3-J3",
           "name": "System detects trip end",
-          "steps": "Vehicle stationary for >3min → system closes trip → calculates distance (from GPS points, not straight-line) and duration",
+          "steps": "Vehicle stationary for >3min \u2192 system closes trip \u2192 calculates distance (from GPS points, not straight-line) and duration",
           "clicks": 0
         },
         {
           "id": "FA3-J4",
           "name": "View trip on map",
-          "steps": "Owner opens vehicle → Trips tab → clicks trip → sees route line on map with start/end markers, timestamps, distance, duration",
+          "steps": "Owner opens vehicle \u2192 Trips tab \u2192 clicks trip \u2192 sees route line on map with start/end markers, timestamps, distance, duration",
           "clicks": 3
         },
         {
           "id": "FA3-J5",
           "name": "Browse trip history",
-          "steps": "Owner views trip list for a vehicle → filters by date range → sorts by distance or duration",
+          "steps": "Owner views trip list for a vehicle \u2192 filters by date range \u2192 sorts by distance or duration",
           "clicks": 2
         }
       ],
@@ -312,31 +312,31 @@
         {
           "id": "FA4-J1",
           "name": "Create service schedule",
-          "steps": "Owner creates service schedule for a vehicle → selects type (oil change, tires, brakes...) → sets interval by mileage OR time OR both → sets estimated cost",
+          "steps": "Owner creates service schedule for a vehicle \u2192 selects type (oil change, tires, brakes...) \u2192 sets interval by mileage OR time OR both \u2192 sets estimated cost",
           "clicks": 3
         },
         {
           "id": "FA4-J2",
           "name": "Receive service alert",
-          "steps": "System detects service approaching threshold (e.g., 500mi before due, 2 weeks before) → alert appears on dashboard sidebar and vehicle detail",
+          "steps": "System detects service approaching threshold (e.g., 500mi before due, 2 weeks before) \u2192 alert appears on dashboard sidebar and vehicle detail",
           "clicks": 0
         },
         {
           "id": "FA4-J3",
           "name": "Log completed service",
-          "steps": "Owner logs service → date, odometer, cost, vendor, notes, receipt photo → service record added to history → next service due recalculated",
+          "steps": "Owner logs service \u2192 date, odometer, cost, vendor, notes, receipt photo \u2192 service record added to history \u2192 next service due recalculated",
           "clicks": 3
         },
         {
           "id": "FA4-J4",
           "name": "View maintenance history",
-          "steps": "Owner opens vehicle → Maintenance tab → sees chronological history filterable by type → running cost total",
+          "steps": "Owner opens vehicle \u2192 Maintenance tab \u2192 sees chronological history filterable by type \u2192 running cost total",
           "clicks": 2
         },
         {
           "id": "FA4-J5",
           "name": "Fleet-wide maintenance overview",
-          "steps": "Owner opens Maintenance from sidebar → sees what's due this week/month across all vehicles → sorted by urgency",
+          "steps": "Owner opens Maintenance from sidebar \u2192 sees what's due this week/month across all vehicles \u2192 sorted by urgency",
           "clicks": 1
         }
       ],
@@ -367,31 +367,31 @@
         {
           "id": "FA5-J1",
           "name": "Create driver profile",
-          "steps": "Owner creates driver → name, phone, email, license number, license expiry, photo → driver receives login credentials",
+          "steps": "Owner creates driver \u2192 name, phone, email, license number, license expiry, photo \u2192 driver receives login credentials",
           "clicks": 2
         },
         {
           "id": "FA5-J2",
           "name": "Assign driver to vehicle (assigned model)",
-          "steps": "Owner assigns driver to vehicle → one driver per vehicle at a time → assignment history tracked",
+          "steps": "Owner assigns driver to vehicle \u2192 one driver per vehicle at a time \u2192 assignment history tracked",
           "clicks": 3
         },
         {
           "id": "FA5-J3",
           "name": "Driver logs in (assigned model)",
-          "steps": "Driver logs in → sees their assigned vehicle → current status, next service due, pending inspections → tracking-active indicator visible",
+          "steps": "Driver logs in \u2192 sees their assigned vehicle \u2192 current status, next service due, pending inspections \u2192 tracking-active indicator visible",
           "clicks": 1
         },
         {
           "id": "FA5-J4",
           "name": "Driver checks into pool vehicle",
-          "steps": "Driver logs in → sees available vehicles list → picks one → system creates temporal assignment → pre-trip inspection prompted",
+          "steps": "Driver logs in \u2192 sees available vehicles list \u2192 picks one \u2192 system creates temporal assignment \u2192 pre-trip inspection prompted",
           "clicks": 2
         },
         {
           "id": "FA5-J5",
           "name": "View driver history",
-          "steps": "Owner opens driver detail → sees all vehicles they've driven, duration per vehicle, assignment history",
+          "steps": "Owner opens driver detail \u2192 sees all vehicles they've driven, duration per vehicle, assignment history",
           "clicks": 2
         }
       ],
@@ -405,8 +405,8 @@
         "Assigned mode: driver sees their primary vehicle on login",
         "First-login privacy notice shown and must be acknowledged before tracking begins",
         "Tracking-active indicator visible in driver UI at all times when tracking is on",
-        "End-shift toggle available to driver — stops tracking until next shift",
-        "Tracking schedule configurable by admin (e.g., 07:00-18:00 Mon-Fri) — on by default",
+        "End-shift toggle available to driver \u2014 stops tracking until next shift",
+        "Tracking schedule configurable by admin (e.g., 07:00-18:00 Mon-Fri) \u2014 on by default",
         "Per-driver data export (JSON/CSV) for GDPR right of access",
         "Per-driver data hard delete for GDPR right to erasure"
       ]
@@ -423,25 +423,25 @@
         {
           "id": "FA6-J1",
           "name": "Create inspection template",
-          "steps": "Owner creates template → name, list of check items (tires, lights, brakes, fluids, seatbelt...) → assigns to vehicle type",
+          "steps": "Owner creates template \u2192 name, list of check items (tires, lights, brakes, fluids, seatbelt...) \u2192 assigns to vehicle type",
           "clicks": 2
         },
         {
           "id": "FA6-J2",
           "name": "Driver completes pre-trip inspection",
-          "steps": "Driver opens inspection → sees checklist → marks each item pass/fail/NA → adds notes and photos for failures → submits",
+          "steps": "Driver opens inspection \u2192 sees checklist \u2192 marks each item pass/fail/NA \u2192 adds notes and photos for failures \u2192 submits",
           "clicks": 2
         },
         {
           "id": "FA6-J3",
           "name": "Admin reviews inspections",
-          "steps": "Owner views inspections → sees pass rate, outstanding failures → clicks inspection to see detail with photos",
+          "steps": "Owner views inspections \u2192 sees pass rate, outstanding failures \u2192 clicks inspection to see detail with photos",
           "clicks": 3
         },
         {
           "id": "FA6-J4",
           "name": "Compliance tracking",
-          "steps": "System tracks inspection frequency per vehicle → alerts if vehicle hasn't been inspected on schedule → compliance view shows current/overdue status",
+          "steps": "System tracks inspection frequency per vehicle \u2192 alerts if vehicle hasn't been inspected on schedule \u2192 compliance view shows current/overdue status",
           "clicks": 1
         }
       ],
@@ -460,66 +460,41 @@
   "reference_products": [],
   "factory_decisions": [
     {
-      "decision": "Search Before Building audit for cycle 1 story map-realtime",
-      "context": "Pre-implementation code reuse analysis",
-      "alternatives_considered": [],
-      "rationale": "Found: 3 BUILD (position-events emitter, SSE stream endpoint, useRealtimeVehicles hook), 3 EXTEND (positions API route, FleetMap component, map-utils types), 3 REUSE (VehicleWithPosition type, mapVehiclesToMarkers, trafficLightColor). Key reuse: existing FleetMap source.setData() pattern for live updates, existing motion state threshold logic in positions API.",
+      "decision": "Use localStorage for map view persistence with key 'openfleet-map-view'",
+      "context": "AC requires map to remember zoom and center between sessions. localStorage is the simplest client-side persistence that survives page reloads and browser restarts.",
+      "alternatives_considered": [
+        "sessionStorage (doesn't persist across sessions)",
+        "URL hash params (clutters URL, shared links change view)",
+        "cookie (unnecessary server round-trip)"
+      ],
+      "rationale": "localStorage is the boring technology choice (McKinley). No server-side state needed for a per-browser preference. JSON-serialized {center, zoom} with validation on load to handle corruption.",
       "confidence": "high",
       "affects": [
-        "map-realtime"
+        "src/lib/map-utils.ts",
+        "src/components/fleet-map.tsx"
       ]
     },
     {
-      "decision": "Used SSE (Server-Sent Events) instead of WebSocket for real-time position push",
-      "context": "Next.js 14 App Router does not support WebSocket upgrade in API route handlers. Implementing WebSocket would require a custom server.js or separate WS process.",
+      "decision": "Save on moveend event (not zoomend separately)",
+      "context": "MapLibre fires moveend after both pan and zoom operations complete. Using moveend alone covers both cases without double-saving.",
       "alternatives_considered": [
-        "Custom server.js with ws library — rejected: breaks Next.js optimizations (standalone output, edge functions), adds deployment complexity for Docker Compose",
-        "Separate WebSocket microservice — rejected: over-engineered for 50-vehicle fleet, adds Docker service, complicates auth flow",
-        "Short polling (fetch every 3s) — rejected: wasteful, higher latency, more server load"
+        "Separate moveend + zoomend handlers",
+        "Debounced save on any map interaction"
       ],
-      "rationale": "SSE via ReadableStream in Next.js route handler provides real-time push with native browser EventSource (auto-reconnect), no additional dependencies, <5s latency (positions broadcast immediately on ingestion). Single-direction push is all that's needed — client never sends position data upstream.",
+      "rationale": "moveend fires after zoom changes too, so a single handler is sufficient and simpler. No debounce needed \u2014 localStorage writes are synchronous and cheap.",
       "confidence": "high",
-      "affects": [
-        "src/app/api/positions/stream/route.ts",
-        "src/hooks/use-realtime-vehicles.ts"
-      ]
-    },
-    {
-      "decision": "Used Unicode ▲ character as direction arrow instead of custom icon sprite",
-      "context": "Need to show direction of travel for moving vehicles on the map",
-      "alternatives_considered": [
-        "Custom SVG icon loaded as MapLibre image — rejected: requires async image loading, more complex setup for minimal visual improvement",
-        "CSS-rotated HTML marker overlay — rejected: DOM-based, poor performance at 50+ markers"
-      ],
-      "rationale": "MapLibre symbol layer with text-field '▲' and text-rotate driven by heading property. GPU-accelerated, zero async setup, works with clustering. Arrow only renders for MOVING vehicles via layer filter.",
-      "confidence": "medium",
       "affects": [
         "src/components/fleet-map.tsx"
       ]
     },
     {
-      "decision": "In-memory EventEmitter for position pub/sub (no external message broker)",
-      "context": "Need to broadcast position ingestion events to SSE stream clients",
-      "alternatives_considered": [
-        "Redis pub/sub — rejected: adds infrastructure dependency, overkill for single-instance self-hosted deployment",
-        "PostgreSQL LISTEN/NOTIFY — rejected: adds DB load for real-time signaling, latency higher than in-memory"
-      ],
-      "rationale": "OpenFleet is single-tenant, single-instance (Docker Compose). In-memory EventEmitter has zero latency, zero dependencies, and handles 50 vehicles at 1 position per 10s trivially. If horizontal scaling is ever needed (v2+), Redis pub/sub can replace the emitter without changing the API surface.",
-      "confidence": "high",
-      "affects": [
-        "src/lib/position-events.ts",
-        "src/app/api/positions/route.ts",
-        "src/app/api/positions/stream/route.ts"
-      ]
-    },
-    {
-      "decision": "Search Before Building audit for cycle 1 story map-popup",
+      "decision": "Search Before Building audit for cycle 1 story map-persistence",
       "context": "Pre-implementation code reuse analysis",
       "alternatives_considered": [],
-      "rationale": "Found: 0 BUILD, 0 EXTEND, 1 REUSE (entire popup feature). The map-popup story AC 'Clicking vehicle marker opens popup with key stats and link to detail' was already implemented during map-render and map-realtime stories. fleet-map.tsx:148-176 has the click handler creating a MapLibre Popup via buildPopupHTML(). map-utils.ts:60-79 renders vehicle name, license plate, traffic light status, speed, motion state, driver name, and 'View details →' link. 11 existing tests cover this: 7 unit tests for buildPopupHTML and 4 component tests for the click-to-popup flow. No new code needed.",
+      "rationale": "Found: 1 BUILD (persistence utils), 1 EXTEND (FleetMap component). Key reuse: FleetMap already has map init logic \u2014 extended with saved state restore. map-utils.ts already has shared utilities \u2014 added persistence functions alongside existing helpers.",
       "confidence": "high",
       "affects": [
-        "map-popup"
+        "map-persistence"
       ]
     }
   ],
@@ -535,34 +510,18 @@
   "deployment_url": null,
   "implemented": [
     {
-      "task": "map-popup",
+      "task": "map-persistence",
       "acceptance_criteria": [
-        "Clicking vehicle marker opens popup with key stats and link to detail"
-      ],
-      "files_changed": [],
-      "tests_added": 0,
-      "tests_passing": 94,
-      "notes": "REUSE — already implemented during map-render/map-realtime stories. fleet-map.tsx click handler (line 148) + buildPopupHTML in map-utils.ts (line 60). Popup shows: vehicle name, license plate, traffic light status with color dot, speed + motion state, driver (or Unassigned), and View details link to /vehicles/{id}. 11 existing tests cover the AC fully."
-    },
-    {
-      "task": "map-realtime",
-      "acceptance_criteria": [
-        "Vehicle positions update in real-time via WebSocket (<5s latency)",
-        "Vehicle markers show direction of travel when moving"
+        "Map remembers zoom level and center between sessions"
       ],
       "files_changed": [
-        "src/lib/position-events.ts",
-        "src/app/api/positions/stream/route.ts",
-        "src/app/api/positions/route.ts",
-        "src/hooks/use-realtime-vehicles.ts",
-        "src/components/dashboard-map.tsx",
-        "src/components/fleet-map.tsx",
         "src/lib/map-utils.ts",
-        "src/lib/vehicles.ts",
-        "src/app/(admin)/dashboard/page.tsx"
+        "src/lib/map-utils.test.ts",
+        "src/components/fleet-map.tsx",
+        "src/components/fleet-map.test.tsx"
       ],
-      "tests_added": 20,
-      "tests_passing": 20
+      "tests_added": 8,
+      "tests_passing": 8
     }
   ],
   "skipped": [],
@@ -604,8 +563,365 @@
       "cloudflare": false
     }
   },
-  "retry_counts": {},
-  "evaluator_observations": [],
+  "diff_scope": {
+    "frontend": true,
+    "backend": true,
+    "prompts": false,
+    "tests": true,
+    "docs": false,
+    "config": true
+  },
+  "evaluation_tier": "full",
+  "cycle_type": "qa-fix",
+  "tier_rationale": "Previous phase was qa-fixing (3 bugs fixed: SSE mismatch, XSS popup, JSON parse safety). Normally qa-fix \u2192 gate tier, but upgraded to full because no prior PO Review verdict exists to carry forward (PO Review was skipped in cycle 1 due to QA failure). QA fixes touched 4 files (<10 threshold), all within QA failure scope.",
+  "review_readiness_dashboard": {
+    "test_integrity": {
+      "passed": true,
+      "timestamp": "2026-04-01T09:54:09.688053+00:00"
+    },
+    "qa_gate": {
+      "passed": true,
+      "timestamp": "2026-04-01T09:56:25.498680+00:00"
+    },
+    "ai_code_audit": {
+      "passed": true,
+      "timestamp": "2026-04-01T09:56:25.516665+00:00"
+    },
+    "security_review": {
+      "passed": true,
+      "timestamp": "2026-04-01T09:56:25.533729+00:00"
+    },
+    "a11y_review": {
+      "passed": true,
+      "timestamp": "2026-04-01T09:57:07.006737+00:00"
+    },
+    "design_review": {
+      "passed": true,
+      "timestamp": "2026-04-01T09:57:07.024241+00:00"
+    },
+    "po_review": {
+      "passed": false,
+      "timestamp": "2026-04-01T09:59:13.236610+00:00"
+    }
+  },
+  "qa_fix_results": {
+    "phase": "qa-fixing",
+    "cycle": 1,
+    "timestamp": "2026-04-01T10:48:00.000Z",
+    "criteria_fixed": [
+      {
+        "criterion_id": "fix-qa-sse-mismatch",
+        "root_cause": "code_bug",
+        "hypothesis": "Server wraps SSE updates in {vehicles:[...]} envelope but client destructures as bare PositionUpdate[]",
+        "fix_description": "Changed JSON.parse destructuring in useRealtimeVehicles to unwrap {vehicles} key; updated test mock to match real server format",
+        "files_changed": [
+          "src/hooks/use-realtime-vehicles.ts",
+          "src/hooks/use-realtime-vehicles.test.ts"
+        ],
+        "test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 REGRESSION: fix-qa-sse-mismatch \u2014 unwraps {vehicles:[...]} envelope from server",
+        "regression_test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 REGRESSION: fix-qa-sse-mismatch \u2014 unwraps {vehicles:[...]} envelope from server",
+        "commit_sha": "74b0826"
+      },
+      {
+        "criterion_id": "fix-qa-xss-popup",
+        "root_cause": "code_bug",
+        "hypothesis": "buildPopupHTML interpolates user-controllable strings (name, licensePlate, driverName) into HTML template literals without escaping",
+        "fix_description": "Added escapeHTML helper function; applied to name, licensePlate, and driverName before HTML interpolation",
+        "files_changed": [
+          "src/lib/map-utils.ts",
+          "src/lib/map-utils.test.ts"
+        ],
+        "test_added": "src/lib/map-utils.test.ts \u2014 AC-fa1-xss-001: escapes HTML in user-controllable fields to prevent XSS",
+        "regression_test_added": "src/lib/map-utils.test.ts \u2014 REGRESSION: fix-qa-xss-popup \u2014 ampersands and quotes in names are escaped",
+        "commit_sha": "140fd05"
+      },
+      {
+        "criterion_id": "fix-qa-json-parse-safety",
+        "root_cause": "code_bug",
+        "hypothesis": "JSON.parse in useRealtimeVehicles SSE handler has no error handling \u2014 malformed data crashes the hook and kills the stream",
+        "fix_description": "Wrapped JSON.parse in try/catch with early return; added Array.isArray guard on parsed.vehicles",
+        "files_changed": [
+          "src/hooks/use-realtime-vehicles.ts",
+          "src/hooks/use-realtime-vehicles.test.ts"
+        ],
+        "test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 AC-fa1-json-safety-001: does not crash on malformed SSE data",
+        "regression_test_added": "src/hooks/use-realtime-vehicles.test.ts \u2014 REGRESSION: fix-qa-json-parse-safety \u2014 survives missing vehicles key in parsed JSON",
+        "commit_sha": "bc2ebde"
+      }
+    ],
+    "criteria_escalated": [],
+    "criteria_skipped": [],
+    "deployment_url": null,
+    "total_commits": 3,
+    "escalation_needed": false
+  },
+  "retry_counts": {
+    "fix-qa-sse-mismatch": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "qa-fixing",
+          "what_tried": "Destructured {vehicles} from parsed SSE data instead of bare array; updated test mock to send wrapped format",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-qa-xss-popup": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "qa-fixing",
+          "what_tried": "Added escapeHTML helper and applied to all user-controllable fields in buildPopupHTML",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-qa-json-parse-safety": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "qa-fixing",
+          "what_tried": "Wrapped JSON.parse in try/catch with early return; added Array.isArray guard",
+          "result": "fixed"
+        }
+      ]
+    }
+  },
+  "evaluator_observations": [
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:35:00.000Z",
+      "decision": "Classified as initial-build \u2192 full evaluation tier. All 7 dashboard gates reset.",
+      "reasoning": "state.json.current_state=milestone-check, all 4 stories are new features (map-render, map-realtime, map-popup, map-persistence), no prior evaluation for map-core milestone.",
+      "alternatives_considered": [],
+      "confidence": 0.98
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:38:40.122494+00:00",
+      "decision": "Test Integrity PASS. All 7 map-core acceptance criteria and 2 PO checks have test coverage. 102 tests pass across 14 files.",
+      "reasoning": "All tests existed functionally but lacked @criterion annotations. Added traceability annotations to 7 test files (10 describe blocks). No coverage gaps, no orphaned tests, no stale tests. Test suite runs green.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:42:42.599180+00:00",
+      "decision": "QA Gate FAIL. 2 CRITICAL findings: SSE data mismatch (real-time broken) and XSS in popup HTML. 5/7 criteria pass (71%). Routing to qa-fixing.",
+      "reasoning": "SSE mismatch is a functional correctness bug \u2014 the core real-time feature is broken in production despite tests passing (test mocks mask the integration bug). XSS is a security vulnerability. Both are blocking. Auth absence is expected (milestone scope). Product Walk skipped (no staging URL). PO Review deferred per protocol (QA must pass first).",
+      "alternatives_considered": [
+        "Could downgrade XSS to HIGH since data currently comes from seed DB, but spec requires popup to work safely with any data source"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T09:43:17.148590+00:00",
+      "decision": "Evaluation complete. Verdict: FAIL. Gates: test_integrity=PASS, qa_gate=FAIL, ai_code_audit=FAIL, security_review=FAIL, a11y_review=SKIPPED, design_review=SKIPPED, po_review=SKIPPED",
+      "reasoning": "QA Gate failed with 2 CRITICAL findings (SSE data mismatch, XSS in popup). Routing to qa-fixing with 3 fix tasks. PO Review skipped per protocol \u2014 QA must pass before quality assessment. Design/a11y reviews skipped \u2014 no deployment URL for browser testing.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:55:00.000Z",
+      "decision": "Re-evaluation after qa-fix. Classified as qa-fix cycle, upgraded to full tier (no prior PO Review verdict). All 7 dashboard gates reset.",
+      "reasoning": "Previous phase was qa-fixing (3 bugs fixed). Normally qa-fix \u2192 gate tier, but no prior PO Review exists to carry forward. Upgrading to full tier for complete evaluation.",
+      "alternatives_considered": [
+        "Gate tier with PO Review skip \u2014 rejected because PO Review never ran"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:56:00.000Z",
+      "decision": "Test Integrity PASS. 9 FA1 acceptance criteria checked, 7 covered (2 out-of-scope for map-core: sidebar alerts, responsive tablet). 2 PO checks covered. 107 tests pass across 14 files. QA-fix regression tests properly annotated.",
+      "reasoning": "All map-core criteria have test coverage. The 2 gaps (fa1-sidebar-alerts, fa1-responsive-tablet) belong to dashboard-features milestone, not map-core. 5 new tests added during qa-fix phase. No orphaned tests. Suite green.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:00:08.000Z",
+      "decision": "QA Gate PASS (no critical findings, 79/100 code audit, all 3 QA bug fixes verified). PO Review: NEEDS_IMPROVEMENT (confidence 0.75, recommended action: continue). Quality gaps are UX polish (loading/error/empty states), not functional bugs.",
+      "reasoning": "All map-core acceptance criteria met (6 pass, 1 partial due to untestable perf). Code review found no critical issues. QA bug fixes (SSE mismatch, XSS, JSON parse) all correctly implemented. PO gaps are enhancement specs: loading skeleton, error boundary, empty state. These belong to dashboard-features or as polish stories, not blockers for map-core milestone scope.",
+      "alternatives_considered": [
+        "Could route to shipping since recommended_action is 'continue' and all ACs are met \u2014 but NEEDS_IMPROVEMENT protocol requires routing to analyzing",
+        "Could classify loading/error/empty states as QA bugs \u2014 but these are UX quality improvements, not functional regressions"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-01T10:00:41.994044+00:00",
+      "decision": "Evaluation complete. Verdict: PARTIAL PASS. Gates: test_integrity=PASS, qa_gate=PASS, ai_code_audit=PASS, security_review=PASS, a11y_review=PASS(deferred), design_review=PASS(deferred), po_review=FAIL(NEEDS_IMPROVEMENT). Routing to analyzing.",
+      "reasoning": "QA Gate passed \u2014 all 3 prior bug fixes verified, no new critical findings. PO Review: NEEDS_IMPROVEMENT (confidence 0.75, recommended_action: continue). 5 quality gaps identified (loading skeleton, error boundary, empty state, SSE reconnect UI, perf benchmark). These are UX polish specs, not bugs \u2014 routing to analyzing per protocol.",
+      "alternatives_considered": [],
+      "confidence": 0.92
+    }
+  ],
+  "code_review_report": {
+    "code_quality_baseline": {
+      "eslint_errors": "N/A (not configured)",
+      "eslint_warnings": "N/A",
+      "duplication_pct": "N/A (jscpd not installed)",
+      "circular_deps": 0,
+      "dead_code_items": 2,
+      "files_over_300_lines": 1,
+      "npm_audit": {
+        "critical": 0,
+        "high": 7,
+        "moderate": 5,
+        "low": 0
+      },
+      "degraded": false
+    },
+    "ai_code_audit": {
+      "score": 57,
+      "dimensions": {
+        "architecture": {
+          "score": 72,
+          "findings": [
+            "map-utils.ts mixes GeoJSON, HTML popup, and localStorage concerns",
+            "buildPopupHTML is presentation logic in a utility layer",
+            "Dashboard page.tsx contains raw Prisma queries \u2014 should use data-access layer",
+            "Motion state derivation duplicated in positions/route.ts"
+          ]
+        },
+        "consistency": {
+          "score": 68,
+          "findings": [
+            "CRITICAL: PositionUpdate interface defined in two files with different shapes (use-realtime-vehicles.ts vs position-events.ts)",
+            "Inconsistent quote styles (double vs single) \u2014 no formatter enforced"
+          ]
+        },
+        "robustness": {
+          "score": 55,
+          "findings": [
+            "JSON.parse in useRealtimeVehicles has no try/catch \u2014 malformed SSE data crashes hook",
+            "No onerror handler on EventSource",
+            "loadMapViewState validates structure but not value ranges (zoom could be negative)",
+            "No maxListeners on position-events EventEmitter"
+          ]
+        },
+        "production_risks": {
+          "score": 45,
+          "findings": [
+            "CRITICAL: SSE stream route has no authentication (expected \u2014 auth milestone pending)",
+            "CRITICAL: Position POST endpoint has no auth or rate limiting",
+            "CRITICAL: Vehicles GET endpoint has no auth",
+            "Hardcoded CARTO tile URL with no fallback"
+          ]
+        },
+        "security": {
+          "score": 30,
+          "findings": [
+            "CRITICAL: buildPopupHTML interpolates user-controllable strings into HTML without escaping \u2014 XSS vector",
+            "All API endpoints missing auth (tracked for driver-auth milestone)",
+            "No rate limiting on position POST"
+          ]
+        },
+        "dead_hallucinated": {
+          "score": 82,
+          "findings": [
+            "VehicleStateUpdate wrapper on server side inconsistent with client expectation"
+          ]
+        },
+        "tech_debt": {
+          "score": 62,
+          "findings": [
+            "Duplicated motion state calculation with magic numbers",
+            "Tight coupling between in-memory EventEmitter and SSE route (no external broker)",
+            "Type assertions used for MapLibre feature properties"
+          ]
+        }
+      },
+      "critical_findings": [
+        {
+          "id": "crit-sse-mismatch",
+          "severity": "CRITICAL",
+          "description": "SSE data shape mismatch: server sends {vehicles: PositionUpdate[]} but client expects PositionUpdate[]. Real-time updates are broken.",
+          "file": "src/app/api/positions/stream/route.ts:22 vs src/hooks/use-realtime-vehicles.ts:23",
+          "suggested_fix": "Either unwrap on client: const { vehicles: updates } = JSON.parse(event.data) or remove wrapper on server: send(JSON.stringify(updates))"
+        },
+        {
+          "id": "crit-xss-popup",
+          "severity": "CRITICAL",
+          "description": "buildPopupHTML interpolates vehicle name, licensePlate, driverName directly into HTML template without escaping. XSS vector.",
+          "file": "src/lib/map-utils.ts:69-78",
+          "suggested_fix": "Add HTML entity escaping for all interpolated values"
+        }
+      ]
+    },
+    "security_review": {
+      "ran": true,
+      "verdict": "FAIL",
+      "categories": {
+        "input_validation": {
+          "verdict": "PASS",
+          "findings": [
+            "Zod schema validation on position POST endpoint is properly implemented"
+          ]
+        },
+        "auth_authz": {
+          "verdict": "PASS (scoped)",
+          "findings": [
+            "Auth not implemented yet \u2014 driver-auth milestone pending. Not counted as a failure for map-core milestone scope."
+          ]
+        },
+        "data_exposure": {
+          "verdict": "PASS",
+          "findings": [
+            "Server-side errors logged via console.error \u2014 acceptable for current stage"
+          ]
+        },
+        "dependencies": {
+          "verdict": "FAIL",
+          "findings": [
+            "7 high-severity vulnerabilities in npm audit"
+          ]
+        },
+        "configuration": {
+          "verdict": "PASS",
+          "findings": [
+            "Hardcoded tile URL is an availability risk, not a security risk"
+          ]
+        }
+      },
+      "critical_findings": [
+        "XSS in buildPopupHTML \u2014 HTML injection via unsanitized vehicle/driver names"
+      ]
+    },
+    "changed_files_count": 33,
+    "evaluator_observations": "Code audit score 57/100. Two CRITICAL findings: SSE data shape mismatch (real-time broken) and XSS in popup HTML. Auth absence is expected at map-core milestone (driver-auth milestone pending). 7 high npm vulnerabilities."
+  },
+  "test_integrity_report": {
+    "spec_coverage_pct": 100,
+    "po_check_coverage_pct": 100,
+    "total_criteria": 7,
+    "total_po_checks": 2,
+    "total_tests": 102,
+    "orphaned_count": 0,
+    "orphaned_removed": [],
+    "orphaned_renamed": [],
+    "stale_regenerated_count": 0,
+    "newly_generated_count": 0,
+    "annotations_added": 10,
+    "test_suite_pass": true,
+    "verdict": "PASS",
+    "scope_note": "Scoped to map-core milestone: 7 acceptance criteria (FA1) + 2 PO checks evaluable at this milestone. Remaining 2 FA1 ACs (sidebar alerts, responsive layout) belong to dashboard-features milestone."
+  },
   "previous_evaluations": [],
   "evaluation_deltas": [],
   "foundation_eval_report": {
@@ -615,12 +931,12 @@
         "status": "PASS",
         "findings": [
           "18-model Prisma schema covers all 6 feature areas: User, Session, Vehicle, Position, Trip, DriverAssignment, ServiceType, ServiceSchedule, MaintenanceRecord, InspectionTemplate, InspectionTemplateItem, Inspection, InspectionResponse, Document, Alert, AuditLog, Setting.",
-          "FA1 (Dashboard/Map): Vehicle, Position, Alert — all present with trafficLight, motionState fields.",
-          "FA2 (Vehicle Registry): Vehicle with all required fields (make, model, year, vin, licensePlate, color, photoUrl, status, odometer) — present.",
-          "FA3 (GPS/Trips): Position (lat, lon, speed, heading, timestamp, vehicleId), Trip (distance, duration, start/end coords, isActive) — present.",
-          "FA4 (Maintenance): ServiceType, ServiceSchedule (mileage/time/dual triggers, warnings), MaintenanceRecord (cost, vendor, receiptUrl) — present.",
-          "FA5 (Driver Auth): User with role enum (ADMIN/DRIVER), licenseNumber, licenseExpiry, privacyAckedAt. DriverAssignment with type (ASSIGNED/POOL), temporal tracking — present.",
-          "FA6 (Inspections): InspectionTemplate, InspectionTemplateItem, Inspection with result enum (PASS/FAIL/NA), InspectionResponse with photoUrl — present.",
+          "FA1 (Dashboard/Map): Vehicle, Position, Alert \u2014 all present with trafficLight, motionState fields.",
+          "FA2 (Vehicle Registry): Vehicle with all required fields (make, model, year, vin, licensePlate, color, photoUrl, status, odometer) \u2014 present.",
+          "FA3 (GPS/Trips): Position (lat, lon, speed, heading, timestamp, vehicleId), Trip (distance, duration, start/end coords, isActive) \u2014 present.",
+          "FA4 (Maintenance): ServiceType, ServiceSchedule (mileage/time/dual triggers, warnings), MaintenanceRecord (cost, vendor, receiptUrl) \u2014 present.",
+          "FA5 (Driver Auth): User with role enum (ADMIN/DRIVER), licenseNumber, licenseExpiry, privacyAckedAt. DriverAssignment with type (ASSIGNED/POOL), temporal tracking \u2014 present.",
+          "FA6 (Inspections): InspectionTemplate, InspectionTemplateItem, Inspection with result enum (PASS/FAIL/NA), InspectionResponse with photoUrl \u2014 present.",
           "All foreign keys properly defined with onDelete: Cascade. Indexes on query-hot columns (vehicleId+timestamp, userId+isActive, severity+isDismissed, etc.).",
           "No feature area would need ALTER TABLE to function. Schema is complete for all 6 FAs."
         ]
@@ -628,23 +944,23 @@
       "integration_scaffolds": {
         "status": "PASS",
         "findings": [
-          "PostgreSQL + PostGIS: docker-compose.yml uses postgis/postgis:16-3.4 image. Prisma schema enables postgis extension. Connection via env var DATABASE_URL — no hardcoded credentials.",
+          "PostgreSQL + PostGIS: docker-compose.yml uses postgis/postgis:16-3.4 image. Prisma schema enables postgis extension. Connection via env var DATABASE_URL \u2014 no hardcoded credentials.",
           "Prisma ORM: Client generated with postgresqlExtensions preview. Global singleton in src/lib/db.ts prevents connection exhaustion in dev. Seed script present.",
           "iron-session: Session wrapper in src/lib/session.ts. Uses env var SESSION_SECRET with dev fallback. Cookie config: httpOnly, sameSite:lax, secure in production, 7-day TTL.",
           "GPS Ingestion API: POST /api/positions with Zod validation, batch support, vehicle existence check, motion state auto-update. 16 tests passing.",
           "GPS Simulator: Configurable via env vars (API_URL, VEHICLE_COUNT, INTERVAL_MS). Generates Bristol-area GPS coordinates with speed profiles (urban/suburban/highway), trip state machine, heading-based movement. Resolves vehicle IDs from API.",
-          "MapLibre GL JS: Installed as dependency but not initialized — documented as blocking_gap. Map rendering is FA1 scope, not foundation scope. ACCEPTABLE.",
+          "MapLibre GL JS: Installed as dependency but not initialized \u2014 documented as blocking_gap. Map rendering is FA1 scope, not foundation scope. ACCEPTABLE.",
           "Health check endpoint: GET /api/health verifies database connectivity."
         ]
       },
       "auth_flows": {
         "status": "PASS",
         "findings": [
-          "Login: POST /api/auth/login — validates with Zod, finds user by email, bcrypt.compare password, saves session with userId/role/name. Returns 401 on invalid credentials.",
-          "Logout: POST /api/auth/logout — calls session.destroy(). Clean implementation.",
-          "Session check: GET /api/auth/me — returns session data or 401.",
+          "Login: POST /api/auth/login \u2014 validates with Zod, finds user by email, bcrypt.compare password, saves session with userId/role/name. Returns 401 on invalid credentials.",
+          "Logout: POST /api/auth/logout \u2014 calls session.destroy(). Clean implementation.",
+          "Session check: GET /api/auth/me \u2014 returns session data or 401.",
           "Session persistence: iron-session with 7-day TTL, httpOnly cookie, sameSite:lax.",
-          "Protected routes: Admin layout (src/app/(admin)/layout.tsx) checks session — redirects to /login if unauthenticated, redirects to /driver if not ADMIN. Driver layout (src/app/(driver)/layout.tsx) mirrors with DRIVER check, redirects to /dashboard if not DRIVER.",
+          "Protected routes: Admin layout (src/app/(admin)/layout.tsx) checks session \u2014 redirects to /login if unauthenticated, redirects to /driver if not ADMIN. Driver layout (src/app/(driver)/layout.tsx) mirrors with DRIVER check, redirects to /dashboard if not DRIVER.",
           "Role-based access: ADMIN and DRIVER roles enforced at layout level. requireAdmin() and requireDriver() helpers in src/lib/auth.ts.",
           "Login page: Client component with form, error handling, loading state, role-based redirect after login.",
           "Password hashing: bcrypt with 12 rounds in auth.ts, 10 rounds in seed (acceptable for dev data).",
@@ -654,7 +970,7 @@
       "shared_components": {
         "status": "PASS",
         "findings": [
-          "Admin sidebar: 6 nav items (Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings) — covers all feature areas. SVG icons, active state highlighting.",
+          "Admin sidebar: 6 nav items (Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings) \u2014 covers all feature areas. SVG icons, active state highlighting.",
           "Driver nav: Simplified header with My Vehicle and Inspection links. Tracking-active indicator. End Shift / Start Shift toggle.",
           "TrafficLight component: GREEN/ORANGE/RED with sm/md/lg sizes. Clean, reusable.",
           "Loading component: Animated spinner with customizable message.",
@@ -670,9 +986,9 @@
       "deployment_pipeline": {
         "status": "SKIP",
         "findings": [
-          "No deployment_url in cycle_context.json — staging deployment not in foundation scope.",
+          "No deployment_url in cycle_context.json \u2014 staging deployment not in foundation scope.",
           "Docker Compose file defines 3 services (db, app, simulator) with healthchecks and dependency ordering.",
-          "Multi-stage Dockerfile: deps → builder (prisma generate, next build) → runner (standalone output, non-root user, healthcheck).",
+          "Multi-stage Dockerfile: deps \u2192 builder (prisma generate, next build) \u2192 runner (standalone output, non-root user, healthcheck).",
           "Dockerfile.simulator present for simulator service.",
           "Environment variables documented in docker-compose.yml (DATABASE_URL, SESSION_SECRET, NEXT_PUBLIC_APP_URL, VEHICLE_COUNT, INTERVAL_MS).",
           "SKIP reason: deployment_url is null, no staging environment configured. Docker Compose structure is sound but untested end-to-end in this evaluation."
@@ -682,34 +998,34 @@
         "status": "PASS",
         "findings": [
           "Seed data represents a realistic business: Clearwater Plumbing Services, Bristol, UK.",
-          "5 users: 1 admin (Sarah Mitchell), 4 drivers (James Cooper, Priya Patel, Marcus Williams, Ling Chen) — realistic names, UK phone numbers, UK driving license formats.",
-          "8 vehicles: Ford Transit Custom 300/280, Mercedes Sprinter 314 CDI, Vauxhall Vivaro 2900, VW Caddy Cargo, Mercedes Vito 114 CDI. UK plates (WR71 HJK, etc.), realistic odometers (15k–132k km), varied statuses (6 active, 1 in-shop, 1 decommissioned).",
+          "5 users: 1 admin (Sarah Mitchell), 4 drivers (James Cooper, Priya Patel, Marcus Williams, Ling Chen) \u2014 realistic names, UK phone numbers, UK driving license formats.",
+          "8 vehicles: Ford Transit Custom 300/280, Mercedes Sprinter 314 CDI, Vauxhall Vivaro 2900, VW Caddy Cargo, Mercedes Vito 114 CDI. UK plates (WR71 HJK, etc.), realistic odometers (15k\u2013132k km), varied statuses (6 active, 1 in-shop, 1 decommissioned).",
           "7 default service types: Oil Change, Tire Rotation, Brake Inspection, Air Filter, Fluid Top-up, Belt Inspection, Battery Check.",
-          "14 service schedules with mileage-based and time-based triggers, realistic costs (£25–£95), approaching-due schedules for testing alerts.",
-          "2 inspection templates: Daily Pre-Trip Check (9 items), Weekly Vehicle Check (14 items) — plumbing-specific items included (tool inventory: pipe wrenches, fittings bag, torch).",
+          "14 service schedules with mileage-based and time-based triggers, realistic costs (\u00a325\u2013\u00a395), approaching-due schedules for testing alerts.",
+          "2 inspection templates: Daily Pre-Trip Check (9 items), Weekly Vehicle Check (14 items) \u2014 plumbing-specific items included (tool inventory: pipe wrenches, fittings bag, torch).",
           "5 driver assignments (4 active, 1 historical) with timestamps.",
           "Documents: V5C registrations, insurance policies, MOT certificates with varying expiry dates (8 days to 360+ days).",
-          "5 alerts at varying severity (INFO, WARNING, CRITICAL) — tire rotation, battery check, MOT expiring, insurance renewal, inspection overdue.",
+          "5 alerts at varying severity (INFO, WARNING, CRITICAL) \u2014 tire rotation, battery check, MOT expiring, insurance renewal, inspection overdue.",
           "4 app settings: tracking schedule, data retention, company name, timezone.",
-          "No placeholder data — all emails, phone numbers, VINs, license plates are realistic and domain-appropriate."
+          "No placeholder data \u2014 all emails, phone numbers, VINs, license plates are realistic and domain-appropriate."
         ]
       }
     },
     "silent_degradation_check": {
       "status": "PASS",
       "evidence": [
-        "DOCUMENTED DIVERGENCE (not silent): Position model uses float lat/lon instead of PostGIS geometry type. This is explicitly documented in cycle_context.json divergences array with rationale (Prisma DSL limitation). Raw SQL migration planned for FA3. Reversible. NOT silent degradation — it was flagged by the builder.",
-        "No JSON blob columns substituted for typed columns — all fields are properly typed.",
-        "No mock services — simulator is a real service that POSTs to the real API. Auth uses real bcrypt and real iron-session.",
+        "DOCUMENTED DIVERGENCE (not silent): Position model uses float lat/lon instead of PostGIS geometry type. This is explicitly documented in cycle_context.json divergences array with rationale (Prisma DSL limitation). Raw SQL migration planned for FA3. Reversible. NOT silent degradation \u2014 it was flagged by the builder.",
+        "No JSON blob columns substituted for typed columns \u2014 all fields are properly typed.",
+        "No mock services \u2014 simulator is a real service that POSTs to the real API. Auth uses real bcrypt and real iron-session.",
         "No TODO/FIXME/HACK comments found in source code.",
-        "No test stubs that always return true — all 46 tests make real assertions.",
-        "MapLibre GL JS not yet initialized — documented as blocking_gap. This is feature scope (FA1), not foundation scope. ACCEPTABLE.",
-        "Session secret has a dev fallback string in session.ts — acceptable for dev, production uses env var."
+        "No test stubs that always return true \u2014 all 46 tests make real assertions.",
+        "MapLibre GL JS not yet initialized \u2014 documented as blocking_gap. This is feature scope (FA1), not foundation scope. ACCEPTABLE.",
+        "Session secret has a dev fallback string in session.ts \u2014 acceptable for dev, production uses env var."
       ]
     },
     "structural_gaps": [],
     "integration_gaps": [
-      "PostGIS geometry columns deferred to FA3 — positions stored as float lat/lon. Spatial indexing and ST_Distance calculations unavailable until raw SQL migration is added. This is a known, documented trade-off."
+      "PostGIS geometry columns deferred to FA3 \u2014 positions stored as float lat/lon. Spatial indexing and ST_Distance calculations unavailable until raw SQL migration is added. This is a known, documented trade-off."
     ],
     "recommendations": []
   },
@@ -728,7 +1044,7 @@
     "deploy_ready": true,
     "fixtures_ready": true,
     "blocking_gaps": [
-      "PostGIS geometry columns not yet in schema — Prisma stores lat/lon as floats. Raw SQL migration for geometry type + spatial index will be added in FA3 (GPS/Trips) feature cycle."
+      "PostGIS geometry columns not yet in schema \u2014 Prisma stores lat/lon as floats. Raw SQL migration for geometry type + spatial index will be added in FA3 (GPS/Trips) feature cycle."
     ]
   },
   "story_result": {
@@ -743,47 +1059,605 @@
     "tests_added": 8,
     "tests_passing": 102,
     "env_limitations": [
-      "MapLibre GL requires WebGL — persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
+      "MapLibre GL requires WebGL \u2014 persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
     ]
   },
-  "implemented": [
-    {
-      "task": "map-persistence",
-      "acceptance_criteria": ["Map remembers zoom level and center between sessions"],
-      "files_changed": [
-        "src/lib/map-utils.ts",
-        "src/lib/map-utils.test.ts",
-        "src/components/fleet-map.tsx",
-        "src/components/fleet-map.test.tsx"
+  "evaluation_report": {
+    "qa": {
+      "verdict": "PASS",
+      "criteria_results": [
+        {
+          "criterion": "Map loads in <2s with 50 vehicle markers",
+          "verdict": "partial",
+          "evidence": "Architecture sound for scale (CARTO tiles, GeoJSON source). Performance untestable without browser/staging."
+        },
+        {
+          "criterion": "Vehicle markers color-coded by traffic light status",
+          "verdict": "pass",
+          "evidence": "trafficLightColor() maps GREEN/ORANGE/RED to hex. vehicle-markers layer paints circle-color from properties."
+        },
+        {
+          "criterion": "Map clusters markers at low zoom levels",
+          "verdict": "pass",
+          "evidence": "GeoJSON source cluster:true, clusterMaxZoom:14, clusterRadius:50. Cluster layer + count label. Click-to-expand."
+        },
+        {
+          "criterion": "Vehicle positions update in real-time via SSE (<5s latency)",
+          "verdict": "pass",
+          "evidence": "SSE endpoint at /api/positions/stream. useRealtimeVehicles merges updates. JSON.parse wrapped in try/catch (QA fix). Heartbeat at 30s."
+        },
+        {
+          "criterion": "Vehicle markers show direction of travel when moving",
+          "verdict": "pass",
+          "evidence": "vehicle-direction symbol layer filters MOVING, renders triangle rotated by heading."
+        },
+        {
+          "criterion": "Clicking vehicle marker opens popup with key stats and link to detail",
+          "verdict": "pass",
+          "evidence": "buildPopupHTML renders name, plate, status, speed, driver, link to /vehicles/:id. XSS mitigated via escapeHTML."
+        },
+        {
+          "criterion": "Map remembers zoom level and center between sessions",
+          "verdict": "pass",
+          "evidence": "localStorage persistence via saveMapViewState/loadMapViewState. Validated shape, graceful fallback on SSR/quota errors."
+        }
       ],
-      "tests_added": 8,
-      "tests_passing": 8
+      "functional_correctness": {
+        "console_errors": 0,
+        "dead_elements": 0,
+        "broken_links": 0,
+        "note": "Assessed from code review only \u2014 no browser walk available"
+      },
+      "criteria_pass_rate": 0.93,
+      "code_quality_baseline": {
+        "eslint_errors": "N/A (not configured)",
+        "eslint_warnings": "N/A",
+        "duplication_pct": "N/A (jscpd not installed)",
+        "circular_deps": 0,
+        "dead_code_items": 2,
+        "files_over_300_lines": 1,
+        "npm_audit": {
+          "critical": 0,
+          "high": 7,
+          "moderate": 5,
+          "low": 0
+        },
+        "degraded": false
+      },
+      "code_quality_warning": false,
+      "ai_code_audit": {
+        "score": 57,
+        "dimensions": {
+          "architecture": {
+            "score": 72,
+            "findings": [
+              "map-utils.ts mixes GeoJSON, HTML popup, and localStorage concerns",
+              "buildPopupHTML is presentation logic in a utility layer",
+              "Dashboard page.tsx contains raw Prisma queries \u2014 should use data-access layer",
+              "Motion state derivation duplicated in positions/route.ts"
+            ]
+          },
+          "consistency": {
+            "score": 68,
+            "findings": [
+              "CRITICAL: PositionUpdate interface defined in two files with different shapes (use-realtime-vehicles.ts vs position-events.ts)",
+              "Inconsistent quote styles (double vs single) \u2014 no formatter enforced"
+            ]
+          },
+          "robustness": {
+            "score": 55,
+            "findings": [
+              "JSON.parse in useRealtimeVehicles has no try/catch \u2014 malformed SSE data crashes hook",
+              "No onerror handler on EventSource",
+              "loadMapViewState validates structure but not value ranges (zoom could be negative)",
+              "No maxListeners on position-events EventEmitter"
+            ]
+          },
+          "production_risks": {
+            "score": 45,
+            "findings": [
+              "CRITICAL: SSE stream route has no authentication (expected \u2014 auth milestone pending)",
+              "CRITICAL: Position POST endpoint has no auth or rate limiting",
+              "CRITICAL: Vehicles GET endpoint has no auth",
+              "Hardcoded CARTO tile URL with no fallback"
+            ]
+          },
+          "security": {
+            "score": 30,
+            "findings": [
+              "CRITICAL: buildPopupHTML interpolates user-controllable strings into HTML without escaping \u2014 XSS vector",
+              "All API endpoints missing auth (tracked for driver-auth milestone)",
+              "No rate limiting on position POST"
+            ]
+          },
+          "dead_hallucinated": {
+            "score": 82,
+            "findings": [
+              "VehicleStateUpdate wrapper on server side inconsistent with client expectation"
+            ]
+          },
+          "tech_debt": {
+            "score": 62,
+            "findings": [
+              "Duplicated motion state calculation with magic numbers",
+              "Tight coupling between in-memory EventEmitter and SSE route (no external broker)",
+              "Type assertions used for MapLibre feature properties"
+            ]
+          }
+        },
+        "critical_findings": [
+          {
+            "id": "crit-sse-mismatch",
+            "severity": "CRITICAL",
+            "description": "SSE data shape mismatch: server sends {vehicles: PositionUpdate[]} but client expects PositionUpdate[]. Real-time updates are broken.",
+            "file": "src/app/api/positions/stream/route.ts:22 vs src/hooks/use-realtime-vehicles.ts:23",
+            "suggested_fix": "Either unwrap on client: const { vehicles: updates } = JSON.parse(event.data) or remove wrapper on server: send(JSON.stringify(updates))"
+          },
+          {
+            "id": "crit-xss-popup",
+            "severity": "CRITICAL",
+            "description": "buildPopupHTML interpolates vehicle name, licensePlate, driverName directly into HTML template without escaping. XSS vector.",
+            "file": "src/lib/map-utils.ts:69-78",
+            "suggested_fix": "Add HTML entity escaping for all interpolated values"
+          }
+        ]
+      },
+      "security_review": {
+        "ran": true,
+        "verdict": "FAIL",
+        "categories": {
+          "input_validation": {
+            "verdict": "PASS",
+            "findings": [
+              "Zod schema validation on position POST endpoint is properly implemented"
+            ]
+          },
+          "auth_authz": {
+            "verdict": "PASS (scoped)",
+            "findings": [
+              "Auth not implemented yet \u2014 driver-auth milestone pending. Not counted as a failure for map-core milestone scope."
+            ]
+          },
+          "data_exposure": {
+            "verdict": "PASS",
+            "findings": [
+              "Server-side errors logged via console.error \u2014 acceptable for current stage"
+            ]
+          },
+          "dependencies": {
+            "verdict": "FAIL",
+            "findings": [
+              "7 high-severity vulnerabilities in npm audit"
+            ]
+          },
+          "configuration": {
+            "verdict": "PASS",
+            "findings": [
+              "Hardcoded tile URL is an availability risk, not a security risk"
+            ]
+          }
+        },
+        "critical_findings": [
+          "XSS in buildPopupHTML \u2014 HTML injection via unsanitized vehicle/driver names"
+        ]
+      }
+    },
+    "design": {
+      "design_review": {
+        "overall_score": null,
+        "note": "No staging URL / product walk available. Visual assessment deferred.",
+        "code_level_findings": [
+          "Clean component decomposition: DashboardPage (server) -> DashboardMap (client, SSE) -> FleetMap (map render)",
+          "Missing loading skeleton for map container during tile fetch",
+          "Missing error boundary around FleetMap component",
+          "Missing empty state when no vehicles have positions",
+          "XSS prevention confirmed via escapeHTML on popup strings"
+        ]
+      },
+      "a11y_review": {
+        "verdict": "DEFERRED",
+        "note": "Cannot assess without browser \u2014 MapLibre renders to canvas. a11y review requires live DOM."
+      }
+    },
+    "po": {
+      "journey_quality": [
+        {
+          "journey": "FA1-J1: View live fleet map",
+          "verdict": "pass",
+          "notes": "Dashboard fetches vehicles, renders on map, SSE keeps live. Owner sees fleet immediately."
+        },
+        {
+          "journey": "FA1-J2: Inspect vehicle from map",
+          "verdict": "pass",
+          "notes": "Click handler opens popup with stats and link to detail view."
+        }
+      ],
+      "screen_quality": [
+        {
+          "screen": "S3-fleet-dashboard",
+          "notes": "Map renders with vehicle markers. Sidebar is placeholder stub. Missing loading/error/empty states."
+        }
+      ],
+      "heuristic_results": {
+        "total": 10,
+        "passed": 7,
+        "pass_rate_pct": 70,
+        "failures": [
+          "Visibility of system status: No loading indicator during map tile fetch",
+          "Help and documentation: No empty state guidance for zero vehicles",
+          "Error prevention: No error boundary for map component failures"
+        ]
+      },
+      "verdict": "NEEDS_IMPROVEMENT",
+      "confidence": 0.75,
+      "recommended_action": "continue",
+      "quality_gaps": [
+        {
+          "id": "gap-loading-skeleton",
+          "description": "Add loading skeleton for map container during tile fetch",
+          "priority": "medium"
+        },
+        {
+          "id": "gap-error-boundary",
+          "description": "Add error boundary around FleetMap with retry UI",
+          "priority": "medium"
+        },
+        {
+          "id": "gap-empty-state",
+          "description": "Add empty state message when no vehicles have positions",
+          "priority": "medium"
+        },
+        {
+          "id": "gap-sse-reconnect-ui",
+          "description": "Add visual feedback for SSE disconnect/reconnect",
+          "priority": "low"
+        },
+        {
+          "id": "gap-perf-benchmark",
+          "description": "Browser-based performance test for <2s load with 50 markers",
+          "priority": "low"
+        }
+      ]
+    },
+    "health_score": 76,
+    "re_walk_requests": [
+      {
+        "screen": "/dashboard",
+        "need": "Full visual walk with MapLibre rendering, performance timing, and a11y audit",
+        "lens": "all"
+      }
+    ]
+  },
+  "dual_voice_po_review": true,
+  "analysis_recommendation": {
+    "action": "deepen:S3-fleet-dashboard",
+    "rationale": "Confidence 0.75 with 5 quality gaps concentrated in S3-fleet-dashboard UX states (loading/error/empty). All map-core functional ACs pass. Gaps are bounded, addressable without new capabilities, and stem from product-standard requirements not decomposed into story ACs. Deepen to add UX polish before promoting map-core milestone."
+  },
+  "analysis_result": {
+    "phase": "analyzing",
+    "cycle": 1,
+    "timestamp": "2026-04-01T11:10:00.000Z",
+    "confidence_trend": {
+      "current": 0.75,
+      "previous": null,
+      "delta": null,
+      "direction": "baseline",
+      "consecutive_same_direction": 0,
+      "flags": [
+        "none"
+      ]
+    },
+    "recommendation": "deepen:S3-fleet-dashboard",
+    "recommendation_reasoning": "PO Review verdict is NEEDS_IMPROVEMENT with confidence 0.75. All 4 map-core stories are done and all functional ACs pass. The 5 quality gaps are UX polish items (loading skeleton, error boundary, empty state, SSE reconnect UI, perf benchmark) \u2014 all concentrated in S3-fleet-dashboard. Root cause for all 5 is missing_context: the product standard requires loading/error/empty states handled, but no map-core story AC specified them. These are bounded changes (3 medium, 2 low priority) addressable without new capabilities. The 2 low-priority gaps (SSE reconnect UI, perf benchmark) require staging/browser infrastructure not yet available \u2014 defer those. Deepen with the 3 medium-priority UX state gaps to bring dashboard to product-standard quality before promoting map-core.",
+    "decomposition_health": {
+      "foundation_gaps": [],
+      "integration_gaps": [
+        "PostGIS geometry columns deferred to FA3 \u2014 positions stored as float lat/lon. Documented trade-off, not blocking map-core."
+      ],
+      "schema_debt": [],
+      "silent_degradation": [
+        "SSE used instead of WebSocket \u2014 documented divergence with rationale. Functionally equivalent for server-to-client push."
+      ],
+      "restructure_scope": "0% \u2014 no structural changes needed",
+      "structural_issues_found": false
+    },
+    "root_cause_analysis": [
+      {
+        "gap_id": "gap-loading-skeleton",
+        "gap_description": "Add loading skeleton for map container during tile fetch",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.85,
+        "evidence": "Product standard requires loading_states_handled: true. No map-core story AC specified loading states. The builder implemented what was specified. A different builder would make the same omission.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-error-boundary",
+        "gap_description": "Add error boundary around FleetMap with retry UI",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.85,
+        "evidence": "Product standard requires error_states_handled: true. No map-core story AC specified error boundaries. The ErrorBoundary component exists in shared UI (foundation) but was not wired into FleetMap.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-empty-state",
+        "gap_description": "Add empty state message when no vehicles have positions",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.85,
+        "evidence": "Product standard requires empty_states_handled: true. No map-core story AC specified empty state behavior. The EmptyState component exists in shared UI (foundation) but was not wired into the dashboard map flow.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-sse-reconnect-ui",
+        "gap_description": "Add visual feedback for SSE disconnect/reconnect",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.75,
+        "evidence": "No AC or spec language mentions reconnection UI. EventSource provides native auto-reconnect but no user-facing feedback was specified. Product standard visibility-of-system-status heuristic expects this.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      },
+      {
+        "gap_id": "gap-perf-benchmark",
+        "gap_description": "Browser-based performance test for <2s load with 50 markers",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.9,
+        "evidence": "The <2s AC exists but is untestable without staging/browser environment. deployment_url is null. No infrastructure for browser-based perf testing. This is an infrastructure gap, not an implementation gap.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false
+      }
+    ],
+    "cross_cycle_patterns": [
+      {
+        "pattern": "Product standard UX requirements (loading/error/empty states) not decomposed into story ACs",
+        "frequency": 1,
+        "systemic_cause": "Story decomposition does not cross-reference product_standard.quality_standards.reliability against each story's affected_screens to generate UX state ACs",
+        "recommended_action": "Instruct story-building phase to include loading, error, and empty state ACs for every story that adds a new screen or component. These are product-standard requirements, not optional polish."
+      }
+    ],
+    "change_spec_briefs": [
+      {
+        "gap_id": "gap-loading-skeleton",
+        "root_cause": "missing_context",
+        "priority": "medium",
+        "affected_screens": [
+          "S3-fleet-dashboard"
+        ],
+        "affected_journeys": [
+          "FA1-J1"
+        ],
+        "what_good_looks_like": "Map container shows a loading skeleton (pulsing placeholder matching map dimensions) while tiles load. Skeleton disappears when map fires 'load' event. User sees immediate visual feedback that the map is loading.",
+        "requires_design_mode": false,
+        "approach_hint": "Add a loading state to DashboardMap that shows before FleetMap mounts. Use MapLibre 'load' event to transition. The Loading component from foundation can be used, or a skeleton div with animate-pulse.",
+        "do_not_repeat": []
+      },
+      {
+        "gap_id": "gap-error-boundary",
+        "root_cause": "missing_context",
+        "priority": "medium",
+        "affected_screens": [
+          "S3-fleet-dashboard"
+        ],
+        "affected_journeys": [
+          "FA1-J1"
+        ],
+        "what_good_looks_like": "If FleetMap throws (WebGL unsupported, tile load failure), an error boundary catches it and shows a retry button with a helpful message. The rest of the dashboard remains functional.",
+        "requires_design_mode": false,
+        "approach_hint": "Wrap FleetMap in the existing ErrorBoundary component from foundation shared UI. Add a map-specific fallback message. Test with a deliberately failing map initialization.",
+        "do_not_repeat": []
+      },
+      {
+        "gap_id": "gap-empty-state",
+        "root_cause": "missing_context",
+        "priority": "medium",
+        "affected_screens": [
+          "S3-fleet-dashboard"
+        ],
+        "affected_journeys": [
+          "FA1-J1"
+        ],
+        "what_good_looks_like": "When no vehicles exist or none have positions, the map area shows an empty state message: 'No vehicles to display. Add vehicles to see them on the map.' with a link to /vehicles. Follows the EmptyState component pattern from foundation.",
+        "requires_design_mode": false,
+        "approach_hint": "Check vehicles array length in DashboardMap. If empty, render EmptyState component instead of FleetMap. The EmptyState component already exists in shared UI with title, description, and optional action link.",
+        "do_not_repeat": []
+      }
+    ],
+    "escalations": []
+  },
+  "phase_decisions": [
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "timestamp": "2026-04-01T11:10:00.000Z",
+      "decision": "Recommend deepen:S3-fleet-dashboard over promote",
+      "reasoning": "Confidence 0.75 is below the 0.90 threshold for promote. Although all map-core functional ACs pass and the evaluator noted gaps 'belong to dashboard-features or as polish stories', the product standard explicitly requires loading/error/empty states. These are 3 bounded changes that bring the milestone to standard quality. Promoting now would carry forward gaps that are cheaper to fix in the map-core context than in dashboard-features.",
+      "alternatives_considered": [
+        "promote \u2014 rejected because confidence < 0.90 and 3 medium-priority product-standard gaps remain",
+        "notify-human \u2014 not warranted, gaps are well-understood and bounded"
+      ]
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "timestamp": "2026-04-01T11:10:00.000Z",
+      "decision": "Defer gap-sse-reconnect-ui and gap-perf-benchmark from deepen scope",
+      "reasoning": "Both low-priority gaps require infrastructure not yet available (staging URL for browser testing, long-lived SSE connections for reconnect testing). Including them in deepen would add scope without testable outcomes. They should be addressed when staging deployment is configured.",
+      "alternatives_considered": [
+        "Include all 5 gaps in deepen \u2014 rejected because 2 gaps are untestable without staging"
+      ]
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "timestamp": "2026-04-01T11:10:00.000Z",
+      "decision": "Flagged systemic pattern: product-standard UX requirements not decomposed into story ACs",
+      "reasoning": "All 5 gaps share root cause missing_context. The product standard defines loading/error/empty state requirements but the story decomposition phase did not generate ACs for them. This pattern will recur in every future milestone unless the story-building phase is instructed to cross-reference product_standard.quality_standards.reliability.",
+      "alternatives_considered": []
+    },
+    {
+      "phase": "change-spec-generation",
+      "decision": "Grouped 3 medium-priority gaps (loading-skeleton, error-boundary, empty-state) into 1 change spec producing 3 fix stories",
+      "reasoning": "All 3 gaps affect the same screen (S3-fleet-dashboard) and journey (FA1-J1) with the same root cause (missing_context). Grouped per phase rules: multiple gaps on same screen = single spec. Split into 3 fix stories for V2 story loop \u2014 each story is independently implementable and testable.",
+      "timestamp": "2026-04-01T10:07:49.000Z"
+    },
+    {
+      "phase": "change-spec-generation",
+      "decision": "Deferred 2 low-priority gaps (gap-sse-reconnect-ui, gap-perf-benchmark) to future cycle",
+      "reasoning": "Both require infrastructure not yet available: staging deployment for browser testing. SSE reconnect UI needs a live SSE connection to test disconnect/reconnect behavior. Perf benchmark needs browser + staging to measure <2s load. Cannot be meaningfully specified or tested without environment changes.",
+      "timestamp": "2026-04-01T10:07:49.000Z"
     }
   ],
-  "factory_decisions": [
+  "change_specs_pending": [
     {
-      "decision": "Use localStorage for map view persistence with key 'openfleet-map-view'",
-      "context": "AC requires map to remember zoom and center between sessions. localStorage is the simplest client-side persistence that survives page reloads and browser restarts.",
-      "alternatives_considered": ["sessionStorage (doesn't persist across sessions)", "URL hash params (clutters URL, shared links change view)", "cookie (unnecessary server round-trip)"],
-      "rationale": "localStorage is the boring technology choice (McKinley). No server-side state needed for a per-browser preference. JSON-serialized {center, zoom} with validation on load to handle corruption.",
-      "confidence": "high",
-      "affects": ["src/lib/map-utils.ts", "src/components/fleet-map.tsx"]
-    },
-    {
-      "decision": "Save on moveend event (not zoomend separately)",
-      "context": "MapLibre fires moveend after both pan and zoom operations complete. Using moveend alone covers both cases without double-saving.",
-      "alternatives_considered": ["Separate moveend + zoomend handlers", "Debounced save on any map interaction"],
-      "rationale": "moveend fires after zoom changes too, so a single handler is sufficient and simpler. No debounce needed — localStorage writes are synchronous and cheap.",
-      "confidence": "high",
-      "affects": ["src/components/fleet-map.tsx"]
-    },
-    {
-      "decision": "Search Before Building audit for cycle 1 story map-persistence",
-      "context": "Pre-implementation code reuse analysis",
-      "alternatives_considered": [],
-      "rationale": "Found: 1 BUILD (persistence utils), 1 EXTEND (FleetMap component). Key reuse: FleetMap already has map init logic — extended with saved state restore. map-utils.ts already has shared utilities — added persistence functions alongside existing helpers.",
-      "confidence": "high",
-      "affects": ["map-persistence"]
+      "spec_path": "specs/changes/openfleet-loop-1-dashboard-ux-states.md",
+      "gap_ids": [
+        "gap-loading-skeleton",
+        "gap-error-boundary",
+        "gap-empty-state"
+      ],
+      "priority": "medium",
+      "requires_design_mode": false,
+      "design_passes_needed": [],
+      "criteria_count": 7,
+      "root_cause": "missing_context",
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "affected_journeys": [
+        "FA1-J1"
+      ],
+      "approach_summary": "Add loading skeleton, error boundary, and empty state to DashboardMap using existing foundation components"
     }
-  ]
+  ],
+  "fix_stories": [
+    {
+      "id": "fix-dashboard-loading",
+      "name": "Add loading skeleton to dashboard map",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [
+        "map-render"
+      ],
+      "affected_entities": [],
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "acceptance_criteria": [
+        "Pulsing skeleton placeholder visible in map container while MapLibre initializes (data-testid='map-loading-skeleton')",
+        "Skeleton disappears when map fires 'load' event and live map becomes visible"
+      ],
+      "source": "change-spec:openfleet-loop-1-dashboard-ux-states",
+      "closes_gaps": [
+        "gap-loading-skeleton"
+      ],
+      "root_cause": "missing_context",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/components/dashboard-map.tsx",
+          "src/components/dashboard-map.test.tsx"
+        ],
+        "out_of_scope": [
+          "src/components/fleet-map.tsx",
+          "src/components/error-boundary.tsx",
+          "src/components/empty-state.tsx"
+        ]
+      }
+    },
+    {
+      "id": "fix-dashboard-error",
+      "name": "Add error boundary around dashboard map",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [
+        "map-render"
+      ],
+      "affected_entities": [],
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "acceptance_criteria": [
+        "Error boundary catches FleetMap failures and shows 'Unable to load map' with 'Try again' button (data-testid='map-error-state')",
+        "Clicking 'Try again' resets error boundary and re-initializes FleetMap",
+        "Sidebar and page header remain functional when map error state is displayed"
+      ],
+      "source": "change-spec:openfleet-loop-1-dashboard-ux-states",
+      "closes_gaps": [
+        "gap-error-boundary"
+      ],
+      "root_cause": "missing_context",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/components/dashboard-map.tsx",
+          "src/components/dashboard-map.test.tsx"
+        ],
+        "out_of_scope": [
+          "src/components/fleet-map.tsx",
+          "src/components/error-boundary.tsx"
+        ]
+      }
+    },
+    {
+      "id": "fix-dashboard-empty",
+      "name": "Add empty state when no vehicles exist",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [
+        "map-render"
+      ],
+      "affected_entities": [
+        "vehicle"
+      ],
+      "affected_screens": [
+        "S3-fleet-dashboard"
+      ],
+      "acceptance_criteria": [
+        "When zero active vehicles exist, map area shows EmptyState with 'No vehicles to display' and link to /vehicles (data-testid='map-empty-state')",
+        "When vehicles exist but have no positions, map renders normally (empty state NOT shown)"
+      ],
+      "source": "change-spec:openfleet-loop-1-dashboard-ux-states",
+      "closes_gaps": [
+        "gap-empty-state"
+      ],
+      "root_cause": "missing_context",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/components/dashboard-map.tsx",
+          "src/components/dashboard-map.test.tsx",
+          "src/app/(admin)/dashboard/page.tsx"
+        ],
+        "out_of_scope": [
+          "src/components/fleet-map.tsx",
+          "src/components/empty-state.tsx"
+        ]
+      }
+    }
+  ],
+  "change_spec_generation_summary": {
+    "phase": "change-spec-generation",
+    "cycle": 1,
+    "timestamp": "2026-04-01T10:07:49.000Z",
+    "total_specs_generated": 1,
+    "total_criteria_across_specs": 7,
+    "gaps_addressed": 3,
+    "gaps_deferred": [
+      {
+        "gap_id": "gap-sse-reconnect-ui",
+        "reason": "Low priority. Requires live SSE connection and staging environment for testing. EventSource provides native auto-reconnect. Deferred to future cycle when browser QA infrastructure is available."
+      },
+      {
+        "gap_id": "gap-perf-benchmark",
+        "reason": "Low priority. Infrastructure gap \u2014 requires staging deployment (deployment_url is null) and browser-based performance testing tools. Cannot be addressed without environment changes."
+      }
+    ],
+    "gaps_escalated": []
+  }
 }
