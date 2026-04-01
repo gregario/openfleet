@@ -1,5 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+// Mock next/navigation to prevent import errors
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn(),
+}));
+
+// Mock session
+vi.mock("@/lib/session", () => ({
+  getSession: vi.fn(),
+  sessionOptions: {
+    password: "dev-only-secret-must-be-at-least-32-chars-long!",
+    cookieName: "openfleet-session",
+  },
+}));
+
 // Mock the position-events module before importing the route
 vi.mock("@/lib/position-events", () => ({
   onPositionUpdates: vi.fn(),
@@ -8,6 +22,7 @@ vi.mock("@/lib/position-events", () => ({
 import { GET } from "./route";
 import { onPositionUpdates } from "@/lib/position-events";
 import type { PositionUpdate } from "@/lib/position-events";
+import { getSession } from "@/lib/session";
 
 const sampleUpdates: PositionUpdate[] = [
   {
@@ -31,11 +46,35 @@ function makeRequest() {
   return { req, controller };
 }
 
+// @criterion: fa1-realtime-004
+// @criterion-hash: 7116d7554b27
 describe("GET /api/positions/stream", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Default: authenticated admin session
+    vi.mocked(getSession).mockResolvedValue({
+      userId: "user-1",
+      role: "ADMIN",
+      name: "Admin",
+      save: vi.fn(),
+      destroy: vi.fn(),
+      updateConfig: vi.fn(),
+    } as never);
     // Default: onPositionUpdates returns a no-op unsubscribe
     vi.mocked(onPositionUpdates).mockReturnValue(() => {});
+  });
+
+  // @criterion: gap-api-auth-missing
+  it("returns 401 when not authenticated", async () => {
+    vi.mocked(getSession).mockResolvedValue({
+      save: vi.fn(),
+      destroy: vi.fn(),
+      updateConfig: vi.fn(),
+    } as never);
+
+    const { req: request } = makeRequest();
+    const response = await GET(request);
+    expect(response.status).toBe(401);
   });
 
   it("returns correct SSE headers", async () => {

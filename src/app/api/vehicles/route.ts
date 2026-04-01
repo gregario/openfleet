@@ -1,47 +1,85 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { supabase } from "@/lib/db";
+import { getApiSession } from "@/lib/auth";
 
 export async function GET() {
-  try {
-    const vehicles = await prisma.vehicle.findMany({
-      where: { status: { not: "DECOMMISSIONED" } },
-      select: {
-        id: true,
-        name: true,
-        make: true,
-        model: true,
-        year: true,
-        licensePlate: true,
-        color: true,
-        status: true,
-        odometer: true,
-        motionState: true,
-        trafficLight: true,
-        positions: {
-          orderBy: { timestamp: "desc" },
-          take: 1,
-          select: {
-            latitude: true,
-            longitude: true,
-          },
-        },
-      },
-      orderBy: { name: "asc" },
-    });
+  const session = await getApiSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    // Flatten the latest position into the vehicle object
-    const result = vehicles.map((v) => ({
-      ...v,
-      latestPosition: v.positions[0] ?? null,
-      positions: undefined,
-    }));
+  // Fetch vehicles (excluding decommissioned)
+  const { data: vehicles, error: vehiclesError } = await supabase
+    .from("vehicles")
+    .select("id, name, make, model, year, license_plate, color, status, odometer, motion_state, traffic_light")
+    .neq("status", "DECOMMISSIONED")
+    .order("name", { ascending: true });
 
-    return NextResponse.json({ vehicles: result });
-  } catch (error) {
-    console.error("Vehicles list error:", error);
+  if (vehiclesError) {
+    console.error("Vehicles list error:", vehiclesError);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
     );
   }
+
+  // Fetch latest position per vehicle
+  const vehicleIds = (vehicles ?? []).map((v: { id: string }) => v.id);
+  const latestPositionByVehicle = new Map<string, { latitude: number; longitude: number }>();
+
+  if (vehicleIds.length > 0) {
+    const { data: positions, error: positionsError } = await supabase
+      .from("positions")
+      .select("vehicle_id, latitude, longitude, timestamp")
+      .in("vehicle_id", vehicleIds)
+      .order("timestamp", { ascending: false });
+
+    if (positionsError) {
+      console.error("Vehicles list error (positions):", positionsError);
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 },
+      );
+    }
+
+    // Keep only the first (most recent) position per vehicle
+    for (const pos of positions ?? []) {
+      if (!latestPositionByVehicle.has(pos.vehicle_id)) {
+        latestPositionByVehicle.set(pos.vehicle_id, {
+          latitude: pos.latitude,
+          longitude: pos.longitude,
+        });
+      }
+    }
+  }
+
+  // Map to response shape (camelCase fields to match existing API contract)
+  const result = (vehicles ?? []).map((v: {
+    id: string;
+    name: string;
+    make: string;
+    model: string;
+    year: number;
+    license_plate: string;
+    color: string;
+    status: string;
+    odometer: number;
+    motion_state: string;
+    traffic_light: string;
+  }) => ({
+    id: v.id,
+    name: v.name,
+    make: v.make,
+    model: v.model,
+    year: v.year,
+    licensePlate: v.license_plate,
+    color: v.color,
+    status: v.status,
+    odometer: v.odometer,
+    motionState: v.motion_state,
+    trafficLight: v.traffic_light,
+    latestPosition: latestPositionByVehicle.get(v.id) ?? null,
+  }));
+
+  return NextResponse.json({ vehicles: result });
 }

@@ -1,8 +1,17 @@
 import { onPositionUpdates, type PositionUpdate, type VehicleStateUpdate } from "@/lib/position-events";
+import { getApiSession } from "@/lib/auth";
 
 const HEARTBEAT_INTERVAL_MS = 30_000;
 
 export async function GET(request: Request): Promise<Response> {
+  const session = await getApiSession();
+  if (!session) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const { signal } = request;
 
   const stream = new ReadableStream({

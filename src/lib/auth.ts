@@ -36,3 +36,24 @@ export async function requireDriver(): Promise<SessionData> {
   }
   return { userId: session.userId, role: session.role, name: session.name };
 }
+
+/**
+ * API route auth: returns session data or null (no redirect).
+ * Use in API route handlers where redirect() is inappropriate.
+ */
+export async function getApiSession(): Promise<SessionData | null> {
+  const session = await getSession();
+  if (!session.userId) return null;
+  return { userId: session.userId, role: session.role, name: session.name };
+}
+
+/**
+ * Check for a valid API key in the X-API-Key header.
+ * Used by the simulator to authenticate position ingestion.
+ */
+export function isValidApiKey(request: Request): boolean {
+  const apiKey = process.env.POSITION_API_KEY;
+  if (!apiKey) return false;
+  const provided = request.headers.get("X-API-Key");
+  return provided === apiKey;
+}

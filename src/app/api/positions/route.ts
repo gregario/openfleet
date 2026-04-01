@@ -1,114 +1,115 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { supabase } from "@/lib/db";
 import { positionBatchSchema } from "@/lib/validators";
 import { emitPositionUpdates, type PositionUpdate } from "@/lib/position-events";
+import { getApiSession, isValidApiKey } from "@/lib/auth";
 
 export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const parsed = positionBatchSchema.safeParse(body);
+  // Require either admin session or valid API key (for simulator)
+  const session = await getApiSession();
+  if (!session && !isValidApiKey(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Invalid input", details: parsed.error.flatten() },
-        { status: 400 },
-      );
-    }
+  const body = await request.json();
+  const parsed = positionBatchSchema.safeParse(body);
 
-    const positions = Array.isArray(parsed.data)
-      ? parsed.data
-      : [parsed.data];
-
-    // Validate all vehicle IDs exist
-    const vehicleIds = Array.from(new Set(positions.map((p) => p.vehicle_id)));
-    const vehicles = await prisma.vehicle.findMany({
-      where: { id: { in: vehicleIds }, status: "ACTIVE" },
-      select: { id: true },
-    });
-    const validIds = new Set(vehicles.map((v) => v.id));
-
-    const validPositions = positions.filter((p) => validIds.has(p.vehicle_id));
-    if (validPositions.length === 0) {
-      return NextResponse.json(
-        { error: "No valid vehicle IDs found" },
-        { status: 404 },
-      );
-    }
-
-    // Insert positions
-    const created = await prisma.position.createMany({
-      data: validPositions.map((p) => ({
-        vehicleId: p.vehicle_id,
-        latitude: p.latitude,
-        longitude: p.longitude,
-        speed: p.speed ?? null,
-        heading: p.heading ?? null,
-        timestamp: new Date(p.timestamp),
-      })),
-    });
-
-    // Update vehicle motion state for each vehicle based on latest position
-    const latestByVehicle = new Map<string, (typeof validPositions)[0]>();
-    for (const p of validPositions) {
-      const existing = latestByVehicle.get(p.vehicle_id);
-      if (!existing || p.timestamp > existing.timestamp) {
-        latestByVehicle.set(p.vehicle_id, p);
-      }
-    }
-
-    await Promise.all(
-      Array.from(latestByVehicle.entries()).map(([vehicleId, pos]) => {
-        const speed = pos.speed ?? 0;
-        let motionState: "MOVING" | "IDLE" | "PARKED";
-        if (speed > 5) {
-          motionState = "MOVING";
-        } else if (speed > 0.5) {
-          motionState = "IDLE";
-        } else {
-          motionState = "PARKED";
-        }
-
-        return prisma.vehicle.update({
-          where: { id: vehicleId },
-          data: { motionState },
-        });
-      }),
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid input", details: parsed.error.flatten() },
+      { status: 400 },
     );
+  }
 
-    // Emit position updates to SSE subscribers
-    const updates: PositionUpdate[] = Array.from(latestByVehicle.entries()).map(
-      ([vehicleId, pos]) => {
-        const speed = pos.speed ?? 0;
-        let motionState: "MOVING" | "IDLE" | "PARKED";
-        if (speed > 5) {
-          motionState = "MOVING";
-        } else if (speed > 0.5) {
-          motionState = "IDLE";
-        } else {
-          motionState = "PARKED";
-        }
-        return {
-          vehicleId,
-          latitude: pos.latitude,
-          longitude: pos.longitude,
-          speed: pos.speed ?? null,
-          heading: pos.heading ?? null,
-          motionState,
-          timestamp: new Date(pos.timestamp).toISOString(),
-        };
-      },
-    );
-    emitPositionUpdates(updates);
+  const positions = Array.isArray(parsed.data) ? parsed.data : [parsed.data];
 
-    return NextResponse.json({
-      accepted: created.count,
-      rejected: positions.length - validPositions.length,
-    });
-  } catch (error) {
-    console.error("Position ingestion error:", error);
+  // Validate all vehicle IDs exist
+  const vehicleIds = Array.from(new Set(positions.map((p) => p.vehicle_id)));
+  const { data: vehicles, error: vehiclesError } = await supabase
+    .from("vehicles")
+    .select("id")
+    .in("id", vehicleIds)
+    .eq("status", "ACTIVE");
+
+  if (vehiclesError) {
+    console.error("Position ingestion error:", vehiclesError);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
     );
   }
+
+  const validIds = new Set((vehicles ?? []).map((v: { id: string }) => v.id));
+  const validPositions = positions.filter((p) => validIds.has(p.vehicle_id));
+
+  if (validPositions.length === 0) {
+    return NextResponse.json(
+      { error: "No valid vehicle IDs found" },
+      { status: 404 },
+    );
+  }
+
+  // Insert positions
+  const { error: insertError } = await supabase.from("positions").insert(
+    validPositions.map((p) => ({
+      vehicle_id: p.vehicle_id,
+      latitude: p.latitude,
+      longitude: p.longitude,
+      speed: p.speed ?? null,
+      heading: p.heading ?? null,
+      timestamp: new Date(p.timestamp).toISOString(),
+    })),
+  );
+
+  if (insertError) {
+    console.error("Position ingestion error:", insertError);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+
+  // Update vehicle motion state for each vehicle based on latest position
+  const latestByVehicle = new Map<string, (typeof validPositions)[0]>();
+  for (const p of validPositions) {
+    const existing = latestByVehicle.get(p.vehicle_id);
+    if (!existing || p.timestamp > existing.timestamp) {
+      latestByVehicle.set(p.vehicle_id, p);
+    }
+  }
+
+  function computeMotionState(speed: number): "MOVING" | "IDLE" | "PARKED" {
+    if (speed > 5) return "MOVING";
+    if (speed > 0.5) return "IDLE";
+    return "PARKED";
+  }
+
+  await Promise.all(
+    Array.from(latestByVehicle.entries()).map(([vehicleId, pos]) => {
+      const motionState = computeMotionState(pos.speed ?? 0);
+      return supabase
+        .from("vehicles")
+        .update({ motion_state: motionState })
+        .eq("id", vehicleId);
+    }),
+  );
+
+  // Emit position updates to SSE subscribers
+  const updates: PositionUpdate[] = Array.from(latestByVehicle.entries()).map(
+    ([vehicleId, pos]) => ({
+      vehicleId,
+      latitude: pos.latitude,
+      longitude: pos.longitude,
+      speed: pos.speed ?? null,
+      heading: pos.heading ?? null,
+      motionState: computeMotionState(pos.speed ?? 0),
+      timestamp: new Date(pos.timestamp).toISOString(),
+    }),
+  );
+  emitPositionUpdates(updates);
+
+  return NextResponse.json({
+    accepted: validPositions.length,
+    rejected: positions.length - validPositions.length,
+  });
 }
