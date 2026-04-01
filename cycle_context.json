@@ -590,8 +590,8 @@
   "dual_voice_po_review": true,
   "review_readiness_dashboard": {
     "test_integrity": {
-      "passed": false,
-      "timestamp": "2026-04-01T14:18:29.309916+00:00"
+      "passed": true,
+      "timestamp": "2026-04-01T14:22:05.025863+00:00"
     },
     "qa_gate": {
       "passed": false,
@@ -841,182 +841,142 @@
   ],
   "code_review_report": {
     "code_quality_baseline": {
-      "eslint_errors": "N/A",
+      "typescript_compiles": true,
+      "eslint_errors": "N/A \u2014 ESLint not configured",
       "eslint_warnings": "N/A",
-      "duplication_pct": "N/A",
+      "duplication_pct": 2,
       "circular_deps": 0,
       "dead_code_items": 0,
-      "files_over_300_lines": 0,
+      "files_over_300_lines": 1,
+      "files_over_300_lines_detail": [
+        "src/components/fleet-map.test.tsx (378 lines, test file)"
+      ],
       "npm_audit": {
         "critical": 0,
-        "high": 7,
+        "high": 0,
         "moderate": 5,
         "low": 0
       },
-      "test_suite": {
-        "files": 14,
-        "tests": 107,
-        "passed": 107,
-        "failed": 0,
-        "duration_s": 3.43
-      },
-      "degraded": false,
-      "delta_vs_previous": "No changes since last review. All 107 tests still pass. npm audit unchanged (0 critical, 7 high in dev/build deps only). No files exceed 300 lines (largest: fleet-map.tsx at 229 lines). ESLint still not configured."
+      "degraded": false
     },
     "ai_code_audit": {
-      "score": 71,
-      "previous_score": 71,
-      "delta": "0 (re-evaluation, no code changes since last review \u2014 scores stable)",
+      "score": 78,
       "dimensions": {
         "architecture": {
-          "score": 72,
-          "findings": [
-            "map-utils.ts mixes GeoJSON conversion, HTML popup generation, and localStorage persistence \u2014 acceptable for V1 scope but should be split in future cycles",
-            "Dashboard page.tsx contains raw Prisma queries \u2014 should use data-access layer (tech debt, not blocking)",
-            "Motion state derivation duplicated in positions/route.ts lines 62-69 and 83-90 \u2014 should extract to shared function",
-            "Clean component hierarchy: DashboardPage (server) -> DashboardMap (client, bridge) -> FleetMap (presentation) \u2014 good separation"
-          ]
+          "weight": 0.2,
+          "score": 82,
+          "notes": "Clean separation: lib/ for pure logic, hooks/ for state, components/ for presentation, api/ for routes. Dependency direction is correct \u2014 components depend on lib, not vice versa. Server components (dashboard page) fetch data and pass to client components. Supabase proxy in db.ts is clever but uses a non-standard pattern that could confuse contributors. Position event emitter uses Node EventEmitter which won't scale beyond a single process \u2014 acceptable for v1 but will need Redis/Supabase Realtime for production multi-instance."
         },
         "consistency": {
-          "score": 75,
-          "findings": [
-            "PositionUpdate interface defined in both use-realtime-vehicles.ts and position-events.ts \u2014 shapes aligned but should deduplicate via shared import",
-            "Inconsistent quote styles (double quotes in API routes, single quotes in components) \u2014 no formatter enforced",
-            "Naming conventions consistent within each layer (camelCase props, PascalCase components, UPPER_CASE constants)"
-          ]
+          "weight": 0.1,
+          "score": 85,
+          "notes": "Consistent naming (camelCase props, snake_case DB columns with explicit mapping). File structure follows Next.js conventions. API routes consistently use NextResponse, Zod validation, and error shapes. Minor inconsistency: dashboard page.tsx uses inline type assertions instead of shared types from vehicles.ts."
         },
         "robustness": {
-          "score": 72,
-          "findings": [
-            "JSON.parse in useRealtimeVehicles wrapped in try/catch \u2014 resolved from prior review",
-            "Graceful handling of non-array SSE updates (line 31 Array.isArray check) \u2014 resolved",
-            "No onerror handler on EventSource \u2014 SSE failures are silent (mitigated by browser auto-reconnect)",
-            "loadMapViewState validates structure but not value ranges (zoom could be negative) \u2014 low risk",
-            "No maxListeners on position-events EventEmitter \u2014 risk if many concurrent SSE clients",
-            "position POST handles invalid vehicle IDs gracefully (filters to valid, returns 404 if none)"
-          ]
+          "weight": 0.15,
+          "score": 80,
+          "notes": "Good null coalescing throughout (?? operators). SSE stream has proper cleanup (abort listener, clearInterval, unsubscribe). Error boundary wraps map. localStorage access guarded with try/catch. Position ingestion validates vehicle existence. Edge case: dashboard fetches ALL positions ordered by timestamp to find latest per vehicle \u2014 will degrade with data growth (needs DISTINCT ON or a latest_position materialized view)."
         },
         "production_risks": {
-          "score": 55,
-          "findings": [
-            "All API endpoints lack auth \u2014 EXPECTED for map-core milestone (driver-auth is future milestone)",
-            "No rate limiting on position POST endpoint \u2014 DoS risk in production",
-            "Hardcoded CARTO tile URL with no fallback \u2014 low risk, free public CDN",
-            "In-memory EventEmitter for SSE pub/sub \u2014 single-process only, won't scale to multi-instance without external broker (Redis, etc.)",
-            "No request body size limit on position POST beyond Zod schema validation"
-          ]
+          "weight": 0.15,
+          "score": 72,
+          "notes": "console.error calls in API routes are acceptable for server-side logging but should use a structured logger in production. No request body size limits on POST /api/positions \u2014 a malicious client could send an unbounded array. EventEmitter-based SSE will not work across multiple server instances. The positions query in dashboard page fetches all positions for all vehicles to find the latest \u2014 this is an N+1 concern that will become a performance bottleneck. No timeout on Supabase queries."
         },
         "security": {
-          "score": 68,
-          "findings": [
-            "XSS prevention: buildPopupHTML uses escapeHTML() for all user-controllable strings (name, licensePlate, driverName) \u2014 confirmed fixed",
-            "Input validation: Position POST uses Zod schema with lat/lon range checks, speed >= 0, heading 0-360, ISO datetime",
-            "Auth absence expected at map-core milestone \u2014 scoped to driver-auth",
-            "No rate limiting on position POST \u2014 DoS vector in production",
-            "npm audit: 0 critical, 7 high (all in dev/build deps: eslint-config-next, prisma/effect, vitest/vite/esbuild) \u2014 none affect runtime",
-            "Error responses use generic 'Internal server error' message \u2014 no stack trace or internal details leaked"
-          ]
+          "weight": 0.2,
+          "score": 62,
+          "notes": "CRITICAL: POST /api/positions has NO authentication \u2014 anyone can submit fake GPS data for any vehicle. GET /api/vehicles has NO authentication \u2014 fleet data (names, plates, locations) is publicly accessible. GET /api/positions/stream has NO authentication \u2014 SSE stream of all vehicle movements is public. Login route uses select('*') which fetches the password_hash column (needed for verification but wider than necessary). No rate limiting on any endpoint. No CSRF protection on position ingestion. HTML in popup is properly escaped via escapeHTML()."
         },
-        "dead_hallucinated": {
-          "score": 82,
-          "findings": [
-            "No dead code or hallucinated imports detected",
-            "All imported modules are used",
-            "VehicleStateUpdate interface in position-events.ts is used only in stream/route.ts \u2014 justified"
-          ]
+        "dead_hallucinated_code": {
+          "weight": 0.1,
+          "score": 90,
+          "notes": "No unused imports detected. All exported functions are consumed. The 'idle' tripState in simulator never triggers (transitions go parked\u2192driving\u2192parked). PositionUpdate type is duplicated between position-events.ts and use-realtime-vehicles.ts \u2014 not dead code but could share a single definition."
         },
         "tech_debt": {
-          "score": 65,
-          "findings": [
-            "Duplicated motion state calculation with magic numbers (5 km/h, 0.5 km/h thresholds) in positions/route.ts \u2014 should extract to shared constant/function",
-            "Type assertions for MapLibre feature properties (fleet-map.tsx line 167) \u2014 acceptable for map library interop",
-            "eslint-disable-line comments on two useEffect hooks (fleet-map.tsx line 209, use-realtime-vehicles.ts line 64) \u2014 intentional empty deps, acceptable",
-            "Dashboard sidebar is placeholder text only \u2014 expected, UX stories pending"
-          ]
+          "weight": 0.1,
+          "score": 78,
+          "notes": "Inline type assertions in dashboard page (e.g., 'as GREEN | ORANGE | RED') instead of deriving from Prisma or shared types. Supabase client used directly instead of through a repository pattern \u2014 acceptable for project size but will create coupling if it grows. The positionBatchSchema validator is separate from the Prisma schema \u2014 drift risk. EventEmitter for pub/sub is a single-process limitation that will need rework."
         }
       },
-      "critical_findings": [],
-      "previous_critical_findings_status": [
-        {
-          "id": "crit-sse-mismatch",
-          "status": "RESOLVED",
-          "evidence": "useRealtimeVehicles correctly unwraps {vehicles} envelope from SSE data"
-        },
-        {
-          "id": "crit-xss-popup",
-          "status": "RESOLVED",
-          "evidence": "escapeHTML() applied to all user strings in buildPopupHTML"
-        },
-        {
-          "id": "crit-json-parse",
-          "status": "RESOLVED",
-          "evidence": "try/catch wraps JSON.parse with early return on failure"
-        }
+      "critical_findings": [
+        "POST /api/positions has no authentication \u2014 any client can inject fake GPS positions for any vehicle ID",
+        "GET /api/vehicles exposes fleet data (names, license plates, locations) without authentication",
+        "GET /api/positions/stream SSE endpoint has no authentication \u2014 real-time vehicle tracking data is publicly accessible",
+        "No rate limiting on position ingestion endpoint \u2014 vulnerable to abuse/DoS",
+        "Dashboard positions query fetches ALL positions to find latest per vehicle \u2014 will degrade at scale"
       ]
     },
     "security_review": {
       "ran": true,
-      "verdict": "PASS",
+      "verdict": "FAIL",
       "categories": {
         "input_validation": {
-          "status": "PASS",
-          "detail": "Position POST validates all inputs via Zod schema (positionBatchSchema). Lat -90..90, lon -180..180, speed >= 0, heading 0..360, ISO datetime, non-empty vehicle_id. Vehicle existence verified against DB before insert."
+          "score": 80,
+          "notes": "Login uses Zod schema validation. Position ingestion uses positionBatchSchema with Zod. Vehicle IDs are validated against DB before insert. Popup HTML is escaped. However, no request body size limits."
         },
         "auth_and_authorization": {
-          "status": "DEFERRED",
-          "detail": "All endpoints lack authentication middleware. This is EXPECTED \u2014 auth is scoped to driver-auth milestone (FA5). Not a map-core failure."
+          "score": 40,
+          "notes": "CRITICAL GAPS: Three data API routes (GET /api/vehicles, POST /api/positions, GET /api/positions/stream) have zero authentication. Layout-level auth guards exist for pages but API routes bypass them entirely. Login correctly uses iron-session. Auth check endpoints (me, logout) correctly verify session."
         },
         "data_exposure": {
-          "status": "PASS",
-          "detail": "SSE stream sends only position/motion data. Vehicle API returns operational data only (no internal IDs beyond entity ID). Error responses use generic messages \u2014 no stack traces or internal details leaked."
-        },
-        "xss_injection": {
-          "status": "PASS",
-          "detail": "buildPopupHTML escapes all user-controllable strings via escapeHTML(). Zod validation prevents injection via API inputs."
+          "score": 55,
+          "notes": "Login route uses select('*') fetching all user columns including password_hash (needed for verification but should select only required fields). Vehicle API returns comprehensive vehicle data without auth. SSE stream exposes real-time GPS tracking without auth. Error responses correctly avoid leaking internal details."
         },
         "dependencies": {
-          "status": "ACCEPTABLE",
-          "detail": "npm audit: 0 critical, 7 high (eslint-config-next/glob CLI injection, prisma/effect race condition, next DoS advisories), 5 moderate (vitest/vite/esbuild dev server). All high vulnerabilities are in dev/build dependencies \u2014 none affect production runtime."
+          "score": 85,
+          "notes": "5 moderate vulnerabilities (all in esbuild/vite dev dependency chain \u2014 not production-affecting). No critical or high severity issues. Fix requires major version bump of vitest."
         },
         "configuration": {
-          "status": "PASS",
-          "detail": "No hardcoded secrets. Tile URL is public CDN. Database connection via DATABASE_URL env var. Session secret via env var with dev-only fallback in session.ts."
+          "score": 75,
+          "notes": "Supabase credentials loaded from env vars (good). Fallback to empty string if env vars missing could cause silent failures. SSE headers correctly set no-cache. No CORS configuration visible (Next.js defaults). TypeScript strict mode enabled."
         }
       },
-      "critical_findings": []
+      "critical_findings": [
+        "Three API routes lack authentication: POST /api/positions, GET /api/vehicles, GET /api/positions/stream",
+        "select('*') in login route fetches password_hash \u2014 should whitelist columns and add password_hash explicitly",
+        "No rate limiting on any API endpoint"
+      ]
     },
     "changed_files": [
+      "prisma/schema.prisma",
+      "simulator/index.ts",
       "src/app/(admin)/dashboard/page.tsx",
       "src/app/(admin)/layout.tsx",
       "src/app/(driver)/driver/inspection/page.tsx",
       "src/app/(driver)/driver/page.tsx",
       "src/app/(driver)/layout.tsx",
+      "src/app/api/auth/login/route.ts",
+      "src/app/api/health/route.ts",
       "src/app/api/positions/route.ts",
       "src/app/api/positions/stream/route.ts",
-      "src/app/api/positions/stream/route.test.ts",
       "src/app/api/vehicles/route.ts",
       "src/app/page.tsx",
       "src/components/dashboard-map.tsx",
-      "src/components/dashboard-map.test.tsx",
-      "src/components/empty-state.test.tsx",
       "src/components/fleet-map.tsx",
+      "src/hooks/use-realtime-vehicles.ts",
+      "src/lib/db.ts",
+      "src/lib/map-utils.ts",
+      "src/lib/position-events.ts",
+      "src/lib/vehicles.ts",
+      "src/components/dashboard-map.test.tsx",
       "src/components/fleet-map.test.tsx",
+      "src/components/empty-state.test.tsx",
       "src/components/loading.test.tsx",
       "src/components/traffic-light.test.tsx",
-      "src/hooks/use-realtime-vehicles.ts",
       "src/hooks/use-realtime-vehicles.test.ts",
       "src/lib/auth.test.ts",
-      "src/lib/map-utils.ts",
       "src/lib/map-utils.test.ts",
-      "src/lib/position-events.ts",
       "src/lib/position-events.test.ts",
       "src/lib/schema.test.ts",
       "src/lib/session.test.ts",
-      "src/lib/vehicles.ts",
       "src/lib/vehicles.test.ts",
-      "simulator/index.ts"
+      "src/app/api/positions/stream/route.test.ts",
+      "package.json",
+      "tsconfig.json",
+      "vision.json",
+      "specs/changes/openfleet-loop-1-dashboard-ux-states.md"
     ],
-    "evaluator_observations": "Re-evaluation of map-core codebase with no code changes since last review (score 71). All 3 previously-identified critical bugs (SSE envelope mismatch, XSS in popup, JSON.parse safety) remain resolved. All 107 tests pass across 14 test files. No files exceed 300 lines. No new critical findings. Score holds at 71/100. Key remaining tech debt: duplicated motion-state logic, duplicated PositionUpdate interface, no rate limiting. These are documented minor issues appropriate for future cycles. Security posture is acceptable for map-core milestone scope \u2014 auth absence is expected per roadmap."
+    "evaluator_observations": "TypeScript compiles cleanly with zero errors. ESLint is not configured. Code architecture is clean with good separation of concerns \u2014 server components for data fetching, client components for interactivity, pure utility functions in lib/. The SSE-based real-time update pipeline (EventEmitter \u2192 ReadableStream \u2192 EventSource hook) is well-implemented for single-process deployment. The most significant issue is the complete absence of authentication on three data API routes (vehicles list, position ingestion, position stream), which means anyone with the URL can read fleet locations and inject fake GPS data. This is the single highest-priority fix needed before any production use. Secondary concerns: the positions query pattern (fetch all, filter in JS) will not scale, and the EventEmitter pub/sub is process-local. Overall code quality is solid for a cycle-1 product \u2014 the auth gaps are the only blocking issue."
   },
   "test_integrity_report": {
     "spec_coverage_pct": 100,
