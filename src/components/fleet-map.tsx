@@ -3,7 +3,7 @@
 import { useRef, useEffect } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { vehiclesToGeoJSON, trafficLightColor, type VehicleMarker } from '@/lib/map-utils';
+import { vehiclesToGeoJSON, buildPopupHTML, saveMapViewState, loadMapViewState, type VehicleMarker } from '@/lib/map-utils';
 
 const CLUSTER_MAX_ZOOM = 14;
 const CLUSTER_RADIUS = 50;
@@ -27,11 +27,21 @@ export function FleetMap({ vehicles }: FleetMapProps) {
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    const savedState = loadMapViewState();
+
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: TILE_STYLE,
-      center: DEFAULT_CENTER,
-      zoom: DEFAULT_ZOOM,
+      center: savedState?.center ?? DEFAULT_CENTER,
+      zoom: savedState?.zoom ?? DEFAULT_ZOOM,
+    });
+
+    map.on('moveend', () => {
+      const center = map.getCenter();
+      saveMapViewState({
+        center: [center.lng, center.lat],
+        zoom: map.getZoom(),
+      });
     });
 
     map.on('load', () => {
@@ -143,6 +153,36 @@ export function FleetMap({ vehicles }: FleetMapProps) {
             zoom,
           });
         });
+      });
+
+      // Vehicle marker click — show popup with stats and link to detail
+      map.on('click', 'vehicle-markers', (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ['vehicle-markers'],
+        });
+        if (!features.length) return;
+
+        const feature = features[0];
+        const coords = (feature.geometry as GeoJSON.Point).coordinates as [number, number];
+        const props = feature.properties as Record<string, unknown>;
+
+        // MapLibre stringifies nested properties — parse driverName back
+        const popupProps = {
+          id: props.id as string,
+          name: props.name as string,
+          trafficLight: props.trafficLight as string,
+          color: props.color as string,
+          motionState: props.motionState as string,
+          heading: props.heading as number | null,
+          speed: props.speed as number | null,
+          driverName: props.driverName === 'null' ? null : (props.driverName as string | null),
+          licensePlate: props.licensePlate as string,
+        };
+
+        new maplibregl.Popup({ closeButton: true, maxWidth: '240px' })
+          .setLngLat(coords)
+          .setHTML(buildPopupHTML(popupProps))
+          .addTo(map);
       });
 
       // Cursor change on hover
