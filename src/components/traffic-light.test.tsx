@@ -5,6 +5,8 @@ import React from 'react';
 // by importing and calling it as a function
 import { TrafficLight } from './traffic-light';
 
+// @criterion: fa1-traffic-light-002
+// @criterion-hash: 28d2034f3514
 describe('TrafficLight component', () => {
   it('renders with GREEN status', () => {
     const element = TrafficLight({ status: 'GREEN' });

@@ -79,6 +79,8 @@ const vehicles: VehicleMarker[] = [
   },
 ];
 
+// @criterion: fa1-map-load-001, fa1-traffic-light-002, fa1-clustering-003, fa1-direction-005, fa1-popup-006, fa1-persistence-007, po-check-002
+// @criterion-hash: ab84bbc818bc, 28d2034f3514, c7602c89af2d, 73e834c496a9, 72f318134255, d4828da02a15, c00a423264dc
 describe('FleetMap component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -318,6 +320,42 @@ describe('FleetMap component', () => {
     expect(mockMapInstances).toHaveLength(1);
     expect(mockMapInstances[0].options.center).toEqual([-2.5879, 51.4545]);
     expect(mockMapInstances[0].options.zoom).toBe(11);
+  });
+
+  // @criterion: po-check-001
+  it('PO-CHECK: all vehicles appear as markers on the map source', () => {
+    render(<FleetMap vehicles={vehicles} />);
+    const loadCall = mockOn.mock.calls.find((call) => call[0] === 'load');
+    if (loadCall) loadCall[1]();
+
+    const sourceCall = mockAddSource.mock.calls[0];
+    const geojson = sourceCall[1].data;
+    expect(geojson.features).toHaveLength(2);
+    expect(geojson.features.map((f: { properties: { id: string } }) => f.properties.id)).toEqual(['v1', 'v2']);
+  });
+
+  // @criterion: fa1-map-load-001
+  it('handles 50 vehicle markers without error', () => {
+    const fiftyVehicles: VehicleMarker[] = Array.from({ length: 50 }, (_, i) => ({
+      id: `v${i}`,
+      name: `Van ${String(i + 1).padStart(2, '0')}`,
+      latitude: 51.4 + i * 0.01,
+      longitude: -2.6 + i * 0.01,
+      trafficLight: (['GREEN', 'ORANGE', 'RED'] as const)[i % 3],
+      motionState: 'PARKED' as const,
+      heading: null,
+      speed: null,
+      driverName: null,
+      licensePlate: `WR7${i} XYZ`,
+    }));
+
+    render(<FleetMap vehicles={fiftyVehicles} />);
+    const loadCall = mockOn.mock.calls.find((call) => call[0] === 'load');
+    if (loadCall) loadCall[1]();
+
+    const sourceCall = mockAddSource.mock.calls[0];
+    const geojson = sourceCall[1].data;
+    expect(geojson.features).toHaveLength(50);
   });
 
   it('registers moveend handler that saves map state', () => {

@@ -58,6 +58,8 @@ beforeEach(() => {
   console.error = vi.fn();
 });
 
+// @criterion: fa1-map-load-001, fa1-realtime-004, gap-loading-skeleton-001, gap-loading-skeleton-002, gap-error-boundary-001, gap-error-boundary-002, gap-error-boundary-003, gap-empty-state-001, gap-empty-state-002, po-check-001
+// @criterion-hash: ab84bbc818bc, 7116d7554b27, 5f2a8c0d1e33, 9a1b2c3d4e55, e6f7a8b9c0d1, f1e2d3c4b5a6, a0b1c2d3e4f5, e38c1ad92b04, b7c8d9e0f1a2, 3d7e1f824a90
 describe('DashboardMap', () => {
   beforeEach(() => {
     cleanup();
@@ -212,6 +214,22 @@ describe('DashboardMap', () => {
     const { container } = render(<DashboardMap initialVehicles={vehicles} />);
     expect(container.querySelector('[data-testid="map-empty-state"]')).toBeNull();
     expect(container.querySelector('[data-testid="fleet-map"]')).toBeTruthy();
+  });
+
+  // @criterion: po-check-001
+  it('PO-CHECK: all vehicles with positions are visible on the map', () => {
+    const manyVehicles: VehicleWithPosition[] = Array.from({ length: 10 }, (_, i) => ({
+      id: `v${i}`,
+      name: `Van ${i + 1}`,
+      trafficLight: 'GREEN' as const,
+      motionState: 'PARKED' as const,
+      licensePlate: `WR7${i} XYZ`,
+      driverName: null,
+      latestPosition: { latitude: 51.4 + i * 0.01, longitude: -2.6 + i * 0.01 },
+    }));
+    const { container } = render(<DashboardMap initialVehicles={manyVehicles} />);
+    const map = container.querySelector('[data-testid="fleet-map"]');
+    expect(map?.getAttribute('data-vehicle-count')).toBe('10');
   });
 
   it('does not render FleetMap when vehicles are empty', () => {

@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import React from "react";
 import { EmptyState } from "./empty-state";
 
+// @criterion: gap-empty-state-001
+// @criterion-hash: e38c1ad92b04
 describe("EmptyState component", () => {
   it("renders with title only", () => {
     const element = EmptyState({ title: "No vehicles" });
