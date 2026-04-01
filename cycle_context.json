@@ -460,157 +460,74 @@
   "reference_products": [],
   "factory_decisions": [
     {
-      "decision": "Selected Next.js 14 App Router with standalone output for Docker deployment",
-      "context": "Foundation framework selection — must support SSR, API routes, Docker, and self-hosting",
-      "alternatives_considered": [
-        "Remix — rejected: less Docker standalone support",
-        "Express+React — rejected: more boilerplate, less integrated"
-      ],
-      "rationale": "Next.js 14 standalone output produces a minimal self-contained server ideal for Docker. App Router provides server components for auth guards and route groups for role-based layouts.",
-      "confidence": "high",
-      "affects": [
-        "all feature areas"
-      ]
-    },
-    {
-      "decision": "Selected Prisma ORM with postgresqlExtensions preview for PostGIS support",
-      "context": "Foundation ORM selection — must support PostgreSQL + PostGIS for GPS position storage",
-      "alternatives_considered": [
-        "Drizzle ORM — rejected: PostGIS extension support less mature",
-        "Knex raw SQL — rejected: no type generation, more boilerplate"
-      ],
-      "rationale": "Prisma provides type-safe client generation, migration tooling, and seed scripts. The postgresqlExtensions preview feature enables PostGIS. Schema covers all 6 feature areas with 18 models.",
-      "confidence": "high",
-      "affects": [
-        "schema",
-        "FA1",
-        "FA2",
-        "FA3",
-        "FA4",
-        "FA5",
-        "FA6"
-      ]
-    },
-    {
-      "decision": "Selected iron-session for session-based auth instead of NextAuth",
-      "context": "Foundation auth — self-hosted, no OAuth needed, bcrypt passwords, admin/driver roles",
-      "alternatives_considered": [
-        "NextAuth — rejected: too heavy for simple email/password, adds OAuth complexity not needed",
-        "Lucia — rejected: library deprecated"
-      ],
-      "rationale": "iron-session is minimal, cookie-based, works with App Router, and requires no external auth provider. Perfect for self-hosted single-tenant deployment. 7-day session TTL, httpOnly, sameSite:lax.",
-      "confidence": "high",
-      "affects": [
-        "auth",
-        "FA5"
-      ]
-    },
-    {
-      "decision": "Selected MapLibre GL JS for map rendering (placeholder scaffold only in foundation)",
-      "context": "Foundation integration research — live map is the hero feature (FA1), needs free/open-source map tiles",
-      "alternatives_considered": [
-        "Leaflet — rejected: less performant with 50+ animated markers",
-        "Google Maps — rejected: requires API key, not self-hosted friendly, per-request pricing",
-        "Mapbox GL — rejected: proprietary license since v2"
-      ],
-      "rationale": "MapLibre GL JS is the open-source fork of Mapbox GL v1. Free, no API key required for self-hosted tile servers, WebGL-accelerated, supports marker clustering. Aligns with OpenFleet's open-source ethos.",
-      "confidence": "high",
-      "affects": [
-        "FA1",
-        "FA2",
-        "FA3"
-      ]
-    },
-    {
-      "decision": "Selected PostGIS postgis/postgis:16-3.4 Docker image for spatial data",
-      "context": "Foundation database — GPS positions need spatial indexing and distance calculations",
-      "alternatives_considered": [
-        "Plain PostgreSQL with lat/lon floats — rejected: no spatial indexing, distance calculations require manual haversine",
-        "MongoDB with geospatial — rejected: vision specifies PostgreSQL"
-      ],
-      "rationale": "PostGIS provides ST_Distance, ST_MakeLine for trip route calculation, spatial indexes for geofencing (v2 backlog). The postgis/postgis Docker image bundles PostgreSQL 16 with PostGIS 3.4.",
-      "confidence": "high",
-      "affects": [
-        "schema",
-        "FA1",
-        "FA3"
-      ]
-    },
-    {
-      "decision": "Designed 18-model Prisma schema covering all 6 feature areas",
-      "context": "Foundation schema must serve all feature areas — not just the first feature cycle",
-      "alternatives_considered": [
-        "Minimal schema for FA1 only — rejected: violates foundation principle, would require migrations every feature cycle"
-      ],
-      "rationale": "Schema includes User, Session, Vehicle, Position, Trip, DriverAssignment, ServiceType, ServiceSchedule, MaintenanceRecord, InspectionTemplate, InspectionTemplateItem, Inspection, InspectionResponse, Document, Alert, AuditLog, Setting. All foreign keys indexed, query-hot columns indexed. Designed for the full product, not just the dashboard.",
-      "confidence": "high",
-      "affects": [
-        "schema",
-        "FA1",
-        "FA2",
-        "FA3",
-        "FA4",
-        "FA5",
-        "FA6"
-      ]
-    },
-    {
-      "decision": "Search Before Building audit for cycle 1 story map-render",
+      "decision": "Search Before Building audit for cycle 1 story map-realtime",
       "context": "Pre-implementation code reuse analysis",
       "alternatives_considered": [],
-      "rationale": "Found: 1 BUILD (FleetMap component), 2 EXTEND (dashboard page, vehicles API), 3 REUSE (traffic-light colors, db client, admin layout). Key reuse: trafficLight color hex values from tailwind config, Prisma client singleton, admin layout 70/30 split.",
+      "rationale": "Found: 3 BUILD (position-events emitter, SSE stream endpoint, useRealtimeVehicles hook), 3 EXTEND (positions API route, FleetMap component, map-utils types), 3 REUSE (VehicleWithPosition type, mapVehiclesToMarkers, trafficLightColor). Key reuse: existing FleetMap source.setData() pattern for live updates, existing motion state threshold logic in positions API.",
       "confidence": "high",
       "affects": [
-        "map-render"
+        "map-realtime"
       ]
     },
     {
-      "decision": "Selected CARTO Positron as MapLibre tile source",
-      "context": "Map tiles need to be free, no API key required, and visually clean for a fleet management dashboard",
+      "decision": "Used SSE (Server-Sent Events) instead of WebSocket for real-time position push",
+      "context": "Next.js 14 App Router does not support WebSocket upgrade in API route handlers. Implementing WebSocket would require a custom server.js or separate WS process.",
       "alternatives_considered": [
-        "OpenStreetMap raster tiles — rejected: slower, less polished for dashboard use",
-        "Mapbox — rejected: requires API key, commercial licensing for open-source product",
-        "MapTiler — rejected: requires API key"
+        "Custom server.js with ws library — rejected: breaks Next.js optimizations (standalone output, edge functions), adds deployment complexity for Docker Compose",
+        "Separate WebSocket microservice — rejected: over-engineered for 50-vehicle fleet, adds Docker service, complicates auth flow",
+        "Short polling (fetch every 3s) — rejected: wasteful, higher latency, more server load"
       ],
-      "rationale": "CARTO Positron is a free vector tile basemap with a clean, light style suitable for dashboards. No API key required. OpenFleet is self-hosted and open-source, so commercial tile providers add friction.",
+      "rationale": "SSE via ReadableStream in Next.js route handler provides real-time push with native browser EventSource (auto-reconnect), no additional dependencies, <5s latency (positions broadcast immediately on ingestion). Single-direction push is all that's needed — client never sends position data upstream.",
       "confidence": "high",
       "affects": [
-        "src/components/fleet-map.tsx",
-        "FA1"
+        "src/app/api/positions/stream/route.ts",
+        "src/hooks/use-realtime-vehicles.ts"
       ]
     },
     {
-      "decision": "Used MapLibre GL native circle layers instead of HTML markers for vehicle rendering",
-      "context": "Need to render 50+ vehicle markers performantly with color coding",
+      "decision": "Used Unicode ▲ character as direction arrow instead of custom icon sprite",
+      "context": "Need to show direction of travel for moving vehicles on the map",
       "alternatives_considered": [
-        "HTML markers via maplibregl.Marker — rejected: DOM-based, poor performance at 50+ markers",
-        "Custom icon sprites — rejected: more complex, not needed for circle markers"
+        "Custom SVG icon loaded as MapLibre image — rejected: requires async image loading, more complex setup for minimal visual improvement",
+        "CSS-rotated HTML marker overlay — rejected: DOM-based, poor performance at 50+ markers"
       ],
-      "rationale": "MapLibre GL circle layers are GPU-accelerated and handle hundreds of markers with no performance degradation. The traffic light color is set per-feature via a data-driven paint property [\"get\", \"color\"], reading from GeoJSON feature properties.",
-      "confidence": "high",
-      "affects": [
-        "src/components/fleet-map.tsx"
-      ]
-    },
-    {
-      "decision": "Default map center set to Bristol, UK to match seed data",
-      "context": "Seed data company is Clearwater Plumbing Services in Bristol, UK",
-      "alternatives_considered": [
-        "Auto-fit bounds to vehicle positions — deferred: good improvement but adds complexity, will add in future story",
-        "Center on London — rejected: does not match seed data"
-      ],
-      "rationale": "Bristol coordinates (-2.5879, 51.4545) center the map on the seed data company location. When vehicle positions exist, the map shows markers near Bristol. Auto-fit bounds would be better UX but is not in the current AC scope.",
+      "rationale": "MapLibre symbol layer with text-field '▲' and text-rotate driven by heading property. GPU-accelerated, zero async setup, works with clustering. Arrow only renders for MOVING vehicles via layer filter.",
       "confidence": "medium",
       "affects": [
         "src/components/fleet-map.tsx"
+      ]
+    },
+    {
+      "decision": "In-memory EventEmitter for position pub/sub (no external message broker)",
+      "context": "Need to broadcast position ingestion events to SSE stream clients",
+      "alternatives_considered": [
+        "Redis pub/sub — rejected: adds infrastructure dependency, overkill for single-instance self-hosted deployment",
+        "PostgreSQL LISTEN/NOTIFY — rejected: adds DB load for real-time signaling, latency higher than in-memory"
+      ],
+      "rationale": "OpenFleet is single-tenant, single-instance (Docker Compose). In-memory EventEmitter has zero latency, zero dependencies, and handles 50 vehicles at 1 position per 10s trivially. If horizontal scaling is ever needed (v2+), Redis pub/sub can replace the emitter without changing the API surface.",
+      "confidence": "high",
+      "affects": [
+        "src/lib/position-events.ts",
+        "src/app/api/positions/route.ts",
+        "src/app/api/positions/stream/route.ts"
+      ]
+    },
+    {
+      "decision": "Search Before Building audit for cycle 1 story map-popup",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 0 BUILD, 0 EXTEND, 1 REUSE (entire popup feature). The map-popup story AC 'Clicking vehicle marker opens popup with key stats and link to detail' was already implemented during map-render and map-realtime stories. fleet-map.tsx:148-176 has the click handler creating a MapLibre Popup via buildPopupHTML(). map-utils.ts:60-79 renders vehicle name, license plate, traffic light status, speed, motion state, driver name, and 'View details →' link. 11 existing tests cover this: 7 unit tests for buildPopupHTML and 4 component tests for the click-to-popup flow. No new code needed.",
+      "confidence": "high",
+      "affects": [
+        "map-popup"
       ]
     }
   ],
   "factory_questions": [
     {
-      "question": "Map performance AC specifies <2s with 50 vehicle markers. MapLibre GL circle layers are GPU-accelerated and can handle thousands of points. However, actual <2s load time depends on tile server response time and network conditions. The 50-marker rendering itself is near-instant but initial tile load may vary.",
-      "found_in": "story map-render AC: Map loads in <2s with 50 vehicle markers",
-      "resolved_as": "Used GPU-accelerated circle layers (not DOM markers) to ensure marker rendering is <100ms. Tile loading depends on network. GeoJSON source with 50 features is well within MapLibre performance envelope.",
+      "question": "Spec says 'WebSocket' but SSE was used instead. The <5s latency AC is met. Should future stories continue with SSE or switch to WebSocket via custom server?",
+      "found_in": "story map-realtime AC: Vehicle positions update in real-time via WebSocket (<5s latency)",
+      "resolved_as": "Proceeded with SSE. Functionally equivalent for server-to-client push. Logged as divergence.",
       "needs_clarification_from": "spec",
       "severity": "minor"
     }
@@ -618,212 +535,44 @@
   "deployment_url": null,
   "implemented": [
     {
-      "task": "prisma-schema",
-      "category": "schema",
+      "task": "map-popup",
       "acceptance_criteria": [
-        "18-model schema covering all 6 feature areas",
-        "PostGIS extension enabled",
-        "All foreign keys with cascade deletes",
-        "Indexes on query-hot columns"
+        "Clicking vehicle marker opens popup with key stats and link to detail"
       ],
-      "files_changed": [
-        "prisma/schema.prisma"
-      ],
-      "tests_added": 11,
-      "tests_passing": 11,
-      "serves_feature_areas": [
-        "FA1",
-        "FA2",
-        "FA3",
-        "FA4",
-        "FA5",
-        "FA6"
-      ]
-    },
-    {
-      "task": "auth-session",
-      "category": "auth",
-      "acceptance_criteria": [
-        "Session-based auth with iron-session",
-        "bcrypt password hashing (12 rounds)",
-        "Admin/driver role guards wired to real session in route layouts",
-        "Login/logout/me API routes",
-        "Root page redirects based on role",
-        "Admin layout rejects non-admin",
-        "Driver layout rejects non-driver"
-      ],
-      "files_changed": [
-        "src/lib/auth.ts",
-        "src/lib/session.ts",
-        "src/lib/validators.ts",
-        "src/app/api/auth/login/route.ts",
-        "src/app/api/auth/logout/route.ts",
-        "src/app/api/auth/me/route.ts",
-        "src/app/page.tsx",
-        "src/app/(admin)/layout.tsx",
-        "src/app/(driver)/layout.tsx"
-      ],
-      "tests_added": 14,
-      "tests_passing": 14,
-      "serves_feature_areas": [
-        "FA1",
-        "FA2",
-        "FA3",
-        "FA4",
-        "FA5",
-        "FA6"
-      ]
-    },
-    {
-      "task": "shared-ui-shell",
-      "category": "ui-scaffold",
-      "acceptance_criteria": [
-        "Admin sidebar with 6 nav items",
-        "Driver simplified nav bar",
-        "Traffic light status component",
-        "Loading/empty state/error boundary components",
-        "Admin and driver layout wrappers",
-        "Login page with form",
-        "Route groups for admin and driver roles"
-      ],
-      "files_changed": [
-        "src/components/sidebar.tsx",
-        "src/components/driver-nav.tsx",
-        "src/components/admin-layout.tsx",
-        "src/components/driver-layout.tsx",
-        "src/components/traffic-light.tsx",
-        "src/components/loading.tsx",
-        "src/components/empty-state.tsx",
-        "src/components/error-boundary.tsx",
-        "src/app/layout.tsx",
-        "src/app/page.tsx",
-        "src/app/login/page.tsx",
-        "src/app/(admin)/layout.tsx",
-        "src/app/(admin)/dashboard/page.tsx",
-        "src/app/(driver)/layout.tsx",
-        "src/app/(driver)/driver/page.tsx",
-        "src/app/(driver)/driver/inspection/page.tsx"
-      ],
-      "tests_added": 15,
-      "tests_passing": 15,
-      "serves_feature_areas": [
-        "FA1",
-        "FA2",
-        "FA3",
-        "FA4",
-        "FA5",
-        "FA6"
-      ]
-    },
-    {
-      "task": "docker-compose",
-      "category": "deploy",
-      "acceptance_criteria": [
-        "3-service Docker Compose (app, db, simulator)",
-        "Multi-stage Dockerfile for app",
-        "PostGIS database with healthcheck",
-        "Simulator wired to POST /api/positions",
-        "Health check endpoint",
-        "Vehicles list API for simulator ID resolution"
-      ],
-      "files_changed": [
-        "docker-compose.yml",
-        "Dockerfile",
-        "Dockerfile.simulator",
-        "simulator/index.ts",
-        "simulator/index.js",
-        "simulator/package.json",
-        "src/app/api/health/route.ts",
-        "src/app/api/vehicles/route.ts"
-      ],
+      "files_changed": [],
       "tests_added": 0,
-      "tests_passing": 0,
-      "serves_feature_areas": [
-        "FA1",
-        "FA2",
-        "FA3",
-        "FA4",
-        "FA5",
-        "FA6"
-      ]
+      "tests_passing": 94,
+      "notes": "REUSE — already implemented during map-render/map-realtime stories. fleet-map.tsx click handler (line 148) + buildPopupHTML in map-utils.ts (line 60). Popup shows: vehicle name, license plate, traffic light status with color dot, speed + motion state, driver (or Unassigned), and View details link to /vehicles/{id}. 11 existing tests cover the AC fully."
     },
     {
-      "task": "seed-data",
-      "category": "fixtures",
+      "task": "map-realtime",
       "acceptance_criteria": [
-        "Realistic fleet data for Clearwater Plumbing Services (Bristol, UK)",
-        "5 users (1 admin, 4 drivers)",
-        "8 vehicles with UK plates and realistic odometers",
-        "7 default service types",
-        "Service schedules with approaching-due triggers",
-        "2 inspection templates",
-        "Driver assignments with history",
-        "Vehicle documents with expiry dates",
-        "5 alerts at varying severity",
-        "App settings"
+        "Vehicle positions update in real-time via WebSocket (<5s latency)",
+        "Vehicle markers show direction of travel when moving"
       ],
       "files_changed": [
-        "prisma/seed.ts"
-      ],
-      "tests_added": 0,
-      "tests_passing": 0,
-      "serves_feature_areas": [
-        "FA1",
-        "FA2",
-        "FA3",
-        "FA4",
-        "FA5",
-        "FA6"
-      ]
-    },
-    {
-      "task": "gps-ingestion-api",
-      "category": "integration",
-      "acceptance_criteria": [
-        "POST endpoint accepting lat, lon, speed, heading, timestamp, vehicle_id",
-        "Zod validation with batch support",
-        "Vehicle motion state auto-update on position ingest"
-      ],
-      "files_changed": [
+        "src/lib/position-events.ts",
+        "src/app/api/positions/stream/route.ts",
         "src/app/api/positions/route.ts",
-        "src/lib/validators.ts"
-      ],
-      "tests_added": 16,
-      "tests_passing": 16,
-      "serves_feature_areas": [
-        "FA1",
-        "FA3"
-      ]
-    },
-    {
-      "task": "map-render",
-      "acceptance_criteria": [
-        "Map loads in <2s with 50 vehicle markers",
-        "Vehicle markers color-coded by traffic light status",
-        "Map clusters markers at low zoom levels"
-      ],
-      "files_changed": [
+        "src/hooks/use-realtime-vehicles.ts",
+        "src/components/dashboard-map.tsx",
         "src/components/fleet-map.tsx",
         "src/lib/map-utils.ts",
         "src/lib/vehicles.ts",
-        "src/app/(admin)/dashboard/page.tsx",
-        "src/app/api/vehicles/route.ts"
+        "src/app/(admin)/dashboard/page.tsx"
       ],
-      "tests_added": 17,
-      "tests_passing": 17
+      "tests_added": 20,
+      "tests_passing": 20
     }
   ],
   "skipped": [],
   "divergences": [
     {
-      "spec_says": "Positions stored with PostGIS geometry type",
-      "actually_did": "Positions stored as float latitude/longitude columns. PostGIS extension is enabled in Prisma schema but geometry columns require raw SQL migrations which will be added in the GPS/Trips feature cycle (FA3).",
-      "rationale": "Prisma does not natively support PostGIS geometry types in its schema DSL. The lat/lon float columns work for ingestion and display. Spatial indexing and ST_Distance calculations will be added via raw SQL migration when the trip detection feature is built.",
+      "spec_says": "Vehicle positions update in real-time via WebSocket (<5s latency)",
+      "actually_did": "Used Server-Sent Events (SSE) instead of WebSocket. SSE endpoint at /api/positions/stream pushes position updates to clients with EventSource auto-reconnection.",
+      "rationale": "Next.js 14 App Router does not support WebSocket upgrade in route handlers. SSE achieves identical real-time push semantics with <5s latency, simpler architecture (no separate WS server), native browser reconnection via EventSource, and compatibility with HTTP/2. For a one-way server-to-client push (positions), SSE is the boring technology choice (McKinley principle).",
       "affects_acceptance_criteria": [
-        "Positions stored with PostGIS geometry type"
-      ],
-      "affects_feature_areas": [
-        "FA3"
+        "Vehicle positions update in real-time via WebSocket (<5s latency)"
       ],
       "reversible": true
     }
@@ -983,118 +732,58 @@
     ]
   },
   "story_result": {
-    "story_id": "map-realtime",
+    "story_id": "map-persistence",
     "outcome": "pass",
     "files_changed": [
-      "src/lib/position-events.ts",
-      "src/lib/position-events.test.ts",
-      "src/app/api/positions/stream/route.ts",
-      "src/app/api/positions/stream/route.test.ts",
-      "src/app/api/positions/route.ts",
-      "src/hooks/use-realtime-vehicles.ts",
-      "src/hooks/use-realtime-vehicles.test.ts",
-      "src/components/dashboard-map.tsx",
-      "src/components/dashboard-map.test.tsx",
-      "src/components/fleet-map.tsx",
-      "src/components/fleet-map.test.tsx",
       "src/lib/map-utils.ts",
       "src/lib/map-utils.test.ts",
-      "src/lib/vehicles.ts",
-      "src/lib/vehicles.test.ts",
-      "src/app/(admin)/dashboard/page.tsx"
+      "src/components/fleet-map.tsx",
+      "src/components/fleet-map.test.tsx"
     ],
-    "tests_added": 20,
-    "tests_passing": 80,
+    "tests_added": 8,
+    "tests_passing": 102,
     "env_limitations": [
-      "MapLibre GL requires WebGL — direction arrow rendering and rotation verified via MapLibre mock layer configuration, not visual rendering.",
-      "SSE stream test verifies headers and data format via mock; actual long-lived connection behavior requires a live server."
+      "MapLibre GL requires WebGL — persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
     ]
   },
   "implemented": [
     {
-      "task": "map-realtime",
-      "acceptance_criteria": [
-        "Vehicle positions update in real-time via WebSocket (<5s latency)",
-        "Vehicle markers show direction of travel when moving"
-      ],
+      "task": "map-persistence",
+      "acceptance_criteria": ["Map remembers zoom level and center between sessions"],
       "files_changed": [
-        "src/lib/position-events.ts",
-        "src/app/api/positions/stream/route.ts",
-        "src/app/api/positions/route.ts",
-        "src/hooks/use-realtime-vehicles.ts",
-        "src/components/dashboard-map.tsx",
-        "src/components/fleet-map.tsx",
         "src/lib/map-utils.ts",
-        "src/lib/vehicles.ts",
-        "src/app/(admin)/dashboard/page.tsx"
+        "src/lib/map-utils.test.ts",
+        "src/components/fleet-map.tsx",
+        "src/components/fleet-map.test.tsx"
       ],
-      "tests_added": 20,
-      "tests_passing": 20
-    }
-  ],
-  "divergences": [
-    {
-      "spec_says": "Vehicle positions update in real-time via WebSocket (<5s latency)",
-      "actually_did": "Used Server-Sent Events (SSE) instead of WebSocket. SSE endpoint at /api/positions/stream pushes position updates to clients with EventSource auto-reconnection.",
-      "rationale": "Next.js 14 App Router does not support WebSocket upgrade in route handlers. SSE achieves identical real-time push semantics with <5s latency, simpler architecture (no separate WS server), native browser reconnection via EventSource, and compatibility with HTTP/2. For a one-way server-to-client push (positions), SSE is the boring technology choice (McKinley principle).",
-      "affects_acceptance_criteria": [
-        "Vehicle positions update in real-time via WebSocket (<5s latency)"
-      ],
-      "reversible": true
+      "tests_added": 8,
+      "tests_passing": 8
     }
   ],
   "factory_decisions": [
     {
-      "decision": "Search Before Building audit for cycle 1 story map-realtime",
-      "context": "Pre-implementation code reuse analysis",
-      "alternatives_considered": [],
-      "rationale": "Found: 3 BUILD (position-events emitter, SSE stream endpoint, useRealtimeVehicles hook), 3 EXTEND (positions API route, FleetMap component, map-utils types), 3 REUSE (VehicleWithPosition type, mapVehiclesToMarkers, trafficLightColor). Key reuse: existing FleetMap source.setData() pattern for live updates, existing motion state threshold logic in positions API.",
+      "decision": "Use localStorage for map view persistence with key 'openfleet-map-view'",
+      "context": "AC requires map to remember zoom and center between sessions. localStorage is the simplest client-side persistence that survives page reloads and browser restarts.",
+      "alternatives_considered": ["sessionStorage (doesn't persist across sessions)", "URL hash params (clutters URL, shared links change view)", "cookie (unnecessary server round-trip)"],
+      "rationale": "localStorage is the boring technology choice (McKinley). No server-side state needed for a per-browser preference. JSON-serialized {center, zoom} with validation on load to handle corruption.",
       "confidence": "high",
-      "affects": ["map-realtime"]
+      "affects": ["src/lib/map-utils.ts", "src/components/fleet-map.tsx"]
     },
     {
-      "decision": "Used SSE (Server-Sent Events) instead of WebSocket for real-time position push",
-      "context": "Next.js 14 App Router does not support WebSocket upgrade in API route handlers. Implementing WebSocket would require a custom server.js or separate WS process.",
-      "alternatives_considered": [
-        "Custom server.js with ws library — rejected: breaks Next.js optimizations (standalone output, edge functions), adds deployment complexity for Docker Compose",
-        "Separate WebSocket microservice — rejected: over-engineered for 50-vehicle fleet, adds Docker service, complicates auth flow",
-        "Short polling (fetch every 3s) — rejected: wasteful, higher latency, more server load"
-      ],
-      "rationale": "SSE via ReadableStream in Next.js route handler provides real-time push with native browser EventSource (auto-reconnect), no additional dependencies, <5s latency (positions broadcast immediately on ingestion). Single-direction push is all that's needed — client never sends position data upstream.",
+      "decision": "Save on moveend event (not zoomend separately)",
+      "context": "MapLibre fires moveend after both pan and zoom operations complete. Using moveend alone covers both cases without double-saving.",
+      "alternatives_considered": ["Separate moveend + zoomend handlers", "Debounced save on any map interaction"],
+      "rationale": "moveend fires after zoom changes too, so a single handler is sufficient and simpler. No debounce needed — localStorage writes are synchronous and cheap.",
       "confidence": "high",
-      "affects": ["src/app/api/positions/stream/route.ts", "src/hooks/use-realtime-vehicles.ts"]
-    },
-    {
-      "decision": "Used Unicode ▲ character as direction arrow instead of custom icon sprite",
-      "context": "Need to show direction of travel for moving vehicles on the map",
-      "alternatives_considered": [
-        "Custom SVG icon loaded as MapLibre image — rejected: requires async image loading, more complex setup for minimal visual improvement",
-        "CSS-rotated HTML marker overlay — rejected: DOM-based, poor performance at 50+ markers"
-      ],
-      "rationale": "MapLibre symbol layer with text-field '▲' and text-rotate driven by heading property. GPU-accelerated, zero async setup, works with clustering. Arrow only renders for MOVING vehicles via layer filter.",
-      "confidence": "medium",
       "affects": ["src/components/fleet-map.tsx"]
     },
     {
-      "decision": "In-memory EventEmitter for position pub/sub (no external message broker)",
-      "context": "Need to broadcast position ingestion events to SSE stream clients",
-      "alternatives_considered": [
-        "Redis pub/sub — rejected: adds infrastructure dependency, overkill for single-instance self-hosted deployment",
-        "PostgreSQL LISTEN/NOTIFY — rejected: adds DB load for real-time signaling, latency higher than in-memory"
-      ],
-      "rationale": "OpenFleet is single-tenant, single-instance (Docker Compose). In-memory EventEmitter has zero latency, zero dependencies, and handles 50 vehicles at 1 position per 10s trivially. If horizontal scaling is ever needed (v2+), Redis pub/sub can replace the emitter without changing the API surface.",
+      "decision": "Search Before Building audit for cycle 1 story map-persistence",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 1 BUILD (persistence utils), 1 EXTEND (FleetMap component). Key reuse: FleetMap already has map init logic — extended with saved state restore. map-utils.ts already has shared utilities — added persistence functions alongside existing helpers.",
       "confidence": "high",
-      "affects": ["src/lib/position-events.ts", "src/app/api/positions/route.ts", "src/app/api/positions/stream/route.ts"]
+      "affects": ["map-persistence"]
     }
-  ],
-  "factory_questions": [
-    {
-      "question": "Spec says 'WebSocket' but SSE was used instead. The <5s latency AC is met. Should future stories continue with SSE or switch to WebSocket via custom server?",
-      "found_in": "story map-realtime AC: Vehicle positions update in real-time via WebSocket (<5s latency)",
-      "resolved_as": "Proceeded with SSE. Functionally equivalent for server-to-client push. Logged as divergence.",
-      "needs_clarification_from": "spec",
-      "severity": "minor"
-    }
-  ],
-  "deployment_url": null
+  ]
 }
