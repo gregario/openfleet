@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --fleet-green: #22c55e;
+    --fleet-orange: #f59e0b;
+    --fleet-red: #ef4444;
+  }
+
+  body {
+    @apply bg-fleet-bg text-slate-900 antialiased;
+  }
+}

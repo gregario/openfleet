@@ -1,0 +1,51 @@
+{
+  "id": "FA3",
+  "name": "GPS Ingestion, Trip Detection & Simulator",
+  "priority": 3,
+  "screens": ["S6-trip-detail-map"],
+  "user_journeys": [
+    {
+      "id": "FA3-J1",
+      "name": "Simulator feeds fleet data",
+      "steps": "Simulator service runs → generates realistic GPS coordinates for N configured vehicles → POSTs to ingestion API → vehicles appear on map moving along roads",
+      "clicks": 0
+    },
+    {
+      "id": "FA3-J2",
+      "name": "System detects trip start",
+      "steps": "Vehicle moves >5km/h for >30s → system creates trip record → trip appears in vehicle's trip list as 'active'",
+      "clicks": 0
+    },
+    {
+      "id": "FA3-J3",
+      "name": "System detects trip end",
+      "steps": "Vehicle stationary for >3min → system closes trip → calculates distance (from GPS points, not straight-line) and duration",
+      "clicks": 0
+    },
+    {
+      "id": "FA3-J4",
+      "name": "View trip on map",
+      "steps": "Owner opens vehicle → Trips tab → clicks trip → sees route line on map with start/end markers, timestamps, distance, duration",
+      "clicks": 3
+    },
+    {
+      "id": "FA3-J5",
+      "name": "Browse trip history",
+      "steps": "Owner views trip list for a vehicle → filters by date range → sorts by distance or duration",
+      "clicks": 2
+    }
+  ],
+  "acceptance_criteria": [
+    "GPS ingestion API: POST endpoint accepting lat, lon, speed, heading, timestamp, vehicle_id",
+    "Positions stored with PostGIS geometry type",
+    "Trip detection runs as background process, <30s from trip end to record creation",
+    "Trip start threshold: speed >5km/h for >30s (configurable)",
+    "Trip end threshold: stationary for >3min (configurable)",
+    "Minimum trip distance: 200m to filter GPS drift (configurable)",
+    "Trip distance calculated from actual GPS points along route",
+    "Trip route rendered as polyline on map with start/end markers",
+    "Simulator configurable: number of vehicles, speed profiles, trip patterns",
+    "Simulator generates routes that follow roads (not random straight lines)",
+    "Simulator runs as a Docker Compose service alongside app and db"
+  ]
+}

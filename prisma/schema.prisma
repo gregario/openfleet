@@ -1,0 +1,376 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+// ─── Auth & Users ────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  DRIVER
+}
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  passwordHash   String    @map("password_hash")
+  name           String
+  role           Role      @default(DRIVER)
+  phone          String?
+  photoUrl       String?   @map("photo_url")
+  privacyAckedAt DateTime? @map("privacy_acked_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  // Driver-specific fields (null for admins)
+  licenseNumber String?   @map("license_number")
+  licenseExpiry DateTime? @map("license_expiry")
+
+  // Relations
+  driverAssignments DriverAssignment[]
+  inspections       Inspection[]
+  sessions          Session[]
+  auditLogs         AuditLog[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ─── Vehicles ────────────────────────────────────────────────────
+
+enum VehicleStatus {
+  ACTIVE
+  IN_SHOP
+  DECOMMISSIONED
+}
+
+enum MotionState {
+  MOVING
+  IDLE
+  PARKED
+}
+
+enum TrafficLight {
+  GREEN
+  ORANGE
+  RED
+}
+
+model Vehicle {
+  id           String        @id @default(cuid())
+  name         String
+  make         String
+  model        String
+  year         Int
+  vin          String?       @unique
+  licensePlate String        @map("license_plate")
+  color        String?
+  photoUrl     String?       @map("photo_url")
+  status       VehicleStatus @default(ACTIVE)
+  odometer     Int           @default(0) // in kilometers
+  motionState  MotionState   @default(PARKED) @map("motion_state")
+  trafficLight TrafficLight  @default(GREEN) @map("traffic_light")
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  positions         Position[]
+  trips             Trip[]
+  driverAssignments DriverAssignment[]
+  serviceSchedules  ServiceSchedule[]
+  maintenanceRecords MaintenanceRecord[]
+  inspections       Inspection[]
+  documents         Document[]
+  alerts            Alert[]
+
+  @@index([status])
+  @@index([trafficLight])
+  @@map("vehicles")
+}
+
+// ─── GPS & Positions ─────────────────────────────────────────────
+
+model Position {
+  id        String   @id @default(cuid())
+  vehicleId String   @map("vehicle_id")
+  latitude  Float
+  longitude Float
+  speed     Float?   // km/h
+  heading   Float?   // degrees 0-360
+  timestamp DateTime
+  tripId    String?  @map("trip_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  trip    Trip?   @relation(fields: [tripId], references: [id])
+
+  @@index([vehicleId, timestamp])
+  @@index([tripId])
+  @@map("positions")
+}
+
+// ─── Trips ───────────────────────────────────────────────────────
+
+model Trip {
+  id             String    @id @default(cuid())
+  vehicleId      String    @map("vehicle_id")
+  startTime      DateTime  @map("start_time")
+  endTime        DateTime? @map("end_time")
+  distanceKm     Float?    @map("distance_km")
+  durationMinutes Float?   @map("duration_minutes")
+  startLatitude  Float?    @map("start_latitude")
+  startLongitude Float?    @map("start_longitude")
+  endLatitude    Float?    @map("end_latitude")
+  endLongitude   Float?    @map("end_longitude")
+  isActive       Boolean   @default(true) @map("is_active")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  vehicle   Vehicle    @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  positions Position[]
+
+  @@index([vehicleId, startTime])
+  @@index([isActive])
+  @@map("trips")
+}
+
+// ─── Driver Assignments ──────────────────────────────────────────
+
+enum AssignmentType {
+  ASSIGNED  // permanent assignment
+  POOL      // temporary pool checkout
+}
+
+model DriverAssignment {
+  id         String         @id @default(cuid())
+  userId     String         @map("user_id")
+  vehicleId  String         @map("vehicle_id")
+  type       AssignmentType @default(ASSIGNED)
+  startedAt  DateTime       @default(now()) @map("started_at")
+  endedAt    DateTime?      @map("ended_at")
+  isActive   Boolean        @default(true) @map("is_active")
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isActive])
+  @@index([vehicleId, isActive])
+  @@map("driver_assignments")
+}
+
+// ─── Maintenance ─────────────────────────────────────────────────
+
+model ServiceType {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  isDefault Boolean  @default(false) @map("is_default")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  schedules  ServiceSchedule[]
+  records    MaintenanceRecord[]
+
+  @@map("service_types")
+}
+
+model ServiceSchedule {
+  id              String   @id @default(cuid())
+  vehicleId       String   @map("vehicle_id")
+  serviceTypeId   String   @map("service_type_id")
+  intervalKm      Int?     @map("interval_km")       // mileage trigger
+  intervalDays    Int?     @map("interval_days")      // time trigger
+  warningKm       Int?     @map("warning_km")         // warn N km before due
+  warningDays     Int?     @map("warning_days")       // warn N days before due
+  estimatedCost   Float?   @map("estimated_cost")
+  lastServicedAt  DateTime? @map("last_serviced_at")
+  lastServicedKm  Int?     @map("last_serviced_km")
+  nextDueAt       DateTime? @map("next_due_at")
+  nextDueKm       Int?     @map("next_due_km")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  vehicle     Vehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  serviceType ServiceType @relation(fields: [serviceTypeId], references: [id])
+
+  @@unique([vehicleId, serviceTypeId])
+  @@index([nextDueAt])
+  @@index([nextDueKm])
+  @@map("service_schedules")
+}
+
+model MaintenanceRecord {
+  id            String   @id @default(cuid())
+  vehicleId     String   @map("vehicle_id")
+  serviceTypeId String   @map("service_type_id")
+  date          DateTime
+  odometerKm    Int      @map("odometer_km")
+  cost          Float?
+  vendor        String?
+  notes         String?
+  receiptUrl    String?  @map("receipt_url")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  vehicle     Vehicle     @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  serviceType ServiceType @relation(fields: [serviceTypeId], references: [id])
+
+  @@index([vehicleId, date])
+  @@map("maintenance_records")
+}
+
+// ─── Inspections ─────────────────────────────────────────────────
+
+model InspectionTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  items       InspectionTemplateItem[]
+  inspections Inspection[]
+
+  @@map("inspection_templates")
+}
+
+model InspectionTemplateItem {
+  id         String @id @default(cuid())
+  templateId String @map("template_id")
+  label      String
+  sortOrder  Int    @default(0) @map("sort_order")
+
+  template InspectionTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@index([templateId, sortOrder])
+  @@map("inspection_template_items")
+}
+
+enum InspectionResult {
+  PASS
+  FAIL
+  NA
+}
+
+model Inspection {
+  id         String   @id @default(cuid())
+  vehicleId  String   @map("vehicle_id")
+  userId     String   @map("user_id")       // driver who performed it
+  templateId String   @map("template_id")
+  type       String   @default("pre-trip")   // pre-trip, post-trip
+  result     InspectionResult @default(PASS)
+  notes      String?
+  submittedAt DateTime @default(now()) @map("submitted_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  vehicle  Vehicle            @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user     User               @relation(fields: [userId], references: [id])
+  template InspectionTemplate @relation(fields: [templateId], references: [id])
+  responses InspectionResponse[]
+
+  @@index([vehicleId, submittedAt])
+  @@index([userId])
+  @@map("inspections")
+}
+
+model InspectionResponse {
+  id           String           @id @default(cuid())
+  inspectionId String           @map("inspection_id")
+  itemLabel    String           @map("item_label")
+  result       InspectionResult
+  notes        String?
+  photoUrl     String?          @map("photo_url")
+
+  inspection Inspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+
+  @@index([inspectionId])
+  @@map("inspection_responses")
+}
+
+// ─── Documents ───────────────────────────────────────────────────
+
+model Document {
+  id         String    @id @default(cuid())
+  vehicleId  String    @map("vehicle_id")
+  type       String    // registration, insurance, cert, etc.
+  name       String
+  fileUrl    String?   @map("file_url")
+  expiresAt  DateTime? @map("expires_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId])
+  @@index([expiresAt])
+  @@map("documents")
+}
+
+// ─── Alerts ──────────────────────────────────────────────────────
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+model Alert {
+  id         String        @id @default(cuid())
+  vehicleId  String?       @map("vehicle_id")
+  type       String        // service_due, inspection_overdue, document_expiring, license_expiring
+  severity   AlertSeverity @default(WARNING)
+  title      String
+  message    String
+  isDismissed Boolean      @default(false) @map("is_dismissed")
+  createdAt  DateTime      @default(now()) @map("created_at")
+
+  vehicle Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([severity, isDismissed])
+  @@index([vehicleId])
+  @@map("alerts")
+}
+
+// ─── Audit Log ───────────────────────────────────────────────────
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  action    String   // e.g., "vehicle.created", "inspection.submitted"
+  entity    String   // e.g., "vehicle", "inspection"
+  entityId  String?  @map("entity_id")
+  details   Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([entity, entityId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ─── Settings ────────────────────────────────────────────────────
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}

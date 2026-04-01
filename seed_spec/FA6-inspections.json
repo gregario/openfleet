@@ -1,0 +1,41 @@
+{
+  "id": "FA6",
+  "name": "Inspections & Compliance",
+  "priority": 6,
+  "screens": ["S10-inspection-templates", "S13-driver-inspection"],
+  "user_journeys": [
+    {
+      "id": "FA6-J1",
+      "name": "Create inspection template",
+      "steps": "Owner creates template → name, list of check items (tires, lights, brakes, fluids, seatbelt...) → assigns to vehicle type",
+      "clicks": 2
+    },
+    {
+      "id": "FA6-J2",
+      "name": "Driver completes pre-trip inspection",
+      "steps": "Driver opens inspection → sees checklist → marks each item pass/fail/NA → adds notes and photos for failures → submits",
+      "clicks": 2
+    },
+    {
+      "id": "FA6-J3",
+      "name": "Admin reviews inspections",
+      "steps": "Owner views inspections → sees pass rate, outstanding failures → clicks inspection to see detail with photos",
+      "clicks": 3
+    },
+    {
+      "id": "FA6-J4",
+      "name": "Compliance tracking",
+      "steps": "System tracks inspection frequency per vehicle → alerts if vehicle hasn't been inspected on schedule → compliance view shows current/overdue status",
+      "clicks": 1
+    }
+  ],
+  "acceptance_criteria": [
+    "Customizable checklist templates with different templates per vehicle type",
+    "Photo attachment on failed inspection items",
+    "Inspection history per vehicle with pass/fail summary",
+    "Compliance view: which vehicles are current vs overdue on inspections",
+    "Inspection submissions timestamped and immutable (audit trail)",
+    "Inspection frequency alerts configurable (e.g., daily pre-trip required)",
+    "Disclaimer: not a tachograph, ELD, or DVIR-compliant system"
+  ]
+}

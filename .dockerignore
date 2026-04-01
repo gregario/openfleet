@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+*.md
+.gitignore
+.dockerignore
+vitest.config.ts
+tests
+legal
+marketing
+seed_spec

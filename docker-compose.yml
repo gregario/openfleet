@@ -1,0 +1,57 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: openfleet
+      POSTGRES_PASSWORD: openfleet
+      POSTGRES_DB: openfleet
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U openfleet -d openfleet"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://openfleet:openfleet@db:5432/openfleet?schema=public"
+      SESSION_SECRET: "${SESSION_SECRET:-dev-session-secret-replace-in-production-with-64-char-random}"
+      NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile.simulator
+    restart: unless-stopped
+    environment:
+      API_URL: "http://app:3000"
+      VEHICLE_COUNT: "${VEHICLE_COUNT:-5}"
+      INTERVAL_MS: "${INTERVAL_MS:-10000}"
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -1,0 +1,13 @@
+# ── GPS Simulator Service ──────────────────────────────────────────
+FROM node:20-alpine
+RUN apk add --no-cache curl
+WORKDIR /app
+
+COPY simulator/package.json ./
+RUN npm install
+
+COPY simulator/ ./
+
+ENV NODE_ENV=production
+
+CMD ["node", "index.js"]

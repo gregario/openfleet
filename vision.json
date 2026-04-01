@@ -1,0 +1,80 @@
+{
+  "product_name": "OpenFleet",
+  "one_liner": "Open-source fleet management for small businesses — see your vehicles, track your maintenance, own your data.",
+  "tagline": "Fleet management that doesn't charge you per van.",
+  "license": "AGPL-3.0",
+  "target_audience": {
+    "primary": "Small business owners with 5-50 light commercial vehicles",
+    "examples": ["plumbers", "electricians", "delivery services", "landscapers", "cleaners", "mobile mechanics"],
+    "persona": "Owner-operator who manages the fleet themselves alongside 12 other jobs"
+  },
+  "deploy_model": "Self-hosted, single-tenant, Docker Compose",
+  "differentiators": [
+    "Open source — no per-vehicle SaaS fees",
+    "Self-hosted — your data stays on your server",
+    "No hardware lock-in — works with any GPS source",
+    "Simple UX — designed for owner-operators, not enterprise fleet managers",
+    "Built-in simulator — try it without owning a fleet"
+  ],
+  "competitive_positioning": "Nextcloud for fleet management. Credible open-source alternative that gives small operators enterprise-grade capability without enterprise pricing or complexity.",
+  "feature_areas": [
+    {
+      "id": "FA1",
+      "name": "Fleet Dashboard & Live Map",
+      "priority": 1,
+      "summary": "Hero screen — live map with all vehicle positions, fleet status sidebar with alerts and upcoming services"
+    },
+    {
+      "id": "FA2",
+      "name": "Vehicle Registry & Detail View",
+      "priority": 2,
+      "summary": "Vehicle list with traffic light status, tabbed detail view (overview, trips, maintenance, inspections, documents)"
+    },
+    {
+      "id": "FA3",
+      "name": "GPS Ingestion, Trip Detection & Simulator",
+      "priority": 3,
+      "summary": "REST API for GPS data, movement-based trip detection, route visualization, simulator as V1 data source"
+    },
+    {
+      "id": "FA4",
+      "name": "Maintenance & Service Management",
+      "priority": 4,
+      "summary": "Service schedules (mileage/time), alerts, history with cost tracking, fleet-wide overview"
+    },
+    {
+      "id": "FA5",
+      "name": "Driver Management & Auth",
+      "priority": 5,
+      "summary": "Admin + driver roles, assigned and pool vehicle models, vehicle history per driver, privacy controls"
+    },
+    {
+      "id": "FA6",
+      "name": "Inspections & Compliance",
+      "priority": 6,
+      "summary": "Custom checklist templates, pre/post-trip inspections, photo capture, compliance calendar, audit trail"
+    }
+  ],
+  "v2_backlog": [
+    "Formal reporting (CSV/PDF exports)",
+    "Driver behavior scoring / speeding metrics",
+    "Fuel tracking and cost-per-mile",
+    "Geofencing with enter/exit alerts",
+    "Tyre management (wear, winter swaps)",
+    "Real device integration (Traccar protocols, OBD-II)",
+    "Mobile native app (driver)"
+  ],
+  "build_estimate": {
+    "human_team": "8-12 weeks with 2-3 developers",
+    "rouge": "4-6 build cycles"
+  },
+  "definition_of_done": [
+    "All 10 PO checks pass",
+    "docker compose up gets a working product with simulated fleet",
+    "All 38 acceptance criteria verified",
+    "Legal templates included in repo",
+    "Live map shows simulated vehicles moving in real-time",
+    "Driver can log in, see their vehicle, complete an inspection",
+    "Admin can see fleet dashboard, drill into any vehicle, view trips on map"
+  ]
+}

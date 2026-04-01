@@ -1,0 +1,540 @@
+{
+  "project": "openfleet-v2",
+  "status": "building",
+  "current_state": "foundation",
+  "current_milestone": null,
+  "current_story": null,
+  "milestones": [
+    {
+      "name": "foundation",
+      "status": "pending",
+      "depends_on_milestones": [],
+      "stories": []
+    },
+    {
+      "name": "map-core",
+      "status": "pending",
+      "depends_on_milestones": [
+        "foundation"
+      ],
+      "stories": [
+        {
+          "id": "map-render",
+          "name": "Live map renders with vehicle markers",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [
+            "vehicle",
+            "position"
+          ],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Map loads in <2s with 50 vehicle markers",
+            "Vehicle markers color-coded by traffic light status",
+            "Map clusters markers at low zoom levels"
+          ]
+        },
+        {
+          "id": "map-realtime",
+          "name": "Real-time position updates",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "map-render"
+          ],
+          "affected_entities": [
+            "vehicle",
+            "position"
+          ],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Vehicle positions update in real-time via WebSocket (<5s latency)",
+            "Vehicle markers show direction of travel when moving"
+          ]
+        },
+        {
+          "id": "map-popup",
+          "name": "Vehicle marker popup with stats",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "map-render"
+          ],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Clicking vehicle marker opens popup with key stats and link to detail"
+          ]
+        },
+        {
+          "id": "map-persistence",
+          "name": "Map remembers zoom and center",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "map-render"
+          ],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Map remembers zoom level and center between sessions"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "dashboard-features",
+      "status": "pending",
+      "depends_on_milestones": [
+        "map-core"
+      ],
+      "stories": [
+        {
+          "id": "fleet-sidebar",
+          "name": "Fleet status sidebar with alerts",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [
+            "vehicle",
+            "maintenance",
+            "inspection"
+          ],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Sidebar shows top-priority alerts sorted by urgency"
+          ]
+        },
+        {
+          "id": "map-filters",
+          "name": "Map filter by status, driver, motion",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "fleet-sidebar"
+          ],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Filter map by traffic light status, by driver, by motion state"
+          ]
+        },
+        {
+          "id": "dashboard-responsive",
+          "name": "Responsive layout \u2014 tablet with sidebar collapse",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "fleet-sidebar"
+          ],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Responsive: usable on tablet with sidebar collapsing to bottom sheet"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "vehicle-registry",
+      "status": "pending",
+      "depends_on_milestones": [
+        "foundation"
+      ],
+      "stories": [
+        {
+          "id": "vehicle-list",
+          "name": "Vehicle list with search, sort, filter",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S4-vehicle-list"
+          ],
+          "acceptance_criteria": [
+            "Vehicle list supports search, sort (name, status, mileage, next service), and filter",
+            "Vehicle list shows traffic light indicator per row"
+          ]
+        },
+        {
+          "id": "add-vehicle",
+          "name": "Add vehicle form with persistence",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "vehicle-list"
+          ],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S4-vehicle-list"
+          ],
+          "acceptance_criteria": [
+            "Vehicle photo upload supported"
+          ]
+        },
+        {
+          "id": "vehicle-detail",
+          "name": "Vehicle detail tabbed view",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "vehicle-list"
+          ],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S5-vehicle-detail",
+            "S5a-overview-tab"
+          ],
+          "acceptance_criteria": [
+            "Vehicle detail loads all tabs without page refresh",
+            "Traffic light: green = all clear, orange = requires attention, red = overdue",
+            "Decommissioned vehicles hidden from map and dashboard by default, visible via filter",
+            "Vehicle detail overview shows mini-map with current position"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "gps-trips",
+      "status": "pending",
+      "depends_on_milestones": [
+        "foundation",
+        "vehicle-registry"
+      ],
+      "stories": [
+        {
+          "id": "gps-api",
+          "name": "GPS ingestion REST API",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [
+            "position"
+          ],
+          "affected_screens": [],
+          "acceptance_criteria": [
+            "GPS ingestion API: POST endpoint accepting lat, lon, speed, heading, timestamp, vehicle_id",
+            "Positions stored with PostGIS geometry type"
+          ]
+        },
+        {
+          "id": "trip-detection",
+          "name": "Trip start/end detection",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "gps-api"
+          ],
+          "affected_entities": [
+            "trip",
+            "position"
+          ],
+          "affected_screens": [],
+          "acceptance_criteria": [
+            "Trip detection runs as background process, <30s from trip end to record creation",
+            "Trip start threshold: speed >5km/h for >30s",
+            "Trip end threshold: stationary for >3min",
+            "Minimum trip distance: 200m to filter GPS drift",
+            "Trip distance calculated from actual GPS points along route"
+          ]
+        },
+        {
+          "id": "trip-display",
+          "name": "Trip route on map + trip history",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "trip-detection"
+          ],
+          "affected_entities": [
+            "trip"
+          ],
+          "affected_screens": [
+            "S5b-trips-tab",
+            "S6-trip-detail-map"
+          ],
+          "acceptance_criteria": [
+            "Trip route rendered as polyline on map with start/end markers"
+          ]
+        },
+        {
+          "id": "simulator",
+          "name": "GPS simulator service",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "gps-api"
+          ],
+          "affected_entities": [
+            "vehicle",
+            "position"
+          ],
+          "affected_screens": [],
+          "acceptance_criteria": [
+            "Simulator configurable: number of vehicles, speed profiles, trip patterns",
+            "Simulator generates routes that follow roads",
+            "Simulator runs as a Docker Compose service alongside app and db"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "maintenance",
+      "status": "pending",
+      "depends_on_milestones": [
+        "vehicle-registry"
+      ],
+      "stories": [
+        {
+          "id": "service-schedules",
+          "name": "Create and manage service schedules",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [
+            "maintenance",
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S5c-maintenance-tab",
+            "S9-maintenance-overview"
+          ],
+          "acceptance_criteria": [
+            "Service schedules support mileage-based, time-based, or dual triggers",
+            "Common service types pre-populated",
+            "Custom service types supported",
+            "Completed service resets the schedule countdown automatically"
+          ]
+        },
+        {
+          "id": "service-alerts",
+          "name": "Service alerts and notifications",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "service-schedules"
+          ],
+          "affected_entities": [
+            "maintenance",
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S3-fleet-dashboard",
+            "S5c-maintenance-tab"
+          ],
+          "acceptance_criteria": [
+            "Alerts fire at configurable warning thresholds"
+          ]
+        },
+        {
+          "id": "maintenance-history",
+          "name": "Log service with cost tracking",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "service-schedules"
+          ],
+          "affected_entities": [
+            "maintenance"
+          ],
+          "affected_screens": [
+            "S5c-maintenance-tab",
+            "S9-maintenance-overview"
+          ],
+          "acceptance_criteria": [
+            "Maintenance cost tracking with per-vehicle and fleet-wide totals",
+            "Receipt photo upload on service records"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "driver-auth",
+      "status": "pending",
+      "depends_on_milestones": [
+        "vehicle-registry"
+      ],
+      "stories": [
+        {
+          "id": "auth-system",
+          "name": "Admin and driver auth with roles",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [
+            "driver"
+          ],
+          "affected_screens": [
+            "S1-login",
+            "S2-admin-setup"
+          ],
+          "acceptance_criteria": [
+            "Two roles: admin and driver",
+            "Driver sees only their assigned vehicle(s)",
+            "Driver login works on mobile browser"
+          ]
+        },
+        {
+          "id": "driver-management",
+          "name": "Driver profiles and vehicle assignment",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "auth-system"
+          ],
+          "affected_entities": [
+            "driver",
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S7-driver-list",
+            "S8-driver-detail"
+          ],
+          "acceptance_criteria": [
+            "Assignment history tracked with timestamps",
+            "License expiry alerts surface on dashboard",
+            "Pool mode: driver selects from available vehicles",
+            "Assigned mode: driver sees their primary vehicle on login"
+          ]
+        },
+        {
+          "id": "privacy-controls",
+          "name": "Driver privacy and GDPR compliance",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "auth-system"
+          ],
+          "affected_entities": [
+            "driver"
+          ],
+          "affected_screens": [
+            "S15-privacy-notice",
+            "S12-driver-home"
+          ],
+          "acceptance_criteria": [
+            "First-login privacy notice shown and must be acknowledged",
+            "Tracking-active indicator visible at all times",
+            "End-shift toggle available to driver",
+            "Tracking schedule configurable by admin",
+            "Per-driver data export (JSON/CSV)",
+            "Per-driver data hard delete"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "inspections",
+      "status": "pending",
+      "depends_on_milestones": [
+        "driver-auth"
+      ],
+      "stories": [
+        {
+          "id": "inspection-templates",
+          "name": "Custom inspection checklist templates",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [
+            "inspection"
+          ],
+          "affected_screens": [
+            "S10-inspection-templates"
+          ],
+          "acceptance_criteria": [
+            "Customizable checklist templates with different templates per vehicle type",
+            "Inspection frequency alerts configurable"
+          ]
+        },
+        {
+          "id": "driver-inspection",
+          "name": "Driver completes pre-trip inspection",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "inspection-templates"
+          ],
+          "affected_entities": [
+            "inspection"
+          ],
+          "affected_screens": [
+            "S13-driver-inspection"
+          ],
+          "acceptance_criteria": [
+            "Photo attachment on failed inspection items",
+            "Inspection submissions timestamped and immutable"
+          ]
+        },
+        {
+          "id": "compliance-tracking",
+          "name": "Admin compliance view and audit trail",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "driver-inspection"
+          ],
+          "affected_entities": [
+            "inspection",
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S5d-inspections-tab"
+          ],
+          "acceptance_criteria": [
+            "Inspection history per vehicle with pass/fail summary",
+            "Compliance view: current vs overdue",
+            "Disclaimer: not a tachograph, ELD, or DVIR-compliant system"
+          ]
+        }
+      ]
+    }
+  ],
+  "escalations": [],
+  "fix_memory": {},
+  "consecutive_failures": 0,
+  "milestone_learnings": [],
+  "foundation": {
+    "status": "pending",
+    "scope": [
+      "postgresql-postgis",
+      "prisma-schema",
+      "auth-session",
+      "shared-ui-shell",
+      "docker-compose",
+      "seed-data"
+    ],
+    "completed_at": null
+  },
+  "detected_profile": "full-stack",
+  "seeded_at": "2026-04-01T10:00:00Z",
+  "seeded_by": "manual-v2-transform",
+  "human_approved": true,
+  "timestamp": "2026-04-01T10:00:00Z"
+}

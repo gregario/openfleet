@@ -1,0 +1,41 @@
+{
+  "id": "FA2",
+  "name": "Vehicle Registry & Detail View",
+  "priority": 2,
+  "screens": ["S4-vehicle-list", "S5-vehicle-detail", "S5a-overview-tab", "S5b-trips-tab", "S5c-maintenance-tab", "S5d-inspections-tab", "S5e-documents-tab"],
+  "user_journeys": [
+    {
+      "id": "FA2-J1",
+      "name": "Add a vehicle",
+      "steps": "Owner clicks Add Vehicle → enters make, model, year, VIN, license plate, color, current odometer, photo → saves",
+      "clicks": 2
+    },
+    {
+      "id": "FA2-J2",
+      "name": "View vehicle detail",
+      "steps": "Owner opens vehicle from list or map → sees tabbed view with Overview, Trips, Maintenance, Inspections, Documents",
+      "clicks": 2
+    },
+    {
+      "id": "FA2-J3",
+      "name": "Check vehicle health at a glance",
+      "steps": "Overview tab shows traffic light indicator, current location on mini-map, assigned driver, odometer, key stats",
+      "clicks": 2
+    },
+    {
+      "id": "FA2-J4",
+      "name": "Change vehicle status",
+      "steps": "Owner edits vehicle status → active, in-shop, decommissioned → decommissioned vehicles hidden from map/dashboard by default",
+      "clicks": 3
+    }
+  ],
+  "acceptance_criteria": [
+    "Vehicle list supports search, sort (name, status, mileage, next service), and filter",
+    "Vehicle list shows traffic light indicator per row (worst status across maintenance, inspections, documents)",
+    "Vehicle detail loads all tabs without page refresh",
+    "Traffic light: green = all clear, orange = requires attention, red = overdue/compliance failure",
+    "Vehicle photo upload supported",
+    "Decommissioned vehicles hidden from map and dashboard by default, visible via filter",
+    "Vehicle detail overview shows mini-map with current position"
+  ]
+}

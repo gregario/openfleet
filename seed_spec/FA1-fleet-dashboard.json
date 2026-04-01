@@ -1,0 +1,43 @@
+{
+  "id": "FA1",
+  "name": "Fleet Dashboard & Live Map",
+  "priority": 1,
+  "screens": ["S3-fleet-dashboard"],
+  "user_journeys": [
+    {
+      "id": "FA1-J1",
+      "name": "View live fleet map",
+      "steps": "Owner opens app → sees live map with all vehicle positions → vehicles color-coded by traffic light status (green/orange/red) and motion state (moving/idle/parked)",
+      "clicks": 0
+    },
+    {
+      "id": "FA1-J2",
+      "name": "Inspect vehicle from map",
+      "steps": "Owner clicks vehicle marker on map → popup shows vehicle name, driver, status, speed, last trip, traffic light, any alerts → link to full vehicle detail view",
+      "clicks": 1
+    },
+    {
+      "id": "FA1-J3",
+      "name": "Review fleet status sidebar",
+      "steps": "Owner glances at sidebar → sees vehicles due for service (count + list), overdue inspections, expiring documents, active alerts sorted by urgency",
+      "clicks": 0
+    },
+    {
+      "id": "FA1-J4",
+      "name": "Filter map by status",
+      "steps": "Owner filters map → by traffic light status, by driver, by motion state (moving/idle/parked)",
+      "clicks": 1
+    }
+  ],
+  "acceptance_criteria": [
+    "Map loads in <2s with 50 vehicle markers",
+    "Vehicle positions update in real-time via WebSocket (<5s latency)",
+    "Vehicle markers show direction of travel when moving",
+    "Vehicle markers color-coded by traffic light status",
+    "Sidebar shows top-priority alerts sorted by urgency",
+    "Map remembers zoom level and center between sessions",
+    "Responsive: usable on tablet with sidebar collapsing to bottom sheet",
+    "Clicking vehicle marker opens popup with key stats and link to detail",
+    "Map clusters markers at low zoom levels"
+  ]
+}

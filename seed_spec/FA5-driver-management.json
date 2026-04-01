@@ -1,0 +1,53 @@
+{
+  "id": "FA5",
+  "name": "Driver Management & Auth",
+  "priority": 5,
+  "screens": ["S1-login", "S2-admin-setup", "S7-driver-list", "S8-driver-detail", "S12-driver-home", "S14-driver-vehicle-select", "S15-privacy-notice"],
+  "user_journeys": [
+    {
+      "id": "FA5-J1",
+      "name": "Create driver profile",
+      "steps": "Owner creates driver → name, phone, email, license number, license expiry, photo → driver receives login credentials",
+      "clicks": 2
+    },
+    {
+      "id": "FA5-J2",
+      "name": "Assign driver to vehicle (assigned model)",
+      "steps": "Owner assigns driver to vehicle → one driver per vehicle at a time → assignment history tracked",
+      "clicks": 3
+    },
+    {
+      "id": "FA5-J3",
+      "name": "Driver logs in (assigned model)",
+      "steps": "Driver logs in → sees their assigned vehicle → current status, next service due, pending inspections → tracking-active indicator visible",
+      "clicks": 1
+    },
+    {
+      "id": "FA5-J4",
+      "name": "Driver checks into pool vehicle",
+      "steps": "Driver logs in → sees available vehicles list → picks one → system creates temporal assignment → pre-trip inspection prompted",
+      "clicks": 2
+    },
+    {
+      "id": "FA5-J5",
+      "name": "View driver history",
+      "steps": "Owner opens driver detail → sees all vehicles they've driven, duration per vehicle, assignment history",
+      "clicks": 2
+    }
+  ],
+  "acceptance_criteria": [
+    "Two roles: admin (owner/manager) and driver",
+    "Driver sees only their assigned vehicle(s)",
+    "Assignment history tracked with timestamps (who drove what, when)",
+    "License expiry alerts surface on dashboard and driver list",
+    "Driver login works on mobile browser (responsive)",
+    "Pool mode: driver selects from available vehicles, temporal assignment created",
+    "Assigned mode: driver sees their primary vehicle on login",
+    "First-login privacy notice shown and must be acknowledged before tracking begins",
+    "Tracking-active indicator visible in driver UI at all times when tracking is on",
+    "End-shift toggle available to driver — stops tracking until next shift",
+    "Tracking schedule configurable by admin (e.g., 07:00-18:00 Mon-Fri) — on by default",
+    "Per-driver data export (JSON/CSV) for GDPR right of access",
+    "Per-driver data hard delete for GDPR right to erasure"
+  ]
+}

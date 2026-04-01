@@ -1,0 +1,8 @@
+{
+  "name": "openfleet-simulator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GPS position simulator for OpenFleet vehicles",
+  "main": "index.js",
+  "dependencies": {}
+}

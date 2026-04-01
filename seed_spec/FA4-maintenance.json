@@ -1,0 +1,47 @@
+{
+  "id": "FA4",
+  "name": "Maintenance & Service Management",
+  "priority": 4,
+  "screens": ["S9-maintenance-overview"],
+  "user_journeys": [
+    {
+      "id": "FA4-J1",
+      "name": "Create service schedule",
+      "steps": "Owner creates service schedule for a vehicle → selects type (oil change, tires, brakes...) → sets interval by mileage OR time OR both → sets estimated cost",
+      "clicks": 3
+    },
+    {
+      "id": "FA4-J2",
+      "name": "Receive service alert",
+      "steps": "System detects service approaching threshold (e.g., 500mi before due, 2 weeks before) → alert appears on dashboard sidebar and vehicle detail",
+      "clicks": 0
+    },
+    {
+      "id": "FA4-J3",
+      "name": "Log completed service",
+      "steps": "Owner logs service → date, odometer, cost, vendor, notes, receipt photo → service record added to history → next service due recalculated",
+      "clicks": 3
+    },
+    {
+      "id": "FA4-J4",
+      "name": "View maintenance history",
+      "steps": "Owner opens vehicle → Maintenance tab → sees chronological history filterable by type → running cost total",
+      "clicks": 2
+    },
+    {
+      "id": "FA4-J5",
+      "name": "Fleet-wide maintenance overview",
+      "steps": "Owner opens Maintenance from sidebar → sees what's due this week/month across all vehicles → sorted by urgency",
+      "clicks": 1
+    }
+  ],
+  "acceptance_criteria": [
+    "Service schedules support mileage-based, time-based, or dual triggers",
+    "Alerts fire at configurable warning thresholds (e.g., 500mi before, 2 weeks before)",
+    "Maintenance cost tracking with per-vehicle and fleet-wide totals",
+    "Common service types pre-populated (oil, tires, brakes, filters, fluids, belts, battery)",
+    "Custom service types supported",
+    "Receipt photo upload on service records",
+    "Completed service resets the schedule countdown automatically"
+  ]
+}

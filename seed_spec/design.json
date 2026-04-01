@@ -1,0 +1,56 @@
+{
+  "screens": {
+    "total": 15,
+    "inventory": [
+      {"id": "S1", "name": "Login", "access": "public", "purpose": "Auth — admin or driver"},
+      {"id": "S2", "name": "Admin Setup / First Run", "access": "admin", "purpose": "Initial config, deployment acknowledgment, privacy notice setup"},
+      {"id": "S3", "name": "Fleet Dashboard", "access": "admin", "purpose": "Live map + fleet status sidebar (default landing)"},
+      {"id": "S4", "name": "Vehicle List", "access": "admin", "purpose": "All vehicles with search/sort/filter and traffic light status"},
+      {"id": "S5", "name": "Vehicle Detail", "access": "admin", "purpose": "Tabbed view: Overview, Trips, Maintenance, Inspections, Documents"},
+      {"id": "S5a", "name": "Overview Tab", "access": "admin", "purpose": "Mini-map, traffic light, assigned driver, key stats"},
+      {"id": "S5b", "name": "Trips Tab", "access": "admin", "purpose": "Trip list with date filter, click to view route on inline map"},
+      {"id": "S5c", "name": "Maintenance Tab", "access": "admin", "purpose": "Service history + upcoming schedule"},
+      {"id": "S5d", "name": "Inspections Tab", "access": "admin", "purpose": "Inspection history with pass/fail and photos"},
+      {"id": "S5e", "name": "Documents Tab", "access": "admin", "purpose": "Registration, insurance, certs with expiry dates"},
+      {"id": "S6", "name": "Trip Detail / Map View", "access": "admin", "purpose": "Single trip route on map with stats and timeline"},
+      {"id": "S7", "name": "Driver List", "access": "admin", "purpose": "All drivers, assigned vehicles, license status"},
+      {"id": "S8", "name": "Driver Detail", "access": "admin", "purpose": "Profile, vehicle history, assignment"},
+      {"id": "S9", "name": "Maintenance Overview", "access": "admin", "purpose": "Fleet-wide: due/overdue services across all vehicles"},
+      {"id": "S10", "name": "Inspection Templates", "access": "admin", "purpose": "Create/edit checklist templates"},
+      {"id": "S11", "name": "Settings", "access": "admin", "purpose": "Tracking schedule, data retention, privacy notice, GPS config"},
+      {"id": "S12", "name": "Driver Home", "access": "driver", "purpose": "Assigned vehicle or pool list, status, pending inspections"},
+      {"id": "S13", "name": "Driver Inspection", "access": "driver", "purpose": "Pre/post-trip checklist with photo capture"},
+      {"id": "S14", "name": "Driver Vehicle Select", "access": "driver", "purpose": "Pick from available pool vehicles, check in"},
+      {"id": "S15", "name": "Privacy Notice", "access": "driver", "purpose": "First-login acknowledgment, operator-customizable"}
+    ]
+  },
+  "navigation": {
+    "admin": {
+      "type": "sidebar",
+      "items": ["Dashboard / Map", "Vehicles", "Drivers", "Maintenance", "Inspections", "Settings"],
+      "persistent": ["End Shift toggle", "User menu (profile, logout)"]
+    },
+    "driver": {
+      "type": "simplified",
+      "items": ["My Vehicle", "Inspection"],
+      "persistent": ["Tracking status indicator", "End Shift toggle"]
+    }
+  },
+  "layout": {
+    "dashboard": "Map ~70% width, collapsible status sidebar ~30%. Tablet: sidebar collapses to bottom sheet.",
+    "vehicle_detail": "Tabs render inline, trip map shows within Trips tab (not full-screen switch)",
+    "responsive": "Desktop + tablet for admin, mobile browser for driver"
+  },
+  "component_hierarchy": {
+    "app_shell": ["Sidebar Navigation", "Content Area"],
+    "dashboard_page": ["Map Component (MapLibre GL)", "Vehicle Markers (clustered)", "Vehicle Popup", "Fleet Status Sidebar"],
+    "vehicle_list_page": ["Search/Filter Bar", "Vehicle Table (with traffic light)"],
+    "vehicle_detail_page": ["Vehicle Header (name, photo, traffic light)", "Tab Container (5 tabs)"],
+    "driver_shell": ["My Vehicle / Vehicle Select", "Inspection Flow", "Tracking Indicator"]
+  },
+  "three_click_validation": {
+    "all_journeys_pass": true,
+    "max_clicks": 3,
+    "worst_case_journeys": ["View trip on map (3 clicks)", "Admin review inspection (3 clicks)", "Change vehicle status (3 clicks)"]
+  }
+}

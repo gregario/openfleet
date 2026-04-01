@@ -1,0 +1,60 @@
+{
+  "product": "openfleet",
+  "quality_standards": {
+    "performance": {
+      "dashboard_load": "<2s with 50 vehicle markers",
+      "realtime_latency": "<5s for vehicle position updates via WebSocket",
+      "gps_ingestion": "Handle 50 vehicles at 1 position per 10 seconds"
+    },
+    "accessibility": {
+      "lighthouse_score": "90+",
+      "responsive": "Desktop + tablet (field use)",
+      "driver_ui": "Mobile browser optimized"
+    },
+    "reliability": {
+      "zero_console_errors": true,
+      "error_states_handled": true,
+      "empty_states_handled": true,
+      "loading_states_handled": true
+    },
+    "security": {
+      "auth": "Session-based, bcrypt passwords, role-based access (admin/driver)",
+      "data_retention": "Configurable with automated purge",
+      "privacy": "Tracking schedule, end-shift toggle, driver data export/delete",
+      "secrets": "No hardcoded keys or credentials"
+    },
+    "deployment": {
+      "method": "Docker Compose",
+      "services": ["app", "db (PostgreSQL + PostGIS)", "simulator"],
+      "one_command": "docker compose up"
+    }
+  },
+  "design_standards": {
+    "navigation": "Sidebar nav for admin, simplified nav for driver",
+    "three_click_rule": "All key journeys reachable in 3 clicks or fewer",
+    "vehicle_status": {
+      "system": "Traffic light (green/orange/red)",
+      "green": "All clear, no action needed",
+      "orange": "Requires attention — service approaching, document expiring, minor alert",
+      "red": "Overdue — past service interval, outside leasing terms, compliance failure"
+    },
+    "map": "Dominant element on dashboard (~70% width), collapsible status sidebar (~30%)",
+    "voice_and_tone": {
+      "direct": "Say what the thing does, no jargon",
+      "practical": "Every element should be useful or get out of the way",
+      "gut_check": "Would a plumber with 8 vans know exactly what this means?"
+    }
+  },
+  "po_checks": [
+    "Can I see all my vehicles on a map right now?",
+    "Can I click a vehicle and see its details without leaving the map?",
+    "Can I tell which vehicles need attention (service, inspection, documents)?",
+    "Can I see where a vehicle went yesterday?",
+    "Can a driver log in and only see their vehicle?",
+    "Can a driver complete a pre-trip checklist on their phone?",
+    "Can I see the maintenance history and costs for any vehicle?",
+    "Does the simulator make the product feel real without owning a fleet?",
+    "Can I deploy this with a single docker compose up?",
+    "Is my data on my own server, not someone else's cloud?"
+  ]
+}

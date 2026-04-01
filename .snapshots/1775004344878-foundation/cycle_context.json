@@ -1,0 +1,498 @@
+{
+  "_schema_version": "2.0",
+  "_project_name": "openfleet-v2",
+  "_cycle_number": 1,
+  "vision": {
+    "product_name": "OpenFleet",
+    "one_liner": "Open-source fleet management for small businesses — see your vehicles, track your maintenance, own your data.",
+    "tagline": "Fleet management that doesn't charge you per van.",
+    "license": "AGPL-3.0",
+    "target_audience": {
+      "primary": "Small business owners with 5-50 light commercial vehicles",
+      "examples": [
+        "plumbers",
+        "electricians",
+        "delivery services",
+        "landscapers",
+        "cleaners",
+        "mobile mechanics"
+      ],
+      "persona": "Owner-operator who manages the fleet themselves alongside 12 other jobs"
+    },
+    "deploy_model": "Self-hosted, single-tenant, Docker Compose",
+    "differentiators": [
+      "Open source — no per-vehicle SaaS fees",
+      "Self-hosted — your data stays on your server",
+      "No hardware lock-in — works with any GPS source",
+      "Simple UX — designed for owner-operators, not enterprise fleet managers",
+      "Built-in simulator — try it without owning a fleet"
+    ],
+    "competitive_positioning": "Nextcloud for fleet management. Credible open-source alternative that gives small operators enterprise-grade capability without enterprise pricing or complexity.",
+    "feature_areas": [
+      {
+        "id": "FA1",
+        "name": "Fleet Dashboard & Live Map",
+        "priority": 1,
+        "summary": "Hero screen — live map with all vehicle positions, fleet status sidebar with alerts and upcoming services"
+      },
+      {
+        "id": "FA2",
+        "name": "Vehicle Registry & Detail View",
+        "priority": 2,
+        "summary": "Vehicle list with traffic light status, tabbed detail view (overview, trips, maintenance, inspections, documents)"
+      },
+      {
+        "id": "FA3",
+        "name": "GPS Ingestion, Trip Detection & Simulator",
+        "priority": 3,
+        "summary": "REST API for GPS data, movement-based trip detection, route visualization, simulator as V1 data source"
+      },
+      {
+        "id": "FA4",
+        "name": "Maintenance & Service Management",
+        "priority": 4,
+        "summary": "Service schedules (mileage/time), alerts, history with cost tracking, fleet-wide overview"
+      },
+      {
+        "id": "FA5",
+        "name": "Driver Management & Auth",
+        "priority": 5,
+        "summary": "Admin + driver roles, assigned and pool vehicle models, vehicle history per driver, privacy controls"
+      },
+      {
+        "id": "FA6",
+        "name": "Inspections & Compliance",
+        "priority": 6,
+        "summary": "Custom checklist templates, pre/post-trip inspections, photo capture, compliance calendar, audit trail"
+      }
+    ],
+    "v2_backlog": [
+      "Formal reporting (CSV/PDF exports)",
+      "Driver behavior scoring / speeding metrics",
+      "Fuel tracking and cost-per-mile",
+      "Geofencing with enter/exit alerts",
+      "Tyre management (wear, winter swaps)",
+      "Real device integration (Traccar protocols, OBD-II)",
+      "Mobile native app (driver)"
+    ],
+    "build_estimate": {
+      "human_team": "8-12 weeks with 2-3 developers",
+      "rouge": "4-6 build cycles"
+    },
+    "definition_of_done": [
+      "All 10 PO checks pass",
+      "docker compose up gets a working product with simulated fleet",
+      "All 38 acceptance criteria verified",
+      "Legal templates included in repo",
+      "Live map shows simulated vehicles moving in real-time",
+      "Driver can log in, see their vehicle, complete an inspection",
+      "Admin can see fleet dashboard, drill into any vehicle, view trips on map"
+    ]
+  },
+  "product_standard": {
+    "product": "openfleet",
+    "quality_standards": {
+      "performance": {
+        "dashboard_load": "<2s with 50 vehicle markers",
+        "realtime_latency": "<5s for vehicle position updates via WebSocket",
+        "gps_ingestion": "Handle 50 vehicles at 1 position per 10 seconds"
+      },
+      "accessibility": {
+        "lighthouse_score": "90+",
+        "responsive": "Desktop + tablet (field use)",
+        "driver_ui": "Mobile browser optimized"
+      },
+      "reliability": {
+        "zero_console_errors": true,
+        "error_states_handled": true,
+        "empty_states_handled": true,
+        "loading_states_handled": true
+      },
+      "security": {
+        "auth": "Session-based, bcrypt passwords, role-based access (admin/driver)",
+        "data_retention": "Configurable with automated purge",
+        "privacy": "Tracking schedule, end-shift toggle, driver data export/delete",
+        "secrets": "No hardcoded keys or credentials"
+      },
+      "deployment": {
+        "method": "Docker Compose",
+        "services": [
+          "app",
+          "db (PostgreSQL + PostGIS)",
+          "simulator"
+        ],
+        "one_command": "docker compose up"
+      }
+    },
+    "design_standards": {
+      "navigation": "Sidebar nav for admin, simplified nav for driver",
+      "three_click_rule": "All key journeys reachable in 3 clicks or fewer",
+      "vehicle_status": {
+        "system": "Traffic light (green/orange/red)",
+        "green": "All clear, no action needed",
+        "orange": "Requires attention — service approaching, document expiring, minor alert",
+        "red": "Overdue — past service interval, outside leasing terms, compliance failure"
+      },
+      "map": "Dominant element on dashboard (~70% width), collapsible status sidebar (~30%)",
+      "voice_and_tone": {
+        "direct": "Say what the thing does, no jargon",
+        "practical": "Every element should be useful or get out of the way",
+        "gut_check": "Would a plumber with 8 vans know exactly what this means?"
+      }
+    },
+    "po_checks": [
+      "Can I see all my vehicles on a map right now?",
+      "Can I click a vehicle and see its details without leaving the map?",
+      "Can I tell which vehicles need attention (service, inspection, documents)?",
+      "Can I see where a vehicle went yesterday?",
+      "Can a driver log in and only see their vehicle?",
+      "Can a driver complete a pre-trip checklist on their phone?",
+      "Can I see the maintenance history and costs for any vehicle?",
+      "Does the simulator make the product feel real without owning a fleet?",
+      "Can I deploy this with a single docker compose up?",
+      "Is my data on my own server, not someone else's cloud?"
+    ]
+  },
+  "active_spec": {
+    "FA1": {
+      "id": "FA1",
+      "name": "Fleet Dashboard & Live Map",
+      "priority": 1,
+      "screens": [
+        "S3-fleet-dashboard"
+      ],
+      "user_journeys": [
+        {
+          "id": "FA1-J1",
+          "name": "View live fleet map",
+          "steps": "Owner opens app → sees live map with all vehicle positions → vehicles color-coded by traffic light status (green/orange/red) and motion state (moving/idle/parked)",
+          "clicks": 0
+        },
+        {
+          "id": "FA1-J2",
+          "name": "Inspect vehicle from map",
+          "steps": "Owner clicks vehicle marker on map → popup shows vehicle name, driver, status, speed, last trip, traffic light, any alerts → link to full vehicle detail view",
+          "clicks": 1
+        },
+        {
+          "id": "FA1-J3",
+          "name": "Review fleet status sidebar",
+          "steps": "Owner glances at sidebar → sees vehicles due for service (count + list), overdue inspections, expiring documents, active alerts sorted by urgency",
+          "clicks": 0
+        },
+        {
+          "id": "FA1-J4",
+          "name": "Filter map by status",
+          "steps": "Owner filters map → by traffic light status, by driver, by motion state (moving/idle/parked)",
+          "clicks": 1
+        }
+      ],
+      "acceptance_criteria": [
+        "Map loads in <2s with 50 vehicle markers",
+        "Vehicle positions update in real-time via WebSocket (<5s latency)",
+        "Vehicle markers show direction of travel when moving",
+        "Vehicle markers color-coded by traffic light status",
+        "Sidebar shows top-priority alerts sorted by urgency",
+        "Map remembers zoom level and center between sessions",
+        "Responsive: usable on tablet with sidebar collapsing to bottom sheet",
+        "Clicking vehicle marker opens popup with key stats and link to detail",
+        "Map clusters markers at low zoom levels"
+      ]
+    },
+    "FA2": {
+      "id": "FA2",
+      "name": "Vehicle Registry & Detail View",
+      "priority": 2,
+      "screens": [
+        "S4-vehicle-list",
+        "S5-vehicle-detail",
+        "S5a-overview-tab",
+        "S5b-trips-tab",
+        "S5c-maintenance-tab",
+        "S5d-inspections-tab",
+        "S5e-documents-tab"
+      ],
+      "user_journeys": [
+        {
+          "id": "FA2-J1",
+          "name": "Add a vehicle",
+          "steps": "Owner clicks Add Vehicle → enters make, model, year, VIN, license plate, color, current odometer, photo → saves",
+          "clicks": 2
+        },
+        {
+          "id": "FA2-J2",
+          "name": "View vehicle detail",
+          "steps": "Owner opens vehicle from list or map → sees tabbed view with Overview, Trips, Maintenance, Inspections, Documents",
+          "clicks": 2
+        },
+        {
+          "id": "FA2-J3",
+          "name": "Check vehicle health at a glance",
+          "steps": "Overview tab shows traffic light indicator, current location on mini-map, assigned driver, odometer, key stats",
+          "clicks": 2
+        },
+        {
+          "id": "FA2-J4",
+          "name": "Change vehicle status",
+          "steps": "Owner edits vehicle status → active, in-shop, decommissioned → decommissioned vehicles hidden from map/dashboard by default",
+          "clicks": 3
+        }
+      ],
+      "acceptance_criteria": [
+        "Vehicle list supports search, sort (name, status, mileage, next service), and filter",
+        "Vehicle list shows traffic light indicator per row (worst status across maintenance, inspections, documents)",
+        "Vehicle detail loads all tabs without page refresh",
+        "Traffic light: green = all clear, orange = requires attention, red = overdue/compliance failure",
+        "Vehicle photo upload supported",
+        "Decommissioned vehicles hidden from map and dashboard by default, visible via filter",
+        "Vehicle detail overview shows mini-map with current position"
+      ]
+    },
+    "FA3": {
+      "id": "FA3",
+      "name": "GPS Ingestion, Trip Detection & Simulator",
+      "priority": 3,
+      "screens": [
+        "S6-trip-detail-map"
+      ],
+      "user_journeys": [
+        {
+          "id": "FA3-J1",
+          "name": "Simulator feeds fleet data",
+          "steps": "Simulator service runs → generates realistic GPS coordinates for N configured vehicles → POSTs to ingestion API → vehicles appear on map moving along roads",
+          "clicks": 0
+        },
+        {
+          "id": "FA3-J2",
+          "name": "System detects trip start",
+          "steps": "Vehicle moves >5km/h for >30s → system creates trip record → trip appears in vehicle's trip list as 'active'",
+          "clicks": 0
+        },
+        {
+          "id": "FA3-J3",
+          "name": "System detects trip end",
+          "steps": "Vehicle stationary for >3min → system closes trip → calculates distance (from GPS points, not straight-line) and duration",
+          "clicks": 0
+        },
+        {
+          "id": "FA3-J4",
+          "name": "View trip on map",
+          "steps": "Owner opens vehicle → Trips tab → clicks trip → sees route line on map with start/end markers, timestamps, distance, duration",
+          "clicks": 3
+        },
+        {
+          "id": "FA3-J5",
+          "name": "Browse trip history",
+          "steps": "Owner views trip list for a vehicle → filters by date range → sorts by distance or duration",
+          "clicks": 2
+        }
+      ],
+      "acceptance_criteria": [
+        "GPS ingestion API: POST endpoint accepting lat, lon, speed, heading, timestamp, vehicle_id",
+        "Positions stored with PostGIS geometry type",
+        "Trip detection runs as background process, <30s from trip end to record creation",
+        "Trip start threshold: speed >5km/h for >30s (configurable)",
+        "Trip end threshold: stationary for >3min (configurable)",
+        "Minimum trip distance: 200m to filter GPS drift (configurable)",
+        "Trip distance calculated from actual GPS points along route",
+        "Trip route rendered as polyline on map with start/end markers",
+        "Simulator configurable: number of vehicles, speed profiles, trip patterns",
+        "Simulator generates routes that follow roads (not random straight lines)",
+        "Simulator runs as a Docker Compose service alongside app and db"
+      ]
+    },
+    "FA4": {
+      "id": "FA4",
+      "name": "Maintenance & Service Management",
+      "priority": 4,
+      "screens": [
+        "S9-maintenance-overview"
+      ],
+      "user_journeys": [
+        {
+          "id": "FA4-J1",
+          "name": "Create service schedule",
+          "steps": "Owner creates service schedule for a vehicle → selects type (oil change, tires, brakes...) → sets interval by mileage OR time OR both → sets estimated cost",
+          "clicks": 3
+        },
+        {
+          "id": "FA4-J2",
+          "name": "Receive service alert",
+          "steps": "System detects service approaching threshold (e.g., 500mi before due, 2 weeks before) → alert appears on dashboard sidebar and vehicle detail",
+          "clicks": 0
+        },
+        {
+          "id": "FA4-J3",
+          "name": "Log completed service",
+          "steps": "Owner logs service → date, odometer, cost, vendor, notes, receipt photo → service record added to history → next service due recalculated",
+          "clicks": 3
+        },
+        {
+          "id": "FA4-J4",
+          "name": "View maintenance history",
+          "steps": "Owner opens vehicle → Maintenance tab → sees chronological history filterable by type → running cost total",
+          "clicks": 2
+        },
+        {
+          "id": "FA4-J5",
+          "name": "Fleet-wide maintenance overview",
+          "steps": "Owner opens Maintenance from sidebar → sees what's due this week/month across all vehicles → sorted by urgency",
+          "clicks": 1
+        }
+      ],
+      "acceptance_criteria": [
+        "Service schedules support mileage-based, time-based, or dual triggers",
+        "Alerts fire at configurable warning thresholds (e.g., 500mi before, 2 weeks before)",
+        "Maintenance cost tracking with per-vehicle and fleet-wide totals",
+        "Common service types pre-populated (oil, tires, brakes, filters, fluids, belts, battery)",
+        "Custom service types supported",
+        "Receipt photo upload on service records",
+        "Completed service resets the schedule countdown automatically"
+      ]
+    },
+    "FA5": {
+      "id": "FA5",
+      "name": "Driver Management & Auth",
+      "priority": 5,
+      "screens": [
+        "S1-login",
+        "S2-admin-setup",
+        "S7-driver-list",
+        "S8-driver-detail",
+        "S12-driver-home",
+        "S14-driver-vehicle-select",
+        "S15-privacy-notice"
+      ],
+      "user_journeys": [
+        {
+          "id": "FA5-J1",
+          "name": "Create driver profile",
+          "steps": "Owner creates driver → name, phone, email, license number, license expiry, photo → driver receives login credentials",
+          "clicks": 2
+        },
+        {
+          "id": "FA5-J2",
+          "name": "Assign driver to vehicle (assigned model)",
+          "steps": "Owner assigns driver to vehicle → one driver per vehicle at a time → assignment history tracked",
+          "clicks": 3
+        },
+        {
+          "id": "FA5-J3",
+          "name": "Driver logs in (assigned model)",
+          "steps": "Driver logs in → sees their assigned vehicle → current status, next service due, pending inspections → tracking-active indicator visible",
+          "clicks": 1
+        },
+        {
+          "id": "FA5-J4",
+          "name": "Driver checks into pool vehicle",
+          "steps": "Driver logs in → sees available vehicles list → picks one → system creates temporal assignment → pre-trip inspection prompted",
+          "clicks": 2
+        },
+        {
+          "id": "FA5-J5",
+          "name": "View driver history",
+          "steps": "Owner opens driver detail → sees all vehicles they've driven, duration per vehicle, assignment history",
+          "clicks": 2
+        }
+      ],
+      "acceptance_criteria": [
+        "Two roles: admin (owner/manager) and driver",
+        "Driver sees only their assigned vehicle(s)",
+        "Assignment history tracked with timestamps (who drove what, when)",
+        "License expiry alerts surface on dashboard and driver list",
+        "Driver login works on mobile browser (responsive)",
+        "Pool mode: driver selects from available vehicles, temporal assignment created",
+        "Assigned mode: driver sees their primary vehicle on login",
+        "First-login privacy notice shown and must be acknowledged before tracking begins",
+        "Tracking-active indicator visible in driver UI at all times when tracking is on",
+        "End-shift toggle available to driver — stops tracking until next shift",
+        "Tracking schedule configurable by admin (e.g., 07:00-18:00 Mon-Fri) — on by default",
+        "Per-driver data export (JSON/CSV) for GDPR right of access",
+        "Per-driver data hard delete for GDPR right to erasure"
+      ]
+    },
+    "FA6": {
+      "id": "FA6",
+      "name": "Inspections & Compliance",
+      "priority": 6,
+      "screens": [
+        "S10-inspection-templates",
+        "S13-driver-inspection"
+      ],
+      "user_journeys": [
+        {
+          "id": "FA6-J1",
+          "name": "Create inspection template",
+          "steps": "Owner creates template → name, list of check items (tires, lights, brakes, fluids, seatbelt...) → assigns to vehicle type",
+          "clicks": 2
+        },
+        {
+          "id": "FA6-J2",
+          "name": "Driver completes pre-trip inspection",
+          "steps": "Driver opens inspection → sees checklist → marks each item pass/fail/NA → adds notes and photos for failures → submits",
+          "clicks": 2
+        },
+        {
+          "id": "FA6-J3",
+          "name": "Admin reviews inspections",
+          "steps": "Owner views inspections → sees pass rate, outstanding failures → clicks inspection to see detail with photos",
+          "clicks": 3
+        },
+        {
+          "id": "FA6-J4",
+          "name": "Compliance tracking",
+          "steps": "System tracks inspection frequency per vehicle → alerts if vehicle hasn't been inspected on schedule → compliance view shows current/overdue status",
+          "clicks": 1
+        }
+      ],
+      "acceptance_criteria": [
+        "Customizable checklist templates with different templates per vehicle type",
+        "Photo attachment on failed inspection items",
+        "Inspection history per vehicle with pass/fail summary",
+        "Compliance view: which vehicles are current vs overdue on inspections",
+        "Inspection submissions timestamped and immutable (audit trail)",
+        "Inspection frequency alerts configurable (e.g., daily pre-trip required)",
+        "Disclaimer: not a tachograph, ELD, or DVIR-compliant system"
+      ]
+    }
+  },
+  "library_heuristics": [],
+  "reference_products": [],
+  "factory_decisions": [],
+  "factory_questions": [],
+  "deployment_url": null,
+  "implemented": [],
+  "skipped": [],
+  "divergences": [],
+  "decomposition_strategy": {
+    "profile": "full-stack",
+    "entities": [
+      "vehicle",
+      "position",
+      "trip",
+      "driver",
+      "maintenance",
+      "inspection"
+    ],
+    "integrations": [
+      "postgresql",
+      "postgis"
+    ],
+    "architecture_map": {}
+  },
+  "infrastructure": {
+    "deployment_method": "docker-compose",
+    "database_type": "postgresql+postgis",
+    "staging_url": null,
+    "readiness": {
+      "posthog": true,
+      "sentry": false,
+      "supabase": false,
+      "cloudflare": false
+    }
+  },
+  "retry_counts": {},
+  "evaluator_observations": [],
+  "previous_evaluations": [],
+  "evaluation_deltas": []
+}

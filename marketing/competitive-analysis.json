@@ -1,0 +1,57 @@
+{
+  "analysis_date": "2026-03-29",
+  "market_gap": "No production-quality open-source fleet management platform exists. Traccar covers GPS tracking only. Full lifecycle (GPS + maintenance + drivers + inspections + compliance) has no open-source option.",
+  "positioning": "Nextcloud for fleet management — credible open-source alternative to enterprise platforms",
+  "competitors": [
+    {
+      "name": "Samsara",
+      "target": "Enterprise (50+ vehicles)",
+      "pricing": "$27-60/vehicle/month, 3-year contracts",
+      "strengths": "Best hardware+software integration, AI dashcams",
+      "weakness_for_smb": "Price, contract length, enterprise complexity"
+    },
+    {
+      "name": "Verizon Connect",
+      "target": "Mid-market to enterprise",
+      "pricing": "$25-45/vehicle/month, 3-year contracts",
+      "strengths": "Large install base, comprehensive features",
+      "weakness_for_smb": "Opaque pricing, long contracts, complex UI"
+    },
+    {
+      "name": "Fleetio",
+      "target": "SMB to mid-market (5+ vehicles)",
+      "pricing": "$5-10/vehicle/month (no GPS), GPS add-on $15-30+ extra",
+      "strengths": "Best SMB maintenance platform, clean UX, transparent pricing",
+      "weakness_for_smb": "Not a full GPS platform — need separate GPS provider"
+    },
+    {
+      "name": "ClearPathGPS",
+      "target": "SMB (5-100 vehicles)",
+      "pricing": "$20-22/vehicle/month, no long-term contract",
+      "strengths": "Month-to-month, competitive pricing, SMB focus",
+      "weakness_for_smb": "Smaller ecosystem"
+    },
+    {
+      "name": "GPS Trackit",
+      "target": "SMB (5-50 vehicles)",
+      "pricing": "$20-25/vehicle/month, 2-3 year terms",
+      "strengths": "Targets small fleets, lower price",
+      "weakness_for_smb": "Limited API, hardware lock-in"
+    },
+    {
+      "name": "Traccar (open source)",
+      "target": "Developers / self-hosters",
+      "pricing": "Free (Apache 2.0)",
+      "strengths": "2000+ GPS device protocols, self-hostable, great tracking",
+      "weakness_for_smb": "GPS tracking ONLY — no maintenance, drivers, inspections, fleet management"
+    }
+  ],
+  "annual_cost_10_vehicles": {
+    "samsara": "$3,240-$7,200",
+    "verizon_connect": "$3,000-$5,400",
+    "gps_trackit": "$2,400-$3,000",
+    "clearpathgps": "$2,400-$2,640",
+    "fleetio_with_gps": "$3,000-$4,800",
+    "openfleet": "$0 (hosting only: ~$60-600/year for VPS)"
+  }
+}
