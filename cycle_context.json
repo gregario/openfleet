@@ -1812,5 +1812,395 @@
     "project_ref": "vbjygbozhkjetufirrpv",
     "slot_acquired": true,
     "connection_string": "https://vbjygbozhkjetufirrpv.supabase.co"
+  },
+  "product_walk": {
+    "timestamp": "2026-04-01T14:32:34.245251+00:00",
+    "scope": "full",
+    "screens_walked": 4,
+    "screens": [
+      {
+        "route": "/",
+        "actual_url": "/login",
+        "behavior": "Redirects to /login",
+        "title": "OpenFleet",
+        "load_time_ms": 253,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "screenshot": "screenshots/cycle-1/walk/login.png",
+        "accessibility": {
+          "landmarks": [
+            "alert"
+          ],
+          "headings": [
+            {
+              "level": 1,
+              "text": "OpenFleet"
+            }
+          ],
+          "aria_labels": [],
+          "form_labels": [
+            "Email",
+            "Password"
+          ],
+          "interactive_elements": 3,
+          "summary": "Login form with h1 heading, 2 labeled text inputs (email, password), 1 submit button, 1 empty alert container for error messages. No landmark nav wrapping the form."
+        },
+        "anomalies": []
+      },
+      {
+        "route": "/login",
+        "actual_url": "/login",
+        "behavior": "Renders login form",
+        "title": "OpenFleet",
+        "load_time_ms": 253,
+        "console_errors": 0,
+        "console_warnings": 1,
+        "screenshot": "screenshots/cycle-1/walk/login.png",
+        "accessibility": {
+          "landmarks": [
+            "alert"
+          ],
+          "headings": [
+            {
+              "level": 1,
+              "text": "OpenFleet"
+            }
+          ],
+          "aria_labels": [],
+          "form_labels": [
+            "Email",
+            "Password"
+          ],
+          "interactive_elements": 3,
+          "summary": "Login form with h1 heading, 2 labeled text inputs (email type, password type), both with required attribute and placeholder text. 1 submit button (Sign in). 1 empty alert container. Console warning about preloaded font not used within load window."
+        },
+        "anomalies": [
+          {
+            "id": "A1",
+            "type": "warning",
+            "description": "Console warning: preloaded font resource (woff2) not used within a few seconds of window load event",
+            "screenshot": null,
+            "severity_hint": "low"
+          }
+        ]
+      },
+      {
+        "route": "/dashboard",
+        "actual_url": "/dashboard",
+        "behavior": "Renders dashboard layout with sidebar, map area (error boundary triggered), and fleet status panel",
+        "title": "OpenFleet",
+        "load_time_ms": 84,
+        "console_errors": 6,
+        "console_warnings": 0,
+        "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+        "accessibility": {
+          "landmarks": [
+            "alert",
+            "complementary",
+            "navigation",
+            "main"
+          ],
+          "headings": [
+            {
+              "level": 2,
+              "text": "Unable to load map"
+            },
+            {
+              "level": 2,
+              "text": "Fleet Status"
+            }
+          ],
+          "aria_labels": [
+            "Open sidebar"
+          ],
+          "form_labels": [],
+          "interactive_elements": 7,
+          "summary": "3-column layout: left sidebar (complementary landmark with navigation containing 6 links: Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings + version text 'OpenFleet v0.1'), main content area showing error boundary ('Unable to load map' h2 + description + 'Try again' button), right panel ('Fleet Status' h2 + placeholder text). Alert landmark present but empty. Dashboard link shows active/highlighted state."
+        },
+        "anomalies": [
+          {
+            "id": "A2",
+            "type": "console-error",
+            "description": "WebGL context creation error: 'Failed to initialize WebGL' when map component attempts to render MapLibre GL. Error includes ANGLE/SwiftShader details. This is expected in headless Chromium without GPU \u2014 the error boundary catches it correctly and shows 'Unable to load map'",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+            "severity_hint": "info-headless-only"
+          },
+          {
+            "id": "A3",
+            "type": "network-404",
+            "description": "5 navigation routes return 404 when prefetched by Next.js RSC: /vehicles, /drivers, /maintenance, /inspections, /settings. These pages do not exist yet.",
+            "screenshot": null,
+            "severity_hint": "expected-not-yet-built"
+          },
+          {
+            "id": "A4",
+            "type": "network",
+            "description": "SSE endpoint GET /api/positions/stream shows 'pending' status \u2014 connection opened and held open for real-time position updates. This is expected SSE behavior.",
+            "screenshot": null,
+            "severity_hint": "info-expected"
+          },
+          {
+            "id": "A5",
+            "type": "layout",
+            "description": "Fleet Status panel shows placeholder text 'Vehicle statuses and alerts will appear here.' with no vehicle data populated, despite /api/vehicles returning 7 vehicles. The panel does not fetch or display vehicle status data.",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+            "severity_hint": "medium"
+          }
+        ]
+      },
+      {
+        "route": "/vehicles",
+        "actual_url": "/vehicles",
+        "behavior": "Renders Next.js default 404 page (no sidebar layout)",
+        "title": "OpenFleet",
+        "load_time_ms": null,
+        "console_errors": 0,
+        "console_warnings": 0,
+        "screenshot": "screenshots/cycle-1/walk/vehicles-404.png",
+        "accessibility": {
+          "landmarks": [],
+          "headings": [
+            {
+              "level": 1,
+              "text": "404"
+            },
+            {
+              "level": 2,
+              "text": "This page could not be found."
+            }
+          ],
+          "aria_labels": [],
+          "form_labels": [],
+          "interactive_elements": 0,
+          "summary": "Next.js default 404 page. No sidebar layout. Two headings only."
+        },
+        "anomalies": [
+          {
+            "id": "A6",
+            "type": "navigation",
+            "description": "Clicking 'Vehicles' sidebar link navigates to /vehicles which shows Next.js default 404 page without the admin sidebar layout wrapper. The 404 page does not preserve the app chrome.",
+            "screenshot": "screenshots/cycle-1/walk/vehicles-404.png",
+            "severity_hint": "medium"
+          }
+        ]
+      }
+    ],
+    "journeys": [
+      {
+        "id": "FA1-J1",
+        "name": "View live fleet map",
+        "steps": [
+          {
+            "action": "Navigate to /",
+            "result": "Redirected to /login",
+            "screenshot": "screenshots/cycle-1/walk/login.png"
+          },
+          {
+            "action": "Enter valid credentials (sarah@clearwaterplumbing.co.uk / openfleet123)",
+            "result": "Login form accepted credentials",
+            "screenshot": null
+          },
+          {
+            "action": "Click Sign in",
+            "result": "POST /api/auth/login returns 200, redirected to /dashboard",
+            "screenshot": null
+          },
+          {
+            "action": "Observe dashboard",
+            "result": "Error boundary shown: 'Unable to load map' with 'Try again' button. WebGL failed in headless browser. Map component attempted MapLibre GL initialization but WebGL context creation failed. Error boundary caught the error and displayed fallback UI. In a real browser with GPU, the map would render.",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png"
+          }
+        ],
+        "outcome": "partially-observable",
+        "notes": "Map rendering cannot be verified in headless Chromium due to WebGL limitation. Error boundary UX is confirmed working. Login flow and auth redirect work correctly. SSE stream connection to /api/positions/stream is established (pending). 7 vehicles exist in database via /api/vehicles."
+      },
+      {
+        "id": "FA1-J2",
+        "name": "Inspect vehicle from map",
+        "steps": [
+          {
+            "action": "Attempt to click vehicle marker on map",
+            "result": "Not possible \u2014 map did not render due to WebGL failure in headless browser",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png"
+          }
+        ],
+        "outcome": "not-observable",
+        "notes": "Vehicle markers and popups cannot be tested in headless Chromium. Map requires WebGL which is unavailable in this environment. The /api/vehicles endpoint confirms 7 vehicles exist with data (name, make, model, year, licensePlate, status, odometer, motionState, trafficLight) but all have latestPosition: null."
+      }
+    ],
+    "responsive": {
+      "tested_routes": [
+        "/login",
+        "/dashboard"
+      ],
+      "breakpoints": [
+        {
+          "width": 320,
+          "height": 568,
+          "label": "mobile-small",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-320px.png",
+            "dashboard_sidebar_open": "screenshots/cycle-1/walk/dashboard-320px-sidebar-open.png"
+          },
+          "observations": [
+            "Sidebar collapses to off-screen, hamburger button ('Open sidebar') appears in top-left header bar",
+            "Hamburger button opens sidebar as overlay with semi-transparent backdrop",
+            "Map area and Fleet Status panel are displayed side-by-side, both very narrow and cramped",
+            "Error boundary text wraps across multiple lines due to narrow width",
+            "'Try again' button text wraps to two lines",
+            "Header shows 'OpenFleet' text next to hamburger icon"
+          ]
+        },
+        {
+          "width": 375,
+          "height": 812,
+          "label": "mobile",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-responsive-mobile.png",
+            "login": "screenshots/cycle-1/walk/login-responsive-mobile.png"
+          },
+          "observations": [
+            "Login: form card renders well, vertically centered, responsive width",
+            "Dashboard: sidebar visible but nav labels truncated (only icons and partial text visible), map and fleet status side-by-side but cramped"
+          ]
+        },
+        {
+          "width": 768,
+          "height": 1024,
+          "label": "tablet",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-responsive-tablet.png",
+            "login": "screenshots/cycle-1/walk/login-responsive-tablet.png"
+          },
+          "observations": [
+            "Login: form centered, good proportions",
+            "Dashboard: sidebar partially visible (shows icons, text clipped at left edge), main content shows error state, Fleet Status panel visible on right",
+            "Sidebar nav labels are clipped/truncated \u2014 only partial text visible"
+          ]
+        },
+        {
+          "width": 1280,
+          "height": 720,
+          "label": "desktop",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-responsive-desktop.png",
+            "login": "screenshots/cycle-1/walk/login-responsive-desktop.png"
+          },
+          "observations": [
+            "Login: centered card, clean layout",
+            "Dashboard: sidebar fully visible with icons and labels, nav text partially truncated on left edge, map area fills center, Fleet Status on right"
+          ]
+        },
+        {
+          "width": 1440,
+          "height": 900,
+          "label": "desktop-large",
+          "screenshots": {
+            "dashboard": "screenshots/cycle-1/walk/dashboard-1440px.png"
+          },
+          "observations": [
+            "Full 3-column layout renders cleanly: sidebar (full nav with icons and labels), map area (center, large), Fleet Status panel (right)",
+            "All sidebar nav items fully readable",
+            "Good proportions between columns"
+          ]
+        }
+      ],
+      "anomalies": [
+        {
+          "id": "A7",
+          "type": "responsive",
+          "description": "At 320px and 375px mobile: map area and Fleet Status panel remain side-by-side instead of stacking vertically. Both panels are very narrow and content is cramped.",
+          "screenshot": "screenshots/cycle-1/walk/dashboard-320px.png",
+          "severity_hint": "medium"
+        },
+        {
+          "id": "A8",
+          "type": "responsive",
+          "description": "At 768px tablet and 1280px desktop: sidebar nav item labels appear partially clipped at the left edge of the viewport. Text starts mid-word for some items.",
+          "screenshot": "screenshots/cycle-1/walk/dashboard-responsive-tablet.png",
+          "severity_hint": "medium"
+        }
+      ]
+    },
+    "forms": [
+      {
+        "route": "/login",
+        "form_name": "Login form",
+        "tests": [
+          {
+            "scenario": "empty-submission",
+            "inputs": {
+              "email": "",
+              "password": ""
+            },
+            "expected": "Validation error shown",
+            "actual": "No network request made. HTML5 required attribute prevents submission via native browser validation. No custom error message shown in the alert container.",
+            "screenshot": "screenshots/cycle-1/walk/login-empty-submit.png",
+            "passed": true,
+            "notes": "Client-side validation via HTML5 required attribute. Native browser tooltip appears but is not visible in headless screenshot."
+          },
+          {
+            "scenario": "invalid-credentials",
+            "inputs": {
+              "email": "wrong@email.com",
+              "password": "wrongpassword"
+            },
+            "expected": "Error message shown",
+            "actual": "POST /api/auth/login returns 401. Error message 'Invalid email or password' appears in red text between password field and Sign in button. Alert landmark contains the error paragraph.",
+            "screenshot": "screenshots/cycle-1/walk/login-invalid-creds.png",
+            "passed": true,
+            "notes": "Clear error message, appropriate red color, good positioning."
+          },
+          {
+            "scenario": "valid-credentials",
+            "inputs": {
+              "email": "sarah@clearwaterplumbing.co.uk",
+              "password": "openfleet123"
+            },
+            "expected": "Redirect to /dashboard",
+            "actual": "POST /api/auth/login returns 200 (218ms response). Client redirects to /dashboard. Dashboard renders with sidebar, map area (error boundary due to WebGL), and fleet status panel.",
+            "screenshot": "screenshots/cycle-1/walk/dashboard.png",
+            "passed": true,
+            "notes": "Auth flow works end-to-end. Session cookie set. Subsequent navigation to /dashboard succeeds without re-authentication."
+          }
+        ]
+      }
+    ],
+    "api_checks": [
+      {
+        "endpoint": "GET /api/health",
+        "status": 200,
+        "response_summary": "status: ok, database: connected",
+        "notes": "Health endpoint confirms database connectivity"
+      },
+      {
+        "endpoint": "GET /api/vehicles",
+        "status": 200,
+        "response_summary": "7 vehicles returned (Van 01-08, no Van 07). Makes: Ford, Mercedes-Benz, Vauxhall, Volkswagen. All motionState: PARKED, all latestPosition: null, 1 IN_SHOP (Van 06), 6 ACTIVE.",
+        "notes": "Vehicle data is seeded but no position data exists. All trafficLight values are GREEN."
+      },
+      {
+        "endpoint": "GET /api/positions",
+        "status": 405,
+        "response_summary": "Method not allowed",
+        "notes": "Positions endpoint likely accepts POST only for ingesting position data"
+      },
+      {
+        "endpoint": "GET /api/positions/stream",
+        "status": "pending (SSE)",
+        "response_summary": "Server-Sent Events connection stays open",
+        "notes": "SSE endpoint for real-time position streaming is active and holds connection open"
+      }
+    ],
+    "keyboard_navigation": {
+      "tested_on": "/dashboard",
+      "tab_order": "Tab cycles through sidebar navigation links (Dashboard, Vehicles, Drivers, Maintenance, Inspections, Settings) then to 'Try again' button in main content",
+      "observations": [
+        "Tab key navigates through sidebar links in order",
+        "Active element correctly reported as anchor tags with appropriate text content",
+        "Focus indicators not visually verified in headless screenshots"
+      ]
+    },
+    "anomalies_total": 8
   }
 }
