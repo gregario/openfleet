@@ -57,17 +57,26 @@ const TRAFFIC_LIGHT_LABELS: Record<string, string> = {
   RED: 'Overdue',
 };
 
+function escapeHTML(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 export function buildPopupHTML(props: VehicleFeature['properties']): string {
   const statusLabel = TRAFFIC_LIGHT_LABELS[props.trafficLight] ?? props.trafficLight;
   const motionLabel = MOTION_STATE_LABELS[props.motionState] ?? props.motionState;
-  const driverLabel = props.driverName || 'Unassigned';
+  const driverLabel = escapeHTML(props.driverName || 'Unassigned');
   const speedLine = props.speed != null
     ? `<div style="font-size:12px;color:#64748b;">${Math.round(props.speed)} km/h · ${motionLabel}</div>`
     : `<div style="font-size:12px;color:#64748b;">${motionLabel}</div>`;
 
   return `<div style="min-width:180px;font-family:system-ui,sans-serif;">
-  <div style="font-weight:600;font-size:14px;margin-bottom:2px;">${props.name}</div>
-  <div style="font-size:12px;color:#64748b;margin-bottom:6px;">${props.licensePlate}</div>
+  <div style="font-weight:600;font-size:14px;margin-bottom:2px;">${escapeHTML(props.name)}</div>
+  <div style="font-size:12px;color:#64748b;margin-bottom:6px;">${escapeHTML(props.licensePlate)}</div>
   <div style="font-size:12px;margin-bottom:2px;">
     <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${props.color};margin-right:4px;vertical-align:middle;"></span>
     ${statusLabel}

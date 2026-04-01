@@ -23,6 +23,8 @@ const makeVehicle = (overrides: Partial<VehicleMarker> = {}): VehicleMarker => (
   ...overrides,
 });
 
+// @criterion: fa1-traffic-light-002
+// @criterion-hash: 28d2034f3514
 describe('trafficLightColor', () => {
   it('returns green hex for GREEN status', () => {
     expect(trafficLightColor('GREEN')).toBe('#22c55e');
@@ -37,6 +39,8 @@ describe('trafficLightColor', () => {
   });
 });
 
+// @criterion: fa1-traffic-light-002, fa1-direction-005, fa1-popup-006, fa1-map-load-001
+// @criterion-hash: 28d2034f3514, 73e834c496a9, 72f318134255, ab84bbc818bc
 describe('vehiclesToGeoJSON', () => {
   it('converts an empty array to empty FeatureCollection', () => {
     const result = vehiclesToGeoJSON([]);
@@ -133,6 +137,8 @@ const makePopupProps = (overrides: Partial<VehicleFeature['properties']> = {}): 
   ...overrides,
 });
 
+// @criterion: fa1-popup-006, po-check-002
+// @criterion-hash: 72f318134255, c00a423264dc
 describe('buildPopupHTML', () => {
   it('includes vehicle name and license plate', () => {
     const html = buildPopupHTML(makePopupProps());
@@ -169,13 +175,39 @@ describe('buildPopupHTML', () => {
     expect(html).toContain('View details');
   });
 
+  it('AC-fa1-xss-001: escapes HTML in user-controllable fields to prevent XSS', () => {
+    const html = buildPopupHTML(makePopupProps({
+      name: '<img onerror=alert(1) src=x>',
+      licensePlate: '<script>alert("xss")</script>',
+      driverName: '"><svg onload=alert(1)>',
+    }));
+    expect(html).not.toContain('<img onerror');
+    expect(html).not.toContain('<script>');
+    expect(html).not.toContain('<svg onload');
+    // Escaped versions should be present
+    expect(html).toContain('&lt;img');
+    expect(html).toContain('&lt;script&gt;');
+    expect(html).toContain('&lt;svg');
+  });
+
   it('includes traffic light status indicator', () => {
     const html = buildPopupHTML(makePopupProps({ trafficLight: 'RED', color: '#ef4444' }));
     expect(html).toContain('#ef4444');
     expect(html).toContain('Overdue');
   });
+
+  it('REGRESSION: fix-qa-xss-popup — ampersands and quotes in names are escaped', () => {
+    const html = buildPopupHTML(makePopupProps({
+      name: 'Van "A&B"',
+      driverName: "O'Connor & Sons",
+    }));
+    expect(html).toContain('Van &quot;A&amp;B&quot;');
+    expect(html).toContain("O&#39;Connor &amp; Sons");
+  });
 });
 
+// @criterion: fa1-persistence-007
+// @criterion-hash: d4828da02a15
 describe('saveMapViewState / loadMapViewState', () => {
   const store: Record<string, string> = {};
   const mockLocalStorage = {
