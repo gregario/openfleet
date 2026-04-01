@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { positionBatchSchema } from "@/lib/validators";
+import { emitPositionUpdates, type PositionUpdate } from "@/lib/position-events";
 
 export async function POST(request: Request) {
   try {
@@ -73,6 +74,31 @@ export async function POST(request: Request) {
         });
       }),
     );
+
+    // Emit position updates to SSE subscribers
+    const updates: PositionUpdate[] = Array.from(latestByVehicle.entries()).map(
+      ([vehicleId, pos]) => {
+        const speed = pos.speed ?? 0;
+        let motionState: "MOVING" | "IDLE" | "PARKED";
+        if (speed > 5) {
+          motionState = "MOVING";
+        } else if (speed > 0.5) {
+          motionState = "IDLE";
+        } else {
+          motionState = "PARKED";
+        }
+        return {
+          vehicleId,
+          latitude: pos.latitude,
+          longitude: pos.longitude,
+          speed: pos.speed ?? null,
+          heading: pos.heading ?? null,
+          motionState,
+          timestamp: new Date(pos.timestamp).toISOString(),
+        };
+      },
+    );
+    emitPositionUpdates(updates);
 
     return NextResponse.json({
       accepted: created.count,
