@@ -17,9 +17,10 @@ const DEFAULT_ZOOM = 11;
 
 interface FleetMapProps {
   vehicles: VehicleMarker[];
+  onLoad?: () => void;
 }
 
-export function FleetMap({ vehicles }: FleetMapProps) {
+export function FleetMap({ vehicles, onLoad }: FleetMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
 
@@ -198,6 +199,8 @@ export function FleetMap({ vehicles }: FleetMapProps) {
       map.on('mouseleave', 'vehicle-markers', () => {
         map.getCanvas().style.cursor = '';
       });
+
+      onLoad?.();
     });
 
     mapRef.current = map;
