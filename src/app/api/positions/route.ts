@@ -95,7 +95,14 @@ export async function POST(request: Request) {
       const motionState = computeMotionState(pos.speed ?? 0);
       return supabase
         .from("vehicles")
-        .update({ motion_state: motionState })
+        .update({
+          motion_state: motionState,
+          latest_latitude: pos.latitude,
+          latest_longitude: pos.longitude,
+          latest_speed: pos.speed ?? null,
+          latest_heading: pos.heading ?? null,
+          latest_position_at: new Date(pos.timestamp).toISOString(),
+        })
         .eq("id", vehicleId);
     }),
   );

@@ -1,41 +1,59 @@
-import { prisma } from '@/lib/db';
+import { supabase } from '@/lib/db';
 import { DashboardMap } from '@/components/dashboard-map';
 
 export default async function DashboardPage() {
-  const vehicles = await prisma.vehicle.findMany({
-    where: { status: { not: 'DECOMMISSIONED' } },
-    select: {
-      id: true,
-      name: true,
-      trafficLight: true,
-      motionState: true,
-      positions: {
-        orderBy: { timestamp: 'desc' },
-        take: 1,
-        select: {
-          latitude: true,
-          longitude: true,
-          speed: true,
-          heading: true,
-          timestamp: true,
-        },
-      },
-    },
-    orderBy: { name: 'asc' },
-  });
+  // Fetch vehicles with latest position (stored on vehicle row during ingestion)
+  const { data: vehicles } = await supabase
+    .from('vehicles')
+    .select('id, name, license_plate, traffic_light, motion_state, latest_latitude, latest_longitude, latest_speed, latest_heading, latest_position_at')
+    .neq('status', 'DECOMMISSIONED')
+    .order('name', { ascending: true });
 
-  const vehiclesWithPosition = vehicles.map((v) => ({
+  const vehicleList = vehicles ?? [];
+  const vehicleIds = vehicleList.map((v: { id: string }) => v.id);
+
+  // Fetch active driver assignments
+  const driverNameByVehicle = new Map<string, string>();
+  if (vehicleIds.length > 0) {
+    const { data: assignments } = await supabase
+      .from('driver_assignments')
+      .select('vehicle_id, users(name)')
+      .in('vehicle_id', vehicleIds)
+      .eq('is_active', true);
+
+    for (const a of assignments ?? []) {
+      if (!driverNameByVehicle.has(a.vehicle_id)) {
+        const user = Array.isArray(a.users) ? a.users[0] : a.users;
+        if (user?.name) driverNameByVehicle.set(a.vehicle_id, user.name);
+      }
+    }
+  }
+
+  const vehiclesWithPosition = vehicleList.map((v: {
+    id: string;
+    name: string;
+    license_plate: string;
+    traffic_light: string;
+    motion_state: string;
+    latest_latitude: number | null;
+    latest_longitude: number | null;
+    latest_speed: number | null;
+    latest_heading: number | null;
+    latest_position_at: string | null;
+  }) => ({
     id: v.id,
     name: v.name,
-    trafficLight: v.trafficLight,
-    motionState: v.motionState,
-    latestPosition: v.positions[0]
+    licensePlate: v.license_plate,
+    trafficLight: v.traffic_light as 'GREEN' | 'ORANGE' | 'RED',
+    motionState: v.motion_state as 'MOVING' | 'IDLE' | 'PARKED',
+    driverName: driverNameByVehicle.get(v.id) ?? null,
+    latestPosition: v.latest_latitude != null && v.latest_longitude != null
       ? {
-          latitude: v.positions[0].latitude,
-          longitude: v.positions[0].longitude,
-          speed: v.positions[0].speed,
-          heading: v.positions[0].heading,
-          timestamp: v.positions[0].timestamp.toISOString(),
+          latitude: v.latest_latitude,
+          longitude: v.latest_longitude,
+          speed: v.latest_speed,
+          heading: v.latest_heading,
+          timestamp: v.latest_position_at,
         }
       : null,
   }));

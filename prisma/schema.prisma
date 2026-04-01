@@ -6,6 +6,7 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
+  directUrl  = env("DIRECT_URL")
   extensions = [postgis]
 }
 
@@ -86,10 +87,15 @@ model Vehicle {
   photoUrl     String?       @map("photo_url")
   status       VehicleStatus @default(ACTIVE)
   odometer     Int           @default(0) // in kilometers
-  motionState  MotionState   @default(PARKED) @map("motion_state")
-  trafficLight TrafficLight  @default(GREEN) @map("traffic_light")
-  createdAt    DateTime      @default(now()) @map("created_at")
-  updatedAt    DateTime      @updatedAt @map("updated_at")
+  motionState       MotionState   @default(PARKED) @map("motion_state")
+  trafficLight      TrafficLight  @default(GREEN) @map("traffic_light")
+  latestLatitude    Float?        @map("latest_latitude")
+  latestLongitude   Float?        @map("latest_longitude")
+  latestSpeed       Float?        @map("latest_speed")
+  latestHeading     Float?        @map("latest_heading")
+  latestPositionAt  DateTime?     @map("latest_position_at")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
 
   // Relations
   positions         Position[]
