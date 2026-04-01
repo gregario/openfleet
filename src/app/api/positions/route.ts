@@ -3,8 +3,14 @@ import { supabase } from "@/lib/db";
 import { positionBatchSchema } from "@/lib/validators";
 import { emitPositionUpdates, type PositionUpdate } from "@/lib/position-events";
 import { getApiSession, isValidApiKey } from "@/lib/auth";
+import { rateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limit: 100 requests/minute per IP
+  const ip = getClientIp(request);
+  const { allowed } = rateLimit(`positions:${ip}`, 100, 60_000);
+  if (!allowed) return rateLimitResponse(60);
+
   // Require either admin session or valid API key (for simulator)
   const session = await getApiSession();
   if (!session && !isValidApiKey(request)) {

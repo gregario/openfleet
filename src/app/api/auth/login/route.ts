@@ -3,8 +3,14 @@ import { supabase } from "@/lib/db";
 import { getSession } from "@/lib/session";
 import { verifyPassword } from "@/lib/auth";
 import { loginSchema } from "@/lib/validators";
+import { rateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Rate limit: 5 attempts/minute per IP
+  const ip = getClientIp(request);
+  const { allowed } = rateLimit(`login:${ip}`, 5, 60_000);
+  if (!allowed) return rateLimitResponse(60);
+
   const body = await request.json();
   const parsed = loginSchema.safeParse(body);
 
