@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TrafficLight } from './traffic-light';
 import { VehicleMiniMap } from './vehicle-mini-map';
@@ -30,6 +30,18 @@ export interface VehicleDetailData {
   updatedAt: string;
 }
 
+interface EditFormData {
+  name: string;
+  make: string;
+  model: string;
+  year: string;
+  vin: string;
+  licensePlate: string;
+  color: string;
+  odometer: string;
+  status: string;
+}
+
 const TABS = [
   { id: 'overview', label: 'Overview' },
   { id: 'trips', label: 'Trips' },
@@ -46,15 +58,87 @@ const TRAFFIC_LIGHT_LABELS: Record<string, string> = {
   RED: 'Overdue',
 };
 
+const STATUS_OPTIONS = [
+  { value: 'ACTIVE', label: 'Active' },
+  { value: 'IN_SHOP', label: 'In Shop' },
+  { value: 'DECOMMISSIONED', label: 'Decommissioned' },
+];
+
 interface VehicleDetailProps {
   vehicle: VehicleDetailData;
 }
 
-export function VehicleDetail({ vehicle }: VehicleDetailProps) {
+export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
+  const [vehicle, setVehicle] = useState(initialVehicle);
   const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+  const [formData, setFormData] = useState<EditFormData>(vehicleToFormData(vehicle));
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => setToast(null), 5000);
+    return () => clearTimeout(timer);
+  }, [toast]);
+
+  function handleEdit() {
+    setFormData(vehicleToFormData(vehicle));
+    setEditing(true);
+  }
+
+  function handleCancel() {
+    setEditing(false);
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const payload: Record<string, unknown> = {
+        name: formData.name,
+        make: formData.make,
+        model: formData.model,
+        year: Number(formData.year),
+        licensePlate: formData.licensePlate,
+        odometer: Number(formData.odometer),
+        status: formData.status,
+      };
+      if (formData.vin) payload.vin = formData.vin;
+      if (formData.color) payload.color = formData.color;
+
+      const res = await fetch(`/api/vehicles/${vehicle.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const { vehicle: updated } = await res.json();
+        setVehicle({ ...vehicle, ...updated });
+        setEditing(false);
+        setToast(`${updated.name || vehicle.name} saved`);
+      }
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  function handleFieldChange(field: keyof EditFormData, value: string) {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  }
 
   return (
     <div className="space-y-4">
+      {/* Toast */}
+      {toast && (
+        <div
+          role="status"
+          className="fixed right-4 top-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg"
+        >
+          {toast}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
@@ -76,8 +160,136 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
             size="lg"
             label={TRAFFIC_LIGHT_LABELS[vehicle.trafficLight]}
           />
+          {!editing && (
+            <button
+              onClick={handleEdit}
+              className="rounded-md bg-fleet-sidebar px-3 py-1.5 text-sm font-medium text-white hover:bg-fleet-sidebar/90"
+            >
+              Edit
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Edit form */}
+      {editing && (
+        <div className="rounded-lg border border-slate-200 bg-white p-4">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-500">Edit Vehicle</h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="edit-name" className="block text-sm font-medium text-slate-700">Name</label>
+              <input
+                id="edit-name"
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleFieldChange('name', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-make" className="block text-sm font-medium text-slate-700">Make</label>
+              <input
+                id="edit-make"
+                type="text"
+                value={formData.make}
+                onChange={(e) => handleFieldChange('make', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-model" className="block text-sm font-medium text-slate-700">Model</label>
+              <input
+                id="edit-model"
+                type="text"
+                value={formData.model}
+                onChange={(e) => handleFieldChange('model', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-year" className="block text-sm font-medium text-slate-700">Year</label>
+              <input
+                id="edit-year"
+                type="number"
+                value={formData.year}
+                onChange={(e) => handleFieldChange('year', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-license-plate" className="block text-sm font-medium text-slate-700">License Plate</label>
+              <input
+                id="edit-license-plate"
+                type="text"
+                value={formData.licensePlate}
+                onChange={(e) => handleFieldChange('licensePlate', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-vin" className="block text-sm font-medium text-slate-700">VIN</label>
+              <input
+                id="edit-vin"
+                type="text"
+                value={formData.vin}
+                onChange={(e) => handleFieldChange('vin', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-color" className="block text-sm font-medium text-slate-700">Color</label>
+              <input
+                id="edit-color"
+                type="text"
+                value={formData.color}
+                onChange={(e) => handleFieldChange('color', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-odometer" className="block text-sm font-medium text-slate-700">Odometer (km)</label>
+              <input
+                id="edit-odometer"
+                type="number"
+                value={formData.odometer}
+                onChange={(e) => handleFieldChange('odometer', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="edit-status" className="block text-sm font-medium text-slate-700">Status</label>
+              <select
+                id="edit-status"
+                value={formData.status}
+                onChange={(e) => handleFieldChange('status', e.target.value)}
+                className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
+              >
+                {STATUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="rounded-md bg-fleet-sidebar px-4 py-2 text-sm font-medium text-white hover:bg-fleet-sidebar/90 disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : 'Save'}
+            </button>
+            <button
+              onClick={handleCancel}
+              disabled={saving}
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div
@@ -118,6 +330,20 @@ export function VehicleDetail({ vehicle }: VehicleDetailProps) {
       </div>
     </div>
   );
+}
+
+function vehicleToFormData(vehicle: VehicleDetailData): EditFormData {
+  return {
+    name: vehicle.name,
+    make: vehicle.make,
+    model: vehicle.model,
+    year: String(vehicle.year),
+    vin: vehicle.vin || '',
+    licensePlate: vehicle.licensePlate,
+    color: vehicle.color || '',
+    odometer: String(vehicle.odometer),
+    status: vehicle.status,
+  };
 }
 
 function OverviewTab({ vehicle }: { vehicle: VehicleDetailData }) {

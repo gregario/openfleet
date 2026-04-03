@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, fireEvent, within, cleanup } from "@testing-library/react";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
+import { render, screen, fireEvent, within, cleanup, waitFor } from "@testing-library/react";
 import { VehicleDetail, type VehicleDetailData } from "./vehicle-detail";
 
 // Mock the mini-map to avoid WebGL dependency
@@ -126,5 +126,100 @@ describe("VehicleDetail", () => {
     const tablist = screen.getByRole("tablist");
     fireEvent.click(within(tablist).getByRole("tab", { name: "Maintenance" }));
     expect(screen.getByRole("heading", { name: "Maintenance records" })).toBeDefined();
+  });
+});
+
+// @criterion: AC-fix-vehicle-edit — Edit mode, toast, cancel
+describe("VehicleDetail edit mode", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Mock fetch for PUT requests
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
+
+  // AC-1: Edit button visible on vehicle detail page header
+  it("shows an Edit button in the header", () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    expect(screen.getByRole("button", { name: /edit/i })).toBeDefined();
+  });
+
+  // AC-2: Edit mode shows pre-populated form with all editable fields including status dropdown
+  it("clicking Edit switches to edit mode with pre-populated form fields", () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    // Form fields should be pre-populated
+    expect(screen.getByLabelText(/name/i)).toHaveProperty("value", "Van Alpha");
+    expect(screen.getByLabelText(/make/i)).toHaveProperty("value", "Ford");
+    expect(screen.getByLabelText(/model/i)).toHaveProperty("value", "Transit");
+    expect(screen.getByLabelText(/year/i)).toHaveProperty("value", "2022");
+    expect(screen.getByLabelText(/license plate/i)).toHaveProperty("value", "AB12 CDE");
+    expect(screen.getByLabelText(/odometer/i)).toHaveProperty("value", "45000");
+  });
+
+  it("edit mode shows status dropdown with active/in-shop/decommissioned options", () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    const statusSelect = screen.getByLabelText(/status/i);
+    expect(statusSelect).toBeDefined();
+
+    const options = within(statusSelect as HTMLElement).getAllByRole("option");
+    const optionValues = options.map((o) => (o as HTMLOptionElement).value);
+    expect(optionValues).toContain("ACTIVE");
+    expect(optionValues).toContain("IN_SHOP");
+    expect(optionValues).toContain("DECOMMISSIONED");
+  });
+
+  // AC-4: Success toast shown after save, view returns to read-only mode
+  it("shows success toast after save and returns to read-only mode", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ vehicle: { ...baseVehicle, name: "Van Beta" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    // Change the name
+    const nameInput = screen.getByLabelText(/name/i);
+    fireEvent.change(nameInput, { target: { value: "Van Beta" } });
+
+    // Save
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    // Wait for toast and read-only return
+    await waitFor(() => {
+      expect(screen.getByText(/saved/i)).toBeDefined();
+    });
+
+    // Should be back in read-only mode (Edit button visible again)
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /edit/i })).toBeDefined();
+    });
+  });
+
+  // AC-5: Cancel discards changes and returns to read-only view
+  it("cancel discards changes and returns to read-only view", () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    // Change the name
+    const nameInput = screen.getByLabelText(/name/i);
+    fireEvent.change(nameInput, { target: { value: "Modified Name" } });
+
+    // Cancel
+    fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+
+    // Should be back in read-only mode with original name
+    expect(screen.getByText("Van Alpha")).toBeDefined();
+    expect(screen.getByRole("button", { name: /edit/i })).toBeDefined();
   });
 });
