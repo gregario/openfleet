@@ -4308,5 +4308,98 @@
     "anomalies_total": 8
   },
   "_current_milestone": "vehicle-registry",
-  "_current_story": "vehicle-detail"
+  "_current_story": "fix-vehicle-edit",
+  "story_result": {
+    "story_id": "fix-vehicle-edit",
+    "outcome": "pass",
+    "files_changed": [
+      "src/lib/validators.ts",
+      "src/app/api/vehicles/[id]/route.ts",
+      "src/app/api/vehicles/[id]/route.test.ts",
+      "src/components/vehicle-detail.tsx",
+      "src/components/vehicle-detail.test.tsx"
+    ],
+    "tests_added": 12,
+    "tests_passing": 12,
+    "env_limitations": []
+  },
+  "implemented": [
+    {
+      "task": "fix-vehicle-edit",
+      "acceptance_criteria": [
+        "AC-edit-1: Edit button visible on vehicle detail page header",
+        "AC-edit-2: Edit mode shows pre-populated form with all editable fields including status dropdown (active/in-shop/decommissioned)",
+        "AC-edit-3: PUT /api/vehicles/[id] persists updates with Zod validation",
+        "AC-edit-4: Success toast shown after save, view returns to read-only mode",
+        "AC-edit-5: Cancel discards changes and returns to read-only view",
+        "AC-edit-6: Decommissioned vehicles hidden from default map/dashboard views (existing filter integration — REUSE, already implemented in vehicle-list and dashboard-map)"
+      ],
+      "files_changed": [
+        "src/lib/validators.ts",
+        "src/app/api/vehicles/[id]/route.ts",
+        "src/app/api/vehicles/[id]/route.test.ts",
+        "src/components/vehicle-detail.tsx",
+        "src/components/vehicle-detail.test.tsx"
+      ],
+      "tests_added": 12,
+      "tests_passing": 12
+    }
+  ],
+  "skipped": [],
+  "divergences": [],
+  "factory_decisions": [
+    {
+      "decision": "Search Before Building audit for cycle 1 story fix-vehicle-edit",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 2 BUILD (PUT handler, success toast), 3 EXTEND (updateVehicleSchema from createVehicleSchema.partial(), vehicle-detail.tsx with edit mode, route.test.ts with PUT tests), 1 REUSE (decommissioned filter already exists in vehicle-list.tsx and dashboard-map.tsx). Key reuse: same Supabase query/mapping pattern from GET handler, same mock patterns from existing route.test.ts, same form pattern from add-vehicle-form.tsx.",
+      "confidence": "high",
+      "affects": [
+        "src/lib/validators.ts",
+        "src/app/api/vehicles/[id]/route.ts",
+        "src/components/vehicle-detail.tsx"
+      ]
+    },
+    {
+      "decision": "Extracted shared mapVehicleRow helper and VEHICLE_SELECT constant in route.ts",
+      "context": "PUT handler duplicated the same snake_case-to-camelCase mapping and select columns from GET handler",
+      "alternatives_considered": [
+        "Keep duplication — simpler but violates DRY, maintenance risk if columns change",
+        "Move to shared lib — over-engineered for single-file use"
+      ],
+      "rationale": "File-local helper keeps both handlers consistent and reduces blast radius of column additions/renames. Not exported, so no public interface change.",
+      "confidence": "high",
+      "affects": [
+        "src/app/api/vehicles/[id]/route.ts"
+      ]
+    },
+    {
+      "decision": "Inline toast in vehicle-detail.tsx instead of separate Toast component",
+      "context": "No existing toast/notification system in the codebase",
+      "alternatives_considered": [
+        "Create shared Toast component — over-engineered for single use case, only this form needs it right now",
+        "Use a toast library (react-hot-toast, sonner) — adds dependency for one usage"
+      ],
+      "rationale": "Simple fixed-position div with role=status, auto-dismiss via useEffect timer (5s). Can be extracted to shared component when a second consumer appears. Boring technology (McKinley).",
+      "confidence": "high",
+      "affects": [
+        "src/components/vehicle-detail.tsx"
+      ]
+    },
+    {
+      "decision": "updateVehicleSchema uses createVehicleSchema.partial() plus status enum extension",
+      "context": "Edit form needs to accept partial updates with valid status values",
+      "alternatives_considered": [
+        "Separate schema definition — duplicates field definitions",
+        "Add status to createVehicleSchema — status should not be set during creation (defaults to ACTIVE)"
+      ],
+      "rationale": "Deriving from createVehicleSchema ensures field validation stays consistent. .refine() ensures empty payloads are rejected. Status enum limited to ACTIVE/IN_SHOP/DECOMMISSIONED per spec.",
+      "confidence": "high",
+      "affects": [
+        "src/lib/validators.ts",
+        "src/app/api/vehicles/[id]/route.ts"
+      ]
+    }
+  ],
+  "factory_questions": []
 }
