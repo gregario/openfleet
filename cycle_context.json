@@ -482,57 +482,97 @@
   "reference_products": [],
   "factory_decisions": [
     {
-      "decision": "Search Before Building audit for cycle 1 story vehicle-detail",
+      "decision": "Search Before Building audit for cycle 1 story fix-vehicle-edit",
       "context": "Pre-implementation code reuse analysis",
       "alternatives_considered": [],
-      "rationale": "Found: 4 BUILD (GET /api/vehicles/[id], vehicle detail page, VehicleDetail component, VehicleMiniMap component), 2 EXTEND (vehicle-list.tsx with decommissioned toggle, vehicles/page.tsx to include decommissioned in fetch), 3 REUSE (TrafficLight component, FleetMap tile source pattern, Supabase client + auth pattern from existing vehicle API). Key reuse: same mock patterns from route.test.ts, same camelCase mapping pattern from GET /api/vehicles, same card/table Tailwind patterns.",
+      "rationale": "Found: 2 BUILD (PUT handler, success toast), 3 EXTEND (updateVehicleSchema from createVehicleSchema.partial(), vehicle-detail.tsx with edit mode, route.test.ts with PUT tests), 1 REUSE (decommissioned filter already exists in vehicle-list.tsx and dashboard-map.tsx). Key reuse: same Supabase query/mapping pattern from GET handler, same mock patterns from existing route.test.ts, same form pattern from add-vehicle-form.tsx.",
       "confidence": "high",
       "affects": [
+        "src/lib/validators.ts",
         "src/app/api/vehicles/[id]/route.ts",
-        "src/components/vehicle-detail.tsx",
-        "src/components/vehicle-mini-map.tsx",
-        "src/components/vehicle-list.tsx",
-        "src/app/(admin)/vehicles/page.tsx"
+        "src/components/vehicle-detail.tsx"
       ]
     },
     {
-      "decision": "Client-side tab switching with useState instead of URL-based routing",
-      "context": "AC says 'loads all tabs without page refresh' — need client-side tab mechanism",
+      "decision": "Extracted shared mapVehicleRow helper and VEHICLE_SELECT constant in route.ts",
+      "context": "PUT handler duplicated the same snake_case-to-camelCase mapping and select columns from GET handler",
       "alternatives_considered": [
-        "URL hash-based tabs (#overview, #trips) — provides bookmarkable URLs but adds complexity",
-        "Next.js parallel routes — over-engineered for placeholder tabs"
+        "Keep duplication — simpler but violates DRY, maintenance risk if columns change",
+        "Move to shared lib — over-engineered for single-file use"
       ],
-      "rationale": "Simple useState tab switching is the boring technology choice (McKinley). Tabs share the same data context (vehicle object) so no data fetching needed on switch. Proper ARIA roles (tablist, tab, tabpanel) for accessibility. Can evolve to URL-based later when tabs have real content.",
+      "rationale": "File-local helper keeps both handlers consistent and reduces blast radius of column additions/renames. Not exported, so no public interface change.",
+      "confidence": "high",
+      "affects": [
+        "src/app/api/vehicles/[id]/route.ts"
+      ]
+    },
+    {
+      "decision": "Inline toast in vehicle-detail.tsx instead of separate Toast component",
+      "context": "No existing toast/notification system in the codebase",
+      "alternatives_considered": [
+        "Create shared Toast component — over-engineered for single use case, only this form needs it right now",
+        "Use a toast library (react-hot-toast, sonner) — adds dependency for one usage"
+      ],
+      "rationale": "Simple fixed-position div with role=status, auto-dismiss via useEffect timer (5s). Can be extracted to shared component when a second consumer appears. Boring technology (McKinley).",
       "confidence": "high",
       "affects": [
         "src/components/vehicle-detail.tsx"
       ]
     },
     {
-      "decision": "Decommissioned filtering moved from server to client in vehicle list",
-      "context": "AC says 'visible via filter' — need toggle mechanism. Server was filtering out DECOMMISSIONED in the Supabase query.",
+      "decision": "updateVehicleSchema uses createVehicleSchema.partial() plus status enum extension",
+      "context": "Edit form needs to accept partial updates with valid status values",
       "alternatives_considered": [
-        "URL search param (?showDecommissioned=true) with server-side filtering — adds page reload",
-        "Keep server filter, add separate API call on toggle — unnecessary network round-trip for 5-50 vehicles"
+        "Separate schema definition — duplicates field definitions",
+        "Add status to createVehicleSchema — status should not be set during creation (defaults to ACTIVE)"
       ],
-      "rationale": "Fleet is 5-50 vehicles (per vision). Client-side filtering is instant and consistent with existing search/sort/filter pattern in VehicleList. Toggle checkbox hidden when no decommissioned vehicles exist. Dashboard map keeps server-side exclusion (no toggle needed on map).",
+      "rationale": "Deriving from createVehicleSchema ensures field validation stays consistent. .refine() ensures empty payloads are rejected. Status enum limited to ACTIVE/IN_SHOP/DECOMMISSIONED per spec.",
       "confidence": "high",
       "affects": [
+        "src/lib/validators.ts",
+        "src/app/api/vehicles/[id]/route.ts"
+      ]
+    },
+    {
+      "decision": "Search Before Building audit for cycle 1 story fix-photo-and-list-polish",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 1 BUILD (VehicleAvatar component), 3 EXTEND (TrafficLight with a11y attrs, VehicleList with summary bar + photo, VehicleDetail with avatar in header), 1 EXTEND (vehicles page query to include photo_url). Key reuse: TrafficLight component extended in-place, VehicleList extended with health summary using existing filteredAndSorted logic pattern.",
+      "confidence": "high",
+      "affects": [
+        "src/components/vehicle-avatar.tsx",
+        "src/components/traffic-light.tsx",
         "src/components/vehicle-list.tsx",
+        "src/components/vehicle-detail.tsx",
         "src/app/(admin)/vehicles/page.tsx"
       ]
     },
     {
-      "decision": "VehicleMiniMap is a separate non-interactive component from FleetMap",
-      "context": "Overview tab needs a mini-map showing single vehicle position",
+      "decision": "Shared VehicleAvatar component for both detail header and list rows",
+      "context": "AC1 and AC2 both need photo-or-placeholder rendering at different sizes",
       "alternatives_considered": [
-        "Reuse FleetMap with single vehicle array — rejected because FleetMap has clustering, click handlers, persistence, and other features unnecessary for a static mini-map",
-        "Embed FleetMap with a 'mini' prop — rejected because it couples the two use cases"
+        "Inline avatar logic in each component — duplicates photo/placeholder logic",
+        "Use next/image directly without wrapper — no placeholder support"
       ],
-      "rationale": "VehicleMiniMap is a focused component: non-interactive (interactive: false), no clustering, no popups, no persistence. Single Marker for the vehicle, color-coded by traffic light. Reuses the same CartoDB Positron tile source. ~60 lines vs FleetMap's 230 lines. Separate concerns, no coupling.",
+      "rationale": "Shared component with size prop (sm/md/lg) serves both contexts. Uses next/image for photos, initial-letter circle for placeholder. Single source of truth for avatar rendering.",
       "confidence": "high",
       "affects": [
-        "src/components/vehicle-mini-map.tsx"
+        "src/components/vehicle-avatar.tsx",
+        "src/components/vehicle-detail.tsx",
+        "src/components/vehicle-list.tsx"
+      ]
+    },
+    {
+      "decision": "Fleet health summary bar inside VehicleList rather than separate component",
+      "context": "Summary bar needs to react to showDecommissioned state which lives inside VehicleList",
+      "alternatives_considered": [
+        "Separate FleetHealthSummary component with lifted state — over-engineered, adds prop drilling for single consumer",
+        "Summary in vehicles page.tsx — cannot react to client-side filter state"
+      ],
+      "rationale": "Keeping summary computation and rendering inside VehicleList gives direct access to the decommissioned toggle state. Uses useMemo for efficient recomputation. Can be extracted if a second consumer appears.",
+      "confidence": "high",
+      "affects": [
+        "src/components/vehicle-list.tsx"
       ]
     }
   ],
@@ -540,26 +580,47 @@
   "deployment_url": "https://openfleet-v2-staging.gregj64.workers.dev",
   "implemented": [
     {
-      "task": "vehicle-detail",
+      "task": "fix-vehicle-edit",
       "acceptance_criteria": [
-        "Vehicle detail loads all tabs without page refresh",
-        "Traffic light: green = all clear, orange = requires attention, red = overdue",
-        "Decommissioned vehicles hidden from map and dashboard by default, visible via filter",
-        "Vehicle detail overview shows mini-map with current position"
+        "AC-edit-1: Edit button visible on vehicle detail page header",
+        "AC-edit-2: Edit mode shows pre-populated form with all editable fields including status dropdown (active/in-shop/decommissioned)",
+        "AC-edit-3: PUT /api/vehicles/[id] persists updates with Zod validation",
+        "AC-edit-4: Success toast shown after save, view returns to read-only mode",
+        "AC-edit-5: Cancel discards changes and returns to read-only view",
+        "AC-edit-6: Decommissioned vehicles hidden from default map/dashboard views (existing filter integration — REUSE, already implemented in vehicle-list and dashboard-map)"
       ],
       "files_changed": [
+        "src/lib/validators.ts",
         "src/app/api/vehicles/[id]/route.ts",
         "src/app/api/vehicles/[id]/route.test.ts",
-        "src/app/(admin)/vehicles/[id]/page.tsx",
+        "src/components/vehicle-detail.tsx",
+        "src/components/vehicle-detail.test.tsx"
+      ],
+      "tests_added": 12,
+      "tests_passing": 12
+    },
+    {
+      "task": "fix-photo-and-list-polish",
+      "acceptance_criteria": [
+        "AC-fix-photo-and-list-polish-1",
+        "AC-fix-photo-and-list-polish-2",
+        "AC-fix-photo-and-list-polish-3",
+        "AC-fix-photo-and-list-polish-4",
+        "AC-fix-photo-and-list-polish-5"
+      ],
+      "files_changed": [
+        "src/components/vehicle-avatar.tsx",
+        "src/components/vehicle-avatar.test.tsx",
         "src/components/vehicle-detail.tsx",
         "src/components/vehicle-detail.test.tsx",
-        "src/components/vehicle-mini-map.tsx",
         "src/components/vehicle-list.tsx",
         "src/components/vehicle-list.test.tsx",
+        "src/components/traffic-light.tsx",
+        "src/components/traffic-light.test.tsx",
         "src/app/(admin)/vehicles/page.tsx"
       ],
-      "tests_added": 19,
-      "tests_passing": 223
+      "tests_added": 18,
+      "tests_passing": 18
     }
   ],
   "skipped": [],
@@ -1682,24 +1743,28 @@
     ]
   },
   "story_result": {
-    "story_id": "vehicle-detail",
+    "story_id": "fix-photo-and-list-polish",
     "outcome": "pass",
     "files_changed": [
-      "src/app/api/vehicles/[id]/route.ts",
-      "src/app/api/vehicles/[id]/route.test.ts",
-      "src/app/(admin)/vehicles/[id]/page.tsx",
+      "src/components/vehicle-avatar.tsx",
+      "src/components/vehicle-avatar.test.tsx",
       "src/components/vehicle-detail.tsx",
       "src/components/vehicle-detail.test.tsx",
-      "src/components/vehicle-mini-map.tsx",
       "src/components/vehicle-list.tsx",
       "src/components/vehicle-list.test.tsx",
+      "src/components/traffic-light.tsx",
+      "src/components/traffic-light.test.tsx",
       "src/app/(admin)/vehicles/page.tsx"
     ],
-    "tests_added": 19,
-    "tests_passing": 223,
-    "env_limitations": [
-      "MapLibre GL requires WebGL — mini-map rendering verified via mock (Marker, Map constructor). Visual verification of map tiles, marker color, and zoom level requires a browser environment."
-    ]
+    "tests_added": 18,
+    "tests_passing": 254,
+    "env_limitations": [],
+    "symptom": null,
+    "diagnosis": null,
+    "classification": null,
+    "fix_attempted": null,
+    "blocked_by": null,
+    "escalation": null
   },
   "evaluation_report": {
     "test_integrity_report": {
@@ -4308,98 +4373,5 @@
     "anomalies_total": 8
   },
   "_current_milestone": "vehicle-registry",
-  "_current_story": "fix-vehicle-edit",
-  "story_result": {
-    "story_id": "fix-vehicle-edit",
-    "outcome": "pass",
-    "files_changed": [
-      "src/lib/validators.ts",
-      "src/app/api/vehicles/[id]/route.ts",
-      "src/app/api/vehicles/[id]/route.test.ts",
-      "src/components/vehicle-detail.tsx",
-      "src/components/vehicle-detail.test.tsx"
-    ],
-    "tests_added": 12,
-    "tests_passing": 12,
-    "env_limitations": []
-  },
-  "implemented": [
-    {
-      "task": "fix-vehicle-edit",
-      "acceptance_criteria": [
-        "AC-edit-1: Edit button visible on vehicle detail page header",
-        "AC-edit-2: Edit mode shows pre-populated form with all editable fields including status dropdown (active/in-shop/decommissioned)",
-        "AC-edit-3: PUT /api/vehicles/[id] persists updates with Zod validation",
-        "AC-edit-4: Success toast shown after save, view returns to read-only mode",
-        "AC-edit-5: Cancel discards changes and returns to read-only view",
-        "AC-edit-6: Decommissioned vehicles hidden from default map/dashboard views (existing filter integration — REUSE, already implemented in vehicle-list and dashboard-map)"
-      ],
-      "files_changed": [
-        "src/lib/validators.ts",
-        "src/app/api/vehicles/[id]/route.ts",
-        "src/app/api/vehicles/[id]/route.test.ts",
-        "src/components/vehicle-detail.tsx",
-        "src/components/vehicle-detail.test.tsx"
-      ],
-      "tests_added": 12,
-      "tests_passing": 12
-    }
-  ],
-  "skipped": [],
-  "divergences": [],
-  "factory_decisions": [
-    {
-      "decision": "Search Before Building audit for cycle 1 story fix-vehicle-edit",
-      "context": "Pre-implementation code reuse analysis",
-      "alternatives_considered": [],
-      "rationale": "Found: 2 BUILD (PUT handler, success toast), 3 EXTEND (updateVehicleSchema from createVehicleSchema.partial(), vehicle-detail.tsx with edit mode, route.test.ts with PUT tests), 1 REUSE (decommissioned filter already exists in vehicle-list.tsx and dashboard-map.tsx). Key reuse: same Supabase query/mapping pattern from GET handler, same mock patterns from existing route.test.ts, same form pattern from add-vehicle-form.tsx.",
-      "confidence": "high",
-      "affects": [
-        "src/lib/validators.ts",
-        "src/app/api/vehicles/[id]/route.ts",
-        "src/components/vehicle-detail.tsx"
-      ]
-    },
-    {
-      "decision": "Extracted shared mapVehicleRow helper and VEHICLE_SELECT constant in route.ts",
-      "context": "PUT handler duplicated the same snake_case-to-camelCase mapping and select columns from GET handler",
-      "alternatives_considered": [
-        "Keep duplication — simpler but violates DRY, maintenance risk if columns change",
-        "Move to shared lib — over-engineered for single-file use"
-      ],
-      "rationale": "File-local helper keeps both handlers consistent and reduces blast radius of column additions/renames. Not exported, so no public interface change.",
-      "confidence": "high",
-      "affects": [
-        "src/app/api/vehicles/[id]/route.ts"
-      ]
-    },
-    {
-      "decision": "Inline toast in vehicle-detail.tsx instead of separate Toast component",
-      "context": "No existing toast/notification system in the codebase",
-      "alternatives_considered": [
-        "Create shared Toast component — over-engineered for single use case, only this form needs it right now",
-        "Use a toast library (react-hot-toast, sonner) — adds dependency for one usage"
-      ],
-      "rationale": "Simple fixed-position div with role=status, auto-dismiss via useEffect timer (5s). Can be extracted to shared component when a second consumer appears. Boring technology (McKinley).",
-      "confidence": "high",
-      "affects": [
-        "src/components/vehicle-detail.tsx"
-      ]
-    },
-    {
-      "decision": "updateVehicleSchema uses createVehicleSchema.partial() plus status enum extension",
-      "context": "Edit form needs to accept partial updates with valid status values",
-      "alternatives_considered": [
-        "Separate schema definition — duplicates field definitions",
-        "Add status to createVehicleSchema — status should not be set during creation (defaults to ACTIVE)"
-      ],
-      "rationale": "Deriving from createVehicleSchema ensures field validation stays consistent. .refine() ensures empty payloads are rejected. Status enum limited to ACTIVE/IN_SHOP/DECOMMISSIONED per spec.",
-      "confidence": "high",
-      "affects": [
-        "src/lib/validators.ts",
-        "src/app/api/vehicles/[id]/route.ts"
-      ]
-    }
-  ],
-  "factory_questions": []
+  "_current_story": "fix-vehicle-edit"
 }
