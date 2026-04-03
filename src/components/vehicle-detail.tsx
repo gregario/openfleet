@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { TrafficLight } from './traffic-light';
+import { VehicleAvatar } from './vehicle-avatar';
 import { VehicleMiniMap } from './vehicle-mini-map';
 
 export interface VehicleDetailData {
@@ -141,18 +142,21 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
 
       {/* Header */}
       <div className="flex items-start justify-between">
-        <div>
-          <Link
-            href="/vehicles"
-            className="mb-2 inline-flex items-center text-sm text-slate-500 hover:text-slate-700"
-          >
-            &larr; Vehicles
-          </Link>
-          <h1 className="text-2xl font-bold text-slate-900">{vehicle.name}</h1>
-          <p className="text-sm text-slate-500">
-            {vehicle.make} {vehicle.model} {vehicle.year}
-          </p>
-          <p className="mt-1 text-sm font-medium text-slate-600">{vehicle.licensePlate}</p>
+        <div className="flex items-start gap-4">
+          <VehicleAvatar name={vehicle.name} photoUrl={vehicle.photoUrl} size="lg" />
+          <div>
+            <Link
+              href="/vehicles"
+              className="mb-2 inline-flex items-center text-sm text-slate-500 hover:text-slate-700"
+            >
+              &larr; Vehicles
+            </Link>
+            <h1 className="text-2xl font-bold text-slate-900">{vehicle.name}</h1>
+            <p className="text-sm text-slate-500">
+              {vehicle.make} {vehicle.model} {vehicle.year}
+            </p>
+            <p className="mt-1 text-sm font-medium text-slate-600">{vehicle.licensePlate}</p>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <TrafficLight

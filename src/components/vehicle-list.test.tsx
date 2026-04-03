@@ -9,6 +9,11 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+// Mock next/image
+vi.mock('next/image', () => ({
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
+}));
+
 const mockVehicles: VehicleListItem[] = [
   {
     id: 'v1',
@@ -20,6 +25,7 @@ const mockVehicles: VehicleListItem[] = [
     status: 'ACTIVE',
     odometer: 45000,
     trafficLight: 'GREEN',
+    photoUrl: '/uploads/van-01.jpg',
   },
   {
     id: 'v2',
@@ -31,6 +37,7 @@ const mockVehicles: VehicleListItem[] = [
     status: 'ACTIVE',
     odometer: 72000,
     trafficLight: 'RED',
+    photoUrl: null,
   },
   {
     id: 'v3',
@@ -42,6 +49,7 @@ const mockVehicles: VehicleListItem[] = [
     status: 'IN_SHOP',
     odometer: 15000,
     trafficLight: 'ORANGE',
+    photoUrl: null,
   },
 ];
 
@@ -57,8 +65,8 @@ describe('VehicleList', () => {
   describe('traffic light indicator per row', () => {
     it('renders a traffic light status indicator for each vehicle', () => {
       const { container } = render(<VehicleList vehicles={mockVehicles} />);
-      // Each row has a TrafficLight — check for the indicator dots
-      const dots = container.querySelectorAll('.rounded-full');
+      // Each row has a TrafficLight — check for the indicator dots (small colored circles)
+      const dots = container.querySelectorAll('.rounded-full.bg-fleet-green, .rounded-full.bg-fleet-red, .rounded-full.bg-fleet-orange');
       expect(dots.length).toBe(3);
     });
 
@@ -231,6 +239,7 @@ describe('VehicleList', () => {
         status: 'DECOMMISSIONED',
         odometer: 150000,
         trafficLight: 'RED',
+        photoUrl: null,
       },
     ];
 
@@ -268,6 +277,23 @@ describe('VehicleList', () => {
       render(<VehicleList vehicles={mockVehicles} />);
       fireEvent.change(screen.getByPlaceholderText(/search/i), { target: { value: 'nonexistent' } });
       expect(screen.getByText(/no vehicles match/i)).toBeTruthy();
+    });
+  });
+
+  // AC-fix-photo-and-list-polish-2: Vehicle thumbnail in each list row
+  describe('vehicle thumbnails', () => {
+    it('shows photo thumbnail when vehicle has photoUrl', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      const img = screen.getByRole('img', { name: /photo of van 01/i });
+      expect(img).toBeTruthy();
+      expect(img.getAttribute('src')).toBe('/uploads/van-01.jpg');
+    });
+
+    it('shows initial-letter placeholder when no photo', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      // Van 02 has no photo — should show "V" placeholder
+      const placeholders = screen.getAllByLabelText(/avatar/i);
+      expect(placeholders.length).toBeGreaterThanOrEqual(2); // Van 02 and Truck 01
     });
   });
 

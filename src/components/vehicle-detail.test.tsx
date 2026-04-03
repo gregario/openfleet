@@ -9,6 +9,11 @@ vi.mock("./vehicle-mini-map", () => ({
   ),
 }));
 
+// Mock next/image to render a simple img
+vi.mock("next/image", () => ({
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
+}));
+
 const baseVehicle: VehicleDetailData = {
   id: "v-1",
   name: "Van Alpha",
@@ -126,6 +131,20 @@ describe("VehicleDetail", () => {
     const tablist = screen.getByRole("tablist");
     fireEvent.click(within(tablist).getByRole("tab", { name: "Maintenance" }));
     expect(screen.getByRole("heading", { name: "Maintenance records" })).toBeDefined();
+  });
+
+  // AC-fix-photo-and-list-polish-1: Vehicle photo in detail header
+  it("renders initial-letter placeholder when no photo", () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    expect(screen.getByLabelText(/van alpha avatar/i)).toBeDefined();
+    expect(screen.getByText("V")).toBeDefined();
+  });
+
+  it("renders vehicle photo in header when photoUrl exists", () => {
+    render(<VehicleDetail vehicle={{ ...baseVehicle, photoUrl: "/uploads/van.jpg" }} />);
+    const img = screen.getByRole("img", { name: /photo of van alpha/i });
+    expect(img).toBeDefined();
+    expect(img.getAttribute("src")).toBe("/uploads/van.jpg");
   });
 });
 

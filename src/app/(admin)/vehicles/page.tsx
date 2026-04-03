@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/empty-state';
 export default async function VehiclesPage() {
   const { data: vehicles, error } = await supabase
     .from('vehicles')
-    .select('id, name, make, model, year, license_plate, status, odometer, traffic_light')
+    .select('id, name, make, model, year, license_plate, status, odometer, traffic_light, photo_url')
     .order('name', { ascending: true });
 
   if (error) {
@@ -27,6 +27,7 @@ export default async function VehiclesPage() {
     status: string;
     odometer: number;
     traffic_light: string;
+    photo_url: string | null;
   }) => ({
     id: v.id,
     name: v.name,
@@ -37,6 +38,7 @@ export default async function VehiclesPage() {
     status: v.status,
     odometer: v.odometer,
     trafficLight: v.traffic_light as 'GREEN' | 'ORANGE' | 'RED',
+    photoUrl: v.photo_url,
   }));
 
   return (

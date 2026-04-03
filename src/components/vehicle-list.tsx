@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { TrafficLight } from './traffic-light';
+import { VehicleAvatar } from './vehicle-avatar';
 
 export interface VehicleListItem {
   id: string;
@@ -14,6 +15,7 @@ export interface VehicleListItem {
   status: string;
   odometer: number;
   trafficLight: 'GREEN' | 'ORANGE' | 'RED';
+  photoUrl: string | null;
 }
 
 type SortField = 'name' | 'trafficLight' | 'odometer';
@@ -193,13 +195,18 @@ export function VehicleList({ vehicles }: VehicleListProps) {
               {filteredAndSorted.map(vehicle => (
                 <tr key={vehicle.id} className="hover:bg-slate-50">
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/vehicles/${vehicle.id}`}
-                      className="font-medium text-slate-900 hover:text-fleet-sidebar"
-                    >
-                      {vehicle.name}
-                    </Link>
-                    <div className="text-xs text-slate-500">{vehicle.make} {vehicle.model}</div>
+                    <div className="flex items-center gap-3">
+                      <VehicleAvatar name={vehicle.name} photoUrl={vehicle.photoUrl} size="sm" />
+                      <div>
+                        <Link
+                          href={`/vehicles/${vehicle.id}`}
+                          className="font-medium text-slate-900 hover:text-fleet-sidebar"
+                        >
+                          {vehicle.name}
+                        </Link>
+                        <div className="text-xs text-slate-500">{vehicle.make} {vehicle.model}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-slate-600">{vehicle.licensePlate}</td>
                   <td className="px-4 py-3">
