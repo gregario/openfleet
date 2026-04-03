@@ -31,7 +31,7 @@ vi.mock("@/lib/db", () => ({
   supabase: { from: mockFrom },
 }));
 
-import { GET } from "./route";
+import { GET, PUT } from "./route";
 
 function setupSelect(data: Record<string, unknown> | null, error: Record<string, unknown> | null = null) {
   const mockSingle = vi.fn().mockResolvedValue({ data, error });
@@ -39,6 +39,14 @@ function setupSelect(data: Record<string, unknown> | null, error: Record<string,
   const mockSelect = vi.fn().mockReturnValue({ eq: mockEq });
   mockFrom.mockReturnValue({ select: mockSelect });
   return { mockSelect, mockEq, mockSingle };
+}
+
+function setupUpdate(data: Record<string, unknown> | null, error: Record<string, unknown> | null = null) {
+  const mockSingle = vi.fn().mockResolvedValue({ data, error });
+  const mockUpdateEq = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ single: mockSingle }) });
+  const mockUpdate = vi.fn().mockReturnValue({ eq: mockUpdateEq });
+  mockFrom.mockReturnValue({ update: mockUpdate });
+  return { mockUpdate, mockUpdateEq, mockSingle };
 }
 
 const sampleVehicle = {
@@ -131,5 +139,106 @@ describe("GET /api/vehicles/[id]", () => {
 
     const response = await GET(makeRequest("v-1"), { params: Promise.resolve({ id: "v-1" }) });
     expect(response.status).toBe(500);
+  });
+});
+
+// @criterion: AC-fix-vehicle-edit-3 — PUT /api/vehicles/[id] persists updates with Zod validation
+describe("PUT /api/vehicles/[id]", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("updates a vehicle and returns the updated record", async () => {
+    const updatedRow = { ...sampleVehicle, name: "Van Beta", status: "IN_SHOP" };
+    setupUpdate(updatedRow);
+
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Van Beta", status: "IN_SHOP" }),
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).toBe(200);
+
+    const body = await response.json();
+    expect(body.vehicle.name).toBe("Van Beta");
+    expect(body.vehicle.status).toBe("IN_SHOP");
+  });
+
+  it("validates input with Zod and returns 400 on invalid data", async () => {
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ year: 1800 }),
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).toBe(400);
+
+    const body = await response.json();
+    expect(body.error).toBeDefined();
+  });
+
+  it("returns 401 when not authenticated", async () => {
+    const { getSession } = await import("@/lib/session");
+    vi.mocked(getSession).mockResolvedValueOnce({
+      save: vi.fn(),
+      destroy: vi.fn(),
+      updateConfig: vi.fn(),
+    } as never);
+
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Van Beta" }),
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).toBe(401);
+  });
+
+  it("returns 404 when vehicle not found", async () => {
+    setupUpdate(null, { code: "PGRST116", message: "not found" });
+
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Van Beta" }),
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).toBe(404);
+  });
+
+  it("accepts status values: ACTIVE, IN_SHOP, DECOMMISSIONED", async () => {
+    for (const status of ["ACTIVE", "IN_SHOP", "DECOMMISSIONED"]) {
+      vi.clearAllMocks();
+      const updatedRow = { ...sampleVehicle, status };
+      setupUpdate(updatedRow);
+
+      const request = new Request("http://localhost/api/vehicles/v-1", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+
+      const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+      expect(response.status).toBe(200);
+
+      const body = await response.json();
+      expect(body.vehicle.status).toBe(status);
+    }
+  });
+
+  it("rejects invalid status values", async () => {
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "INVALID_STATUS" }),
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).toBe(400);
   });
 });

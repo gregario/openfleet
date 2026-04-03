@@ -34,3 +34,15 @@ export const createVehicleSchema = z.object({
 });
 
 export type CreateVehicleInput = z.infer<typeof createVehicleSchema>;
+
+export const updateVehicleSchema = createVehicleSchema
+  .omit({ photoUrl: true })
+  .partial()
+  .extend({
+    status: z.enum(["ACTIVE", "IN_SHOP", "DECOMMISSIONED"]).optional(),
+  })
+  .refine((data) => Object.keys(data).length > 0, {
+    message: "At least one field must be provided",
+  });
+
+export type UpdateVehicleInput = z.infer<typeof updateVehicleSchema>;
