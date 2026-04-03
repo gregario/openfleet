@@ -1,7 +1,9 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/db';
 import { VehicleList, type VehicleListItem } from '@/components/vehicle-list';
 import { EmptyState } from '@/components/empty-state';
+import { VehicleCreatedToast } from '@/components/vehicle-created-toast';
 
 export default async function VehiclesPage() {
   const { data: vehicles, error } = await supabase
@@ -43,6 +45,9 @@ export default async function VehiclesPage() {
 
   return (
     <div className="space-y-4">
+      <Suspense>
+        <VehicleCreatedToast />
+      </Suspense>
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Vehicles</h1>
         <Link

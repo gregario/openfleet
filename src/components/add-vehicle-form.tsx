@@ -33,6 +33,7 @@ export function AddVehicleForm() {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [serverError, setServerError] = useState('');
+  const [photoUploadWarning, setPhotoUploadWarning] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   function validate(): boolean {
@@ -81,6 +82,7 @@ export function AddVehicleForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setServerError('');
+    setPhotoUploadWarning('');
 
     if (!validate()) return;
 
@@ -88,6 +90,7 @@ export function AddVehicleForm() {
 
     try {
       const photoUrl = await uploadPhoto();
+      const photoFailed = photoFile !== null && photoUrl === null;
 
       const res = await fetch('/api/vehicles', {
         method: 'POST',
@@ -110,7 +113,14 @@ export function AddVehicleForm() {
         return;
       }
 
-      router.push('/vehicles');
+      if (photoFailed) {
+        setPhotoUploadWarning('Photo could not be uploaded, but the vehicle was saved. You can add a photo later.');
+        setSubmitting(false);
+        return;
+      }
+
+      const vehicleName = `${make.trim()} ${model.trim()}`;
+      router.push(`/vehicles?created=${encodeURIComponent(vehicleName)}`);
       router.refresh();
     } catch {
       setServerError('Failed to create vehicle. Please try again.');
@@ -138,26 +148,34 @@ export function AddVehicleForm() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-lg space-y-5">
+      <p className="text-xs text-slate-500">* Required</p>
+
       {serverError && (
         <div role="alert" className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {serverError}
         </div>
       )}
 
+      {photoUploadWarning && (
+        <div role="alert" className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          {photoUploadWarning}
+        </div>
+      )}
+
       <div>
-        <label htmlFor="name" className={labelClass}>Vehicle Name</label>
+        <label htmlFor="name" className={labelClass}>Vehicle Name <span className="text-red-500">*</span></label>
         <input id="name" type="text" value={name} onChange={e => setName(e.target.value)} className={inputClass} placeholder="e.g. Van 1" />
         {errors.name && <p className={errorClass}>{errors.name}</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="make" className={labelClass}>Make</label>
+          <label htmlFor="make" className={labelClass}>Make <span className="text-red-500">*</span></label>
           <input id="make" type="text" value={make} onChange={e => setMake(e.target.value)} className={inputClass} placeholder="e.g. Ford" />
           {errors.make && <p className={errorClass}>{errors.make}</p>}
         </div>
         <div>
-          <label htmlFor="model" className={labelClass}>Model</label>
+          <label htmlFor="model" className={labelClass}>Model <span className="text-red-500">*</span></label>
           <input id="model" type="text" value={model} onChange={e => setModel(e.target.value)} className={inputClass} placeholder="e.g. Transit" />
           {errors.model && <p className={errorClass}>{errors.model}</p>}
         </div>
@@ -165,36 +183,36 @@ export function AddVehicleForm() {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label htmlFor="year" className={labelClass}>Year</label>
+          <label htmlFor="year" className={labelClass}>Year <span className="text-red-500">*</span></label>
           <input id="year" type="number" value={year} onChange={e => setYear(e.target.value)} className={inputClass} min={1900} max={new Date().getFullYear() + 2} />
           {errors.year && <p className={errorClass}>{errors.year}</p>}
         </div>
         <div>
-          <label htmlFor="color" className={labelClass}>Color</label>
+          <label htmlFor="color" className={labelClass}>Color <span className="text-slate-400">(optional)</span></label>
           <input id="color" type="text" value={color} onChange={e => setColor(e.target.value)} className={inputClass} placeholder="e.g. White" />
         </div>
       </div>
 
       <div>
-        <label htmlFor="licensePlate" className={labelClass}>License Plate</label>
+        <label htmlFor="licensePlate" className={labelClass}>License Plate <span className="text-red-500">*</span></label>
         <input id="licensePlate" type="text" value={licensePlate} onChange={e => setLicensePlate(e.target.value)} className={inputClass} placeholder="e.g. AB12 CDE" />
         {errors.licensePlate && <p className={errorClass}>{errors.licensePlate}</p>}
       </div>
 
       <div>
-        <label htmlFor="vin" className={labelClass}>VIN</label>
-        <input id="vin" type="text" value={vin} onChange={e => setVin(e.target.value)} className={inputClass} placeholder="17-character VIN (optional)" maxLength={17} />
+        <label htmlFor="vin" className={labelClass}>VIN <span className="text-slate-400">(optional)</span></label>
+        <input id="vin" type="text" value={vin} onChange={e => setVin(e.target.value)} className={inputClass} placeholder="17-character VIN" maxLength={17} />
         {errors.vin && <p className={errorClass}>{errors.vin}</p>}
       </div>
 
       <div>
-        <label htmlFor="odometer" className={labelClass}>Odometer (km)</label>
+        <label htmlFor="odometer" className={labelClass}>Odometer (km) <span className="text-red-500">*</span></label>
         <input id="odometer" type="number" value={odometer} onChange={e => setOdometer(e.target.value)} className={inputClass} min={0} />
         {errors.odometer && <p className={errorClass}>{errors.odometer}</p>}
       </div>
 
       <div>
-        <label htmlFor="photo" className={labelClass}>Photo</label>
+        <label htmlFor="photo" className={labelClass}>Photo <span className="text-slate-400">(optional)</span></label>
         <input
           id="photo"
           type="file"
