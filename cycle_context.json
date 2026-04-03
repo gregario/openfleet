@@ -614,6 +614,31 @@
         "src/components/add-vehicle-form.tsx"
       ]
     }
+    ,{
+      "decision": "Search Before Building audit for cycle 1 story openfleet-loop-1-dashboard-ux-states",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 0 BUILD, 1 EXTEND (DashboardMap with loading/error/empty states + FleetMap with onLoad prop), 2 REUSE (ErrorBoundary from foundation, EmptyState from foundation). Key reuse: ErrorBoundary class component used as-is with custom fallback prop, EmptyState functional component used as-is with title/description/action props. DashboardMap extended with useState for isMapLoaded, ErrorBoundary wrapper with custom error UI, and empty array check before FleetMap render.",
+      "confidence": "high",
+      "affects": [
+        "src/components/dashboard-map.tsx",
+        "src/components/dashboard-map.test.tsx",
+        "src/components/fleet-map.tsx"
+      ]
+    },
+    {
+      "decision": "Error boundary retry via key remount instead of ErrorBoundary.handleRetry()",
+      "context": "ErrorBoundary uses getDerivedStateFromError — calling handleRetry clears error state but doesn't guarantee FleetMap re-initialization because React may reuse the component tree",
+      "alternatives_considered": [
+        "Call ErrorBoundary.handleRetry() via ref — works but doesn't force FleetMap unmount/remount, so WebGL context may remain stale",
+        "Add forceUpdate to ErrorBoundary — couples DashboardMap to ErrorBoundary internals"
+      ],
+      "rationale": "Incrementing errorKey on retry causes React to unmount the entire ErrorBoundary subtree and remount fresh. This guarantees FleetMap re-initializes from scratch (new MapLibre instance, new WebGL context). Also resets isMapLoaded to false so skeleton shows during re-init. Clean, idiomatic React pattern.",
+      "confidence": "high",
+      "affects": [
+        "src/components/dashboard-map.tsx"
+      ]
+    }
   ],
   "factory_questions": [],
   "deployment_url": "https://openfleet-v2-staging.gregj64.workers.dev",
@@ -680,6 +705,25 @@
       ],
       "tests_added": 9,
       "tests_passing": 9
+    },
+    {
+      "task": "openfleet-loop-1-dashboard-ux-states",
+      "acceptance_criteria": [
+        "AC-dash-ux-1: Map loading skeleton visible during initialization (data-testid='map-loading-skeleton' with animate-pulse)",
+        "AC-dash-ux-2: Loading skeleton disappears when map fires load event",
+        "AC-dash-ux-3: Error boundary catches FleetMap failures and shows 'Unable to load map' with 'Try again' button",
+        "AC-dash-ux-4: Error boundary retry resets the map via key remount",
+        "AC-dash-ux-5: Sidebar remains functional during map error (error boundary scoped to map area only)",
+        "AC-dash-ux-6: Empty state shown when no vehicles exist with title, description, and link to /vehicles",
+        "AC-dash-ux-7: Map renders normally when vehicles exist but have no positions (empty state NOT shown)"
+      ],
+      "files_changed": [
+        "src/components/dashboard-map.tsx",
+        "src/components/dashboard-map.test.tsx",
+        "src/components/fleet-map.tsx"
+      ],
+      "tests_added": 13,
+      "tests_passing": 13
     }
   ],
   "skipped": [],
@@ -1802,18 +1846,18 @@
     ]
   },
   "story_result": {
-    "story_id": "fix-add-vehicle-form-ux",
+    "story_id": "openfleet-loop-1-dashboard-ux-states",
     "outcome": "pass",
     "files_changed": [
-      "src/components/add-vehicle-form.tsx",
-      "src/components/add-vehicle-form.test.tsx",
-      "src/components/vehicle-created-toast.tsx",
-      "src/components/vehicle-created-toast.test.tsx",
-      "src/app/(admin)/vehicles/page.tsx"
+      "src/components/dashboard-map.tsx",
+      "src/components/dashboard-map.test.tsx",
+      "src/components/fleet-map.tsx"
     ],
-    "tests_added": 9,
-    "tests_passing": 9,
-    "env_limitations": []
+    "tests_added": 13,
+    "tests_passing": 13,
+    "env_limitations": [
+      "MapLibre GL requires WebGL — loading skeleton visibility, error boundary catch/retry, and empty state rendering verified via mocked FleetMap. Visual rendering of skeleton pulse animation and error state styling requires a browser environment."
+    ]
   },
   "evaluation_report": {
     "test_integrity_report": {
@@ -4422,5 +4466,5 @@
     "anomalies_total": 8
   },
   "_current_milestone": "vehicle-registry",
-  "_current_story": "fix-add-vehicle-form-ux"
+  "_current_story": "openfleet-loop-1-dashboard-ux-states"
 }
