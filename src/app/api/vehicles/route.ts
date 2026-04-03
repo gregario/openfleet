@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
 import { getApiSession } from "@/lib/auth";
+import { createVehicleSchema } from "@/lib/validators";
 
 export async function GET() {
   const session = await getApiSession();
@@ -56,4 +57,56 @@ export async function GET() {
   }));
 
   return NextResponse.json({ vehicles: result });
+}
+
+export async function POST(request: Request) {
+  const session = await getApiSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+
+  const parsed = createVehicleSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Validation failed", details: parsed.error.flatten().fieldErrors },
+      { status: 400 },
+    );
+  }
+
+  const v = parsed.data;
+
+  const { data: vehicle, error } = await supabase
+    .from("vehicles")
+    .insert([
+      {
+        name: v.name,
+        make: v.make,
+        model: v.model,
+        year: v.year,
+        vin: v.vin || null,
+        license_plate: v.licensePlate,
+        color: v.color || null,
+        odometer: v.odometer,
+        photo_url: v.photoUrl || null,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Vehicle creation error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
+  }
+
+  return NextResponse.json({ vehicle }, { status: 201 });
 }

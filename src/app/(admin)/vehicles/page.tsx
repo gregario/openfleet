@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { supabase } from '@/lib/db';
 import { VehicleList, type VehicleListItem } from '@/components/vehicle-list';
 import { EmptyState } from '@/components/empty-state';
@@ -43,11 +44,18 @@ export default async function VehiclesPage() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Vehicles</h1>
+        <Link
+          href="/vehicles/new"
+          className="rounded-md bg-fleet-sidebar px-4 py-2 text-sm font-medium text-white hover:bg-fleet-sidebar-hover"
+        >
+          Add Vehicle
+        </Link>
       </div>
       {vehicleList.length === 0 ? (
         <EmptyState
           title="No vehicles yet"
           description="Add your first vehicle to start tracking your fleet."
+          action={{ label: "Add Vehicle", href: "/vehicles/new" }}
         />
       ) : (
         <VehicleList vehicles={vehicleList} />

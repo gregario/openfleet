@@ -20,3 +20,17 @@ export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
 });
+
+export const createVehicleSchema = z.object({
+  name: z.string().min(1).max(100),
+  make: z.string().min(1).max(50),
+  model: z.string().min(1).max(50),
+  year: z.number().int().min(1900).max(new Date().getFullYear() + 2),
+  vin: z.string().length(17).regex(/^[A-HJ-NPR-Z0-9]+$/).optional().or(z.literal("")),
+  licensePlate: z.string().min(1).max(20),
+  color: z.string().max(30).optional().or(z.literal("")),
+  odometer: z.number().int().min(0).default(0),
+  photoUrl: z.string().url().optional().or(z.literal("")),
+});
+
+export type CreateVehicleInput = z.infer<typeof createVehicleSchema>;
