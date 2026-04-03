@@ -19,9 +19,22 @@ const sizeMap: Record<Size, string> = {
   lg: 'h-4 w-4',
 };
 
+const statusLabels: Record<Status, string> = {
+  GREEN: 'All clear',
+  ORANGE: 'Requires attention',
+  RED: 'Overdue',
+};
+
 export function TrafficLight({ status, size = 'md', label }: TrafficLightProps) {
+  const ariaLabel = statusLabels[status];
+
   return (
-    <span className="inline-flex items-center gap-1.5">
+    <span
+      role="status"
+      aria-label={ariaLabel}
+      title={ariaLabel}
+      className="inline-flex items-center gap-1.5"
+    >
       <span className={`inline-block rounded-full ${colorMap[status]} ${sizeMap[size]}`} />
       {label && <span className="text-sm text-slate-700">{label}</span>}
     </span>
