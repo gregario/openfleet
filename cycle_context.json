@@ -1846,18 +1846,18 @@
     ]
   },
   "story_result": {
-    "story_id": "openfleet-loop-1-dashboard-ux-states",
+    "story_id": "fix-add-vehicle-form-ux",
     "outcome": "pass",
     "files_changed": [
-      "src/components/dashboard-map.tsx",
-      "src/components/dashboard-map.test.tsx",
-      "src/components/fleet-map.tsx"
+      "src/components/add-vehicle-form.tsx",
+      "src/components/add-vehicle-form.test.tsx",
+      "src/components/vehicle-created-toast.tsx",
+      "src/components/vehicle-created-toast.test.tsx",
+      "src/app/(admin)/vehicles/page.tsx"
     ],
-    "tests_added": 13,
-    "tests_passing": 13,
-    "env_limitations": [
-      "MapLibre GL requires WebGL — loading skeleton visibility, error boundary catch/retry, and empty state rendering verified via mocked FleetMap. Visual rendering of skeleton pulse animation and error state styling requires a browser environment."
-    ]
+    "tests_added": 7,
+    "tests_passing": 7,
+    "env_limitations": []
   },
   "evaluation_report": {
     "test_integrity_report": {
