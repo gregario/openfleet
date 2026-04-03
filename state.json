@@ -1,9 +1,9 @@
 {
   "project": "openfleet-v2",
-  "status": "fixing",
-  "current_state": "qa-fixing",
-  "current_milestone": "map-core",
-  "current_story": "openfleet-loop-1-dashboard-ux-states",
+  "status": "shipping",
+  "current_state": "generating-change-spec",
+  "current_milestone": "vehicle-registry",
+  "current_story": "vehicle-detail",
   "milestones": [
     {
       "name": "foundation",
@@ -13,7 +13,7 @@
     },
     {
       "name": "map-core",
-      "status": "in-progress",
+      "status": "complete",
       "depends_on_milestones": [
         "foundation"
       ],
@@ -50,7 +50,7 @@
             "package-lock.json"
           ],
           "env_limitations": [
-            "MapLibre GL requires WebGL \u2014 component tests mock the map library. Visual verification of map rendering, marker colors, and clustering behavior requires a browser environment (not possible in jsdom/vitest)."
+            "MapLibre GL requires WebGL — component tests mock the map library. Visual verification of map rendering, marker colors, and clustering behavior requires a browser environment (not possible in jsdom/vitest)."
           ]
         },
         {
@@ -92,7 +92,7 @@
             "src/app/(admin)/dashboard/page.tsx"
           ],
           "env_limitations": [
-            "MapLibre GL requires WebGL \u2014 direction arrow rendering and rotation verified via MapLibre mock layer configuration, not visual rendering.",
+            "MapLibre GL requires WebGL — direction arrow rendering and rotation verified via MapLibre mock layer configuration, not visual rendering.",
             "SSE stream test verifies headers and data format via mock; actual long-lived connection behavior requires a live server."
           ]
         },
@@ -116,7 +116,7 @@
           "completed_at": "2026-04-01T09:14:10.260Z",
           "files_changed": [],
           "env_limitations": [
-            "MapLibre GL requires WebGL \u2014 popup rendering verified via MapLibre mock (Popup constructor, setHTML, setLngLat, addTo), not visual rendering."
+            "MapLibre GL requires WebGL — popup rendering verified via MapLibre mock (Popup constructor, setHTML, setLngLat, addTo), not visual rendering."
           ]
         },
         {
@@ -142,7 +142,7 @@
             "src/components/fleet-map.test.tsx"
           ],
           "env_limitations": [
-            "MapLibre GL requires WebGL \u2014 persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
+            "MapLibre GL requires WebGL — persistence behavior verified via mock (Map constructor options for restore, moveend handler + getCenter/getZoom for save). Actual localStorage interaction in browser not tested end-to-end."
           ]
         },
         {
@@ -163,14 +163,14 @@
             "src/components/fleet-map.tsx"
           ],
           "env_limitations": [
-            "MapLibre GL requires WebGL \u2014 loading skeleton visibility, error boundary catch, and empty state rendering verified via component mocks (FleetMap mocked). Visual rendering of skeleton animation and error styling requires browser environment."
+            "MapLibre GL requires WebGL — loading skeleton visibility, error boundary catch, and empty state rendering verified via component mocks (FleetMap mocked). Visual rendering of skeleton animation and error styling requires browser environment."
           ]
         }
       ]
     },
     {
       "name": "dashboard-features",
-      "status": "pending",
+      "status": "complete",
       "depends_on_milestones": [
         "map-core"
       ],
@@ -178,7 +178,7 @@
         {
           "id": "fleet-sidebar",
           "name": "Fleet status sidebar with alerts",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [],
           "affected_entities": [
@@ -191,12 +191,23 @@
           ],
           "acceptance_criteria": [
             "Sidebar shows top-priority alerts sorted by urgency"
-          ]
+          ],
+          "completed_at": "2026-04-01T19:33:49.964Z",
+          "files_changed": [
+            "src/lib/alerts.ts",
+            "src/lib/alerts.test.ts",
+            "src/app/api/alerts/route.ts",
+            "src/app/api/alerts/route.test.ts",
+            "src/components/fleet-sidebar.tsx",
+            "src/components/fleet-sidebar.test.tsx",
+            "src/app/(admin)/dashboard/page.tsx"
+          ],
+          "env_limitations": []
         },
         {
           "id": "map-filters",
           "name": "Map filter by status, driver, motion",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "fleet-sidebar"
@@ -209,12 +220,24 @@
           ],
           "acceptance_criteria": [
             "Filter map by traffic light status, by driver, by motion state"
+          ],
+          "completed_at": "2026-04-01T19:39:36.395Z",
+          "files_changed": [
+            "src/lib/map-filters.ts",
+            "src/lib/map-filters.test.ts",
+            "src/components/map-filters.tsx",
+            "src/components/map-filters.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — filter behavior verified via mocked FleetMap component. Visual verification of filtered markers on the actual map requires a browser environment."
           ]
         },
         {
           "id": "dashboard-responsive",
-          "name": "Responsive layout \u2014 tablet with sidebar collapse",
-          "status": "pending",
+          "name": "Responsive layout — tablet with sidebar collapse",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "fleet-sidebar"
@@ -225,13 +248,483 @@
           ],
           "acceptance_criteria": [
             "Responsive: usable on tablet with sidebar collapsing to bottom sheet"
+          ],
+          "completed_at": "2026-04-01T19:45:15.153Z",
+          "files_changed": [
+            "src/components/dashboard-layout.tsx",
+            "src/components/dashboard-layout.test.tsx",
+            "src/app/(admin)/dashboard/page.tsx"
+          ],
+          "env_limitations": [
+            "Tailwind CSS responsive classes (lg:) cannot be verified in jsdom — structural tests verify toggle behavior, aria attributes, and CSS class presence. Actual responsive breakpoint behavior requires browser testing."
           ]
+        },
+        {
+          "id": "openfleet-loop-1-map-reliability",
+          "name": "Add free OSM raster tile fallback when MapTiler key is absent; lazy-load MapLibre via next/dynamic",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T14:41:27.794Z",
+          "files_changed": [
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx",
+            "src/components/dashboard-map.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — tile source selection verified via mock (MapLibre Map constructor options inspected for inline style object and tile URLs). Actual tile rendering requires a browser environment."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-realtime-feedback",
+          "name": "SSE reconnection with exponential backoff, live/stale/disconnected indicator, sidebar refresh button, filter result count",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T14:49:25.515Z",
+          "files_changed": [
+            "src/hooks/use-realtime-vehicles.ts",
+            "src/hooks/use-realtime-vehicles.test.ts",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/lib/vehicles.ts"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "openfleet-loop-1-session-navigation",
+          "name": "User identity + logout in sidebar, Coming Soon pages for unbuilt routes, custom 404 page",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T14:59:06.852Z",
+          "files_changed": [
+            "src/components/sidebar.tsx",
+            "src/components/sidebar.test.tsx",
+            "src/components/admin-layout.tsx",
+            "src/app/(admin)/layout.tsx",
+            "src/components/coming-soon.tsx",
+            "src/components/coming-soon.test.tsx",
+            "src/app/(admin)/vehicles/page.tsx",
+            "src/app/(admin)/drivers/page.tsx",
+            "src/app/(admin)/maintenance/page.tsx",
+            "src/app/(admin)/inspections/page.tsx",
+            "src/app/(admin)/settings/page.tsx",
+            "src/app/not-found.tsx",
+            "src/app/not-found.test.tsx",
+            "src/lib/vehicles.ts"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "openfleet-loop-1-responsive-a11y",
+          "name": "Fix bottom sheet tap target/z-index, matchMedia resize listener, 375px stacking, TrafficLight aria-labels, map container ARIA, semantic alert list",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T15:08:53.546Z",
+          "files_changed": [
+            "src/app/(admin)/dashboard/page.tsx",
+            "src/components/admin-layout.tsx",
+            "src/components/admin-layout.test.tsx",
+            "src/components/traffic-light.tsx",
+            "src/components/traffic-light.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/lib/vehicles.ts"
+          ],
+          "env_limitations": [
+            "Tailwind CSS responsive breakpoints (lg:flex-row, lg:flex-[7]) cannot be verified in jsdom — tests verify class presence and structural behavior, not actual pixel-based layout changes.",
+            "matchMedia listener behavior tested via mock — actual browser resize events not testable in jsdom."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-dashboard-ux-states",
+          "name": "Add loading skeleton, error boundary, and empty state to DashboardMap using existing foundation components",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T16:15:42.893Z",
+          "files_changed": [
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/components/fleet-map.tsx",
+            "src/lib/vehicles.ts"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — loading skeleton visibility, error boundary catch, and empty state rendering verified via component mocks (FleetMap mocked). Visual rendering of skeleton animation and error styling requires browser environment."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-branch-integration",
+          "name": "Merge 4 story branches (fleet-sidebar, dashboard-responsive, session-navigation) into current branch, resolve conflicts, verify full test suite",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T16:24:56.650Z",
+          "files_changed": [
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/app/(admin)/dashboard/page.tsx",
+            "src/components/fleet-sidebar.tsx",
+            "src/components/fleet-sidebar.test.tsx",
+            "src/components/map-filters.tsx",
+            "src/components/map-filters.test.tsx",
+            "src/components/dashboard-layout.tsx",
+            "src/components/dashboard-layout.test.tsx",
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx",
+            "src/hooks/use-realtime-vehicles.ts",
+            "src/hooks/use-realtime-vehicles.test.ts",
+            "src/components/sidebar.tsx",
+            "src/components/sidebar.test.tsx",
+            "src/components/admin-layout.tsx",
+            "src/components/admin-layout.test.tsx",
+            "src/components/traffic-light.tsx",
+            "src/components/traffic-light.test.tsx",
+            "src/components/coming-soon.tsx",
+            "src/components/coming-soon.test.tsx",
+            "src/app/not-found.tsx",
+            "src/app/not-found.test.tsx",
+            "src/lib/alerts.ts",
+            "src/lib/alerts.test.ts",
+            "src/lib/map-filters.ts",
+            "src/lib/map-filters.test.ts",
+            "src/lib/vehicles.ts",
+            "src/lib/dashboard-data.ts",
+            "src/lib/dashboard-data.test.ts",
+            "src/app/api/alerts/route.ts",
+            "src/app/api/alerts/route.test.ts",
+            "src/app/(admin)/layout.tsx",
+            "src/app/(admin)/vehicles/page.tsx",
+            "src/app/(admin)/drivers/page.tsx",
+            "src/app/(admin)/maintenance/page.tsx",
+            "src/app/(admin)/inspections/page.tsx",
+            "src/app/(admin)/settings/page.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — all map-related tests use mocks. Visual rendering requires browser.",
+            "Tailwind responsive breakpoints cannot be verified in jsdom — tests verify class presence only.",
+            "matchMedia listener behavior tested via mock — actual browser resize events not testable in jsdom."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-focus-trap",
+          "name": "Add focus trap, Escape dismiss, and focus restore to mobile sidebar overlay in AdminLayout",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T16:28:56.880Z",
+          "files_changed": [
+            "src/components/admin-layout.tsx",
+            "src/components/admin-layout.test.tsx"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "fix-sidebar-reactivity",
+          "name": "Add alert polling, clickable alerts with map flyTo, and live sidebar vehicle counts",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Alerts refresh every 30s via client-side polling of /api/alerts",
+            "Updated Xs ago indicator visible below Active Alerts heading",
+            "Clicking alert with vehicleId pans/zooms map to vehicle position",
+            "Alert hover state and pointer cursor on alerts with vehicleId",
+            "Fleet-wide alerts (vehicleId null) are not clickable",
+            "Sidebar vehicle counts derived from realtime vehicle data"
+          ],
+          "completed_at": "2026-04-03T17:29:13.749Z",
+          "files_changed": [
+            "src/hooks/use-alert-polling.ts",
+            "src/hooks/use-alert-polling.test.ts",
+            "src/components/dashboard-shell.tsx",
+            "src/components/dashboard-shell.test.tsx",
+            "src/components/fleet-sidebar.tsx",
+            "src/components/fleet-sidebar.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/components/fleet-map.tsx",
+            "src/app/(admin)/dashboard/page.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL flyTo animation and moveend event verified via mock — actual map pan/zoom behavior requires browser with WebGL."
+          ]
+        },
+        {
+          "id": "fix-route-completeness",
+          "name": "Fix popup dead link, add /vehicles/[id] redirect, create dashboard and admin error.tsx",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Popup detail link href is /vehicles, text is 'View in vehicles list'",
+            "/vehicles/[id] catch-all route redirects to /vehicles",
+            "Dashboard error.tsx catches server failures with friendly message and retry",
+            "Admin root error.tsx catches unhandled errors on any admin route",
+            "Try again button calls Next.js reset()"
+          ],
+          "completed_at": "2026-04-03T17:36:30.428Z",
+          "files_changed": [
+            "src/lib/map-utils.ts",
+            "src/lib/map-utils.test.ts",
+            "src/components/fleet-map.test.tsx",
+            "src/app/(admin)/vehicles/[id]/page.tsx",
+            "src/app/(admin)/vehicles/[id]/page.test.tsx",
+            "src/app/(admin)/dashboard/error.tsx",
+            "src/app/(admin)/dashboard/error.test.tsx",
+            "src/app/(admin)/error.tsx",
+            "src/app/(admin)/error.test.tsx"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "fix-filter-ux",
+          "name": "Add filter-empty state with clear action, add aria-labels to all filter controls",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Filter-specific empty state shown when filters exclude all vehicles",
+            "Clear all filters button resets filters and shows vehicles",
+            "No-vehicles empty state unchanged when zero vehicles exist",
+            "Driver select has aria-label='Filter by driver'",
+            "All status and motion toggle buttons have aria-labels"
+          ],
+          "completed_at": "2026-04-03T17:44:00.902Z",
+          "files_changed": [
+            "src/components/map-filters.tsx",
+            "src/components/map-filters.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "fix-map-polish",
+          "name": "Add hover tooltip on vehicle markers, add last-updated relative timestamp",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [
+            "Hovering over vehicle marker shows tooltip with vehicle name",
+            "Tooltip dismissed on mouseleave, no tooltip on clusters",
+            "Relative timestamp shown next to connection status when live or stale",
+            "Timestamp updates every 10 seconds"
+          ],
+          "completed_at": "2026-04-03T17:53:10.890Z",
+          "files_changed": [
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/hooks/use-realtime-vehicles.ts",
+            "src/hooks/use-realtime-vehicles.test.ts",
+            "src/lib/format-time.ts",
+            "src/lib/format-time.test.ts",
+            "src/lib/vehicles.ts"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — hover tooltip creation and removal verified via MapLibre mock (Popup constructor, setLngLat, setHTML, addTo, remove calls inspected). Actual tooltip positioning and visual rendering requires a browser environment."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-sidebar-reactivity",
+          "name": "Add alert polling (30s), clickable alerts that flyTo vehicle on map, and live sidebar counts derived from realtime vehicle data",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T17:59:02.110Z",
+          "files_changed": [
+            "src/hooks/use-alert-polling.ts",
+            "src/hooks/use-alert-polling.test.ts",
+            "src/components/dashboard-shell.tsx",
+            "src/components/dashboard-shell.test.tsx",
+            "src/components/fleet-sidebar.tsx",
+            "src/components/fleet-sidebar.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/components/fleet-map.tsx",
+            "src/app/(admin)/dashboard/page.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL flyTo animation and moveend event verified via mock — actual map pan/zoom behavior requires browser with WebGL."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-route-completeness",
+          "name": "Fix popup dead link to /vehicles, add /vehicles/[id] catch-all redirect, create dashboard and admin error.tsx boundaries",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T18:03:27.314Z",
+          "files_changed": [
+            "src/lib/map-utils.ts",
+            "src/lib/map-utils.test.ts",
+            "src/components/fleet-map.test.tsx",
+            "src/app/(admin)/vehicles/[id]/page.tsx",
+            "src/app/(admin)/vehicles/[id]/page.test.tsx",
+            "src/app/(admin)/dashboard/error.tsx",
+            "src/app/(admin)/dashboard/error.test.tsx",
+            "src/app/(admin)/error.tsx",
+            "src/app/(admin)/error.test.tsx"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "openfleet-loop-1-filter-ux",
+          "name": "Add filter-specific empty state with clear filters action, add aria-labels to all filter controls",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T18:07:56.662Z",
+          "files_changed": [
+            "src/components/map-filters.tsx",
+            "src/components/map-filters.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "openfleet-loop-1-map-polish",
+          "name": "Add hover tooltip on vehicle markers showing vehicle name, add last-updated relative timestamp next to connection status",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T18:18:11.954Z",
+          "files_changed": [
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx",
+            "src/components/dashboard-map.tsx",
+            "src/components/dashboard-map.test.tsx",
+            "src/hooks/use-realtime-vehicles.ts",
+            "src/hooks/use-realtime-vehicles.test.ts",
+            "src/lib/format-time.ts",
+            "src/lib/format-time.test.ts",
+            "src/components/dashboard-shell.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — hover tooltip creation and removal verified via MapLibre mock (Popup constructor, setLngLat, setHTML, addTo, remove calls inspected). Actual tooltip positioning and visual rendering requires a browser environment."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-xss-and-cleanup",
+          "name": "Export escapeHTML from map-utils.ts, fix XSS in hover tooltip, add security comments at .setHTML() sites, consolidate duplicate time formatting to single formatRelativeTime",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T18:53:47.301Z",
+          "files_changed": [
+            "src/lib/map-utils.ts",
+            "src/components/fleet-map.tsx",
+            "src/components/fleet-map.test.tsx",
+            "src/components/fleet-sidebar.tsx",
+            "src/components/fleet-sidebar.test.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — XSS escaping in hover tooltip verified via MapLibre mock (Popup.setHTML argument inspected for escaped HTML entities). Actual tooltip rendering requires a browser environment."
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-test-type-fix",
+          "name": "Add userName='Test User' prop to 7 AdminLayout renders in admin-layout.test.tsx to fix TypeScript TS2741 errors",
+          "status": "done",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "S3-fleet-dashboard"
+          ],
+          "acceptance_criteria": [],
+          "completed_at": "2026-04-03T19:25:19.821Z",
+          "files_changed": [
+            "src/components/admin-layout.test.tsx"
+          ],
+          "env_limitations": []
         }
       ]
     },
     {
       "name": "vehicle-registry",
-      "status": "pending",
+      "status": "in-progress",
       "depends_on_milestones": [
         "foundation"
       ],
@@ -239,7 +732,7 @@
         {
           "id": "vehicle-list",
           "name": "Vehicle list with search, sort, filter",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [],
           "affected_entities": [
@@ -251,12 +744,21 @@
           "acceptance_criteria": [
             "Vehicle list supports search, sort (name, status, mileage, next service), and filter",
             "Vehicle list shows traffic light indicator per row"
-          ]
+          ],
+          "completed_at": "2026-04-03T19:49:57.796Z",
+          "files_changed": [
+            "src/components/vehicle-list.tsx",
+            "src/components/vehicle-list.test.tsx",
+            "src/app/(admin)/vehicles/page.tsx",
+            "src/lib/db.ts",
+            "src/lib/vehicles.ts"
+          ],
+          "env_limitations": []
         },
         {
           "id": "add-vehicle",
           "name": "Add vehicle form with persistence",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "vehicle-list"
@@ -269,12 +771,27 @@
           ],
           "acceptance_criteria": [
             "Vehicle photo upload supported"
-          ]
+          ],
+          "completed_at": "2026-04-03T20:04:04.553Z",
+          "files_changed": [
+            "src/lib/validators.ts",
+            "src/lib/validators.test.ts",
+            "src/app/api/vehicles/route.ts",
+            "src/app/api/vehicles/route.test.ts",
+            "src/app/api/uploads/route.ts",
+            "src/app/api/uploads/route.test.ts",
+            "src/components/add-vehicle-form.tsx",
+            "src/components/add-vehicle-form.test.tsx",
+            "src/app/(admin)/vehicles/new/page.tsx",
+            "src/app/(admin)/vehicles/page.tsx",
+            ".gitignore"
+          ],
+          "env_limitations": []
         },
         {
           "id": "vehicle-detail",
           "name": "Vehicle detail tabbed view",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "vehicle-list"
@@ -291,6 +808,90 @@
             "Traffic light: green = all clear, orange = requires attention, red = overdue",
             "Decommissioned vehicles hidden from map and dashboard by default, visible via filter",
             "Vehicle detail overview shows mini-map with current position"
+          ],
+          "completed_at": "2026-04-03T20:14:44.207Z",
+          "files_changed": [
+            "src/app/api/vehicles/[id]/route.ts",
+            "src/app/api/vehicles/[id]/route.test.ts",
+            "src/app/(admin)/vehicles/[id]/page.tsx",
+            "src/components/vehicle-detail.tsx",
+            "src/components/vehicle-detail.test.tsx",
+            "src/components/vehicle-mini-map.tsx",
+            "src/components/vehicle-list.tsx",
+            "src/components/vehicle-list.test.tsx",
+            "src/app/(admin)/vehicles/page.tsx"
+          ],
+          "env_limitations": [
+            "MapLibre GL requires WebGL — mini-map rendering verified via mock (Marker, Map constructor). Visual verification of map tiles, marker color, and zoom level requires a browser environment."
+          ]
+        },
+        {
+          "id": "fix-vehicle-edit",
+          "name": "Add vehicle edit mode with status dropdown, PUT endpoint, and success feedback",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "vehicle-detail"
+          ],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S5-vehicle-detail"
+          ],
+          "acceptance_criteria": [
+            "Edit button visible on vehicle detail page header",
+            "Edit mode shows pre-populated form with all editable fields including status dropdown",
+            "PUT /api/vehicles/[id] persists updates with Zod validation",
+            "Success toast shown after save, view returns to read-only mode",
+            "Cancel discards changes and returns to read-only view",
+            "Decommissioned vehicles hidden from default map/dashboard views"
+          ]
+        },
+        {
+          "id": "fix-photo-and-list-polish",
+          "name": "Display vehicle photos, accessible traffic light, and fleet health summary",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "vehicle-detail",
+            "vehicle-list"
+          ],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "S4-vehicle-list",
+            "S5-vehicle-detail"
+          ],
+          "acceptance_criteria": [
+            "Vehicle photo rendered in detail header (or initial-letter placeholder if no photo)",
+            "Vehicle thumbnail shown in each list row (photo or placeholder)",
+            "Traffic light indicators in list have role=status, aria-label, and tooltip on hover",
+            "Fleet health summary bar above table showing total and per-status breakdown",
+            "Summary bar updates when decommissioned filter is toggled"
+          ]
+        },
+        {
+          "id": "fix-add-vehicle-form-ux",
+          "name": "Add success toast, photo upload warning, and required/optional field markers",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [
+            "add-vehicle"
+          ],
+          "affected_entities": [
+            "vehicle"
+          ],
+          "affected_screens": [
+            "/vehicles/new",
+            "S4-vehicle-list"
+          ],
+          "acceptance_criteria": [
+            "Success toast visible on vehicle list after creation redirect, auto-dismisses after 5s",
+            "Inline warning shown when photo upload fails but vehicle creation succeeds",
+            "Required fields marked with asterisk (*), optional fields with '(optional)' suffix",
+            "Legend '* Required' visible at top of form"
           ]
         }
       ]
@@ -611,8 +1212,8 @@
   "seeded_at": "2026-04-01T10:00:00Z",
   "seeded_by": "manual-v2-transform",
   "human_approved": true,
-  "timestamp": "2026-04-01T14:42:00.151155+00:00",
-  "last_build_delta": 0,
+  "timestamp": "2026-04-03T20:42:58.829Z",
+  "last_build_delta": 6,
   "previous_state": "milestone-check",
   "fix_tasks": [
     {
