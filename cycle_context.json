@@ -624,6 +624,49 @@
       "affects": [
         "src/lib/vehicles.ts"
       ]
+    },
+    {
+      "decision": "Search Before Building audit for cycle 1 story add-vehicle",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 3 BUILD (AddVehicleForm component, POST /api/vehicles route, POST /api/uploads route), 2 EXTEND (validators.ts with createVehicleSchema, vehicles page.tsx with Add Vehicle button), 2 REUSE (Supabase client from db.ts, auth from getApiSession). Key reuse: existing form input styling patterns, Zod validation approach from positionSchema, API route pattern from GET /api/vehicles.",
+      "confidence": "high",
+      "affects": [
+        "src/lib/validators.ts",
+        "src/app/api/vehicles/route.ts",
+        "src/app/api/uploads/route.ts",
+        "src/components/add-vehicle-form.tsx",
+        "src/app/(admin)/vehicles/page.tsx",
+        "src/app/(admin)/vehicles/new/page.tsx"
+      ]
+    },
+    {
+      "decision": "Local filesystem photo storage with /public/uploads/vehicles/",
+      "context": "Vehicle photo upload needs persistent storage. Deploy model is self-hosted Docker Compose.",
+      "alternatives_considered": [
+        "Supabase Storage — rejected because adds external dependency for a self-hosted product, complicates Docker Compose setup",
+        "Base64 in database — rejected because bloats DB, poor performance for image serving",
+        "S3-compatible storage — rejected because adds cloud dependency counter to self-hosted vision"
+      ],
+      "rationale": "Self-hosted product should store files locally. Next.js serves /public/ statically. UUID filenames prevent collisions. 5MB limit prevents abuse. Upload directory in .gitignore. Docker volume mount makes uploads persistent across container restarts.",
+      "confidence": "high",
+      "affects": [
+        "src/app/api/uploads/route.ts",
+        ".gitignore"
+      ]
+    },
+    {
+      "decision": "Zod schema validates VIN with 17-char regex excluding I/O/Q",
+      "context": "VIN is optional but when provided must be valid per ISO 3779 (no I, O, Q characters)",
+      "alternatives_considered": [
+        "No VIN validation — rejected because garbage data degrades product quality",
+        "Full VIN checksum validation — rejected as over-engineering for a fleet management tool; format validation is sufficient"
+      ],
+      "rationale": "VIN format validation catches common typos and prevents garbage data. Empty string is accepted (treated as 'not provided'). The regex /^[A-HJ-NPR-Z0-9]+$/ with .length(17) matches ISO 3779 character set without the complexity of full check-digit validation.",
+      "confidence": "high",
+      "affects": [
+        "src/lib/validators.ts"
+      ]
     }
   ],
   "factory_questions": [],
@@ -715,6 +758,28 @@
         "src/app/(admin)/vehicles/page.tsx",
         "src/lib/db.ts",
         "src/lib/vehicles.ts"
+      ],
+      "tests_added": 24,
+      "tests_passing": 24
+    },
+    {
+      "task": "add-vehicle",
+      "acceptance_criteria": [
+        "AC-FA2-5: Vehicle photo upload supported",
+        "AC-FA2-J1: Add vehicle form with make, model, year, VIN, license plate, color, odometer, photo"
+      ],
+      "files_changed": [
+        "src/lib/validators.ts",
+        "src/lib/validators.test.ts",
+        "src/app/api/vehicles/route.ts",
+        "src/app/api/vehicles/route.test.ts",
+        "src/app/api/uploads/route.ts",
+        "src/app/api/uploads/route.test.ts",
+        "src/components/add-vehicle-form.tsx",
+        "src/components/add-vehicle-form.test.tsx",
+        "src/app/(admin)/vehicles/new/page.tsx",
+        "src/app/(admin)/vehicles/page.tsx",
+        ".gitignore"
       ],
       "tests_added": 24,
       "tests_passing": 24
@@ -1749,14 +1814,20 @@
     ]
   },
   "story_result": {
-    "story_id": "vehicle-list",
+    "story_id": "add-vehicle",
     "outcome": "pass",
     "files_changed": [
-      "src/components/vehicle-list.tsx",
-      "src/components/vehicle-list.test.tsx",
+      "src/lib/validators.ts",
+      "src/lib/validators.test.ts",
+      "src/app/api/vehicles/route.ts",
+      "src/app/api/vehicles/route.test.ts",
+      "src/app/api/uploads/route.ts",
+      "src/app/api/uploads/route.test.ts",
+      "src/components/add-vehicle-form.tsx",
+      "src/components/add-vehicle-form.test.tsx",
+      "src/app/(admin)/vehicles/new/page.tsx",
       "src/app/(admin)/vehicles/page.tsx",
-      "src/lib/db.ts",
-      "src/lib/vehicles.ts"
+      ".gitignore"
     ],
     "tests_added": 24,
     "tests_passing": 24,
@@ -3828,5 +3899,5 @@
     "anomalies_total": 8
   },
   "_current_milestone": "vehicle-registry",
-  "_current_story": "vehicle-list"
+  "_current_story": "add-vehicle"
 }
