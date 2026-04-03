@@ -217,6 +217,46 @@ describe('VehicleList', () => {
     });
   });
 
+  // AC-6: Decommissioned vehicles hidden by default, visible via filter
+  describe('decommissioned filter', () => {
+    const vehiclesWithDecommissioned: VehicleListItem[] = [
+      ...mockVehicles,
+      {
+        id: 'v4',
+        name: 'Old Van',
+        make: 'Ford',
+        model: 'Connect',
+        year: 2015,
+        licensePlate: 'DE15 COM',
+        status: 'DECOMMISSIONED',
+        odometer: 150000,
+        trafficLight: 'RED',
+      },
+    ];
+
+    it('hides decommissioned vehicles by default', () => {
+      render(<VehicleList vehicles={vehiclesWithDecommissioned} />);
+      expect(screen.queryByText('Old Van')).toBeNull();
+      expect(screen.getByText('Van 01')).toBeTruthy();
+    });
+
+    it('shows decommissioned vehicles when toggle is checked', () => {
+      render(<VehicleList vehicles={vehiclesWithDecommissioned} />);
+      const toggle = screen.getByRole('checkbox', { name: /decommissioned/i });
+      fireEvent.click(toggle);
+      expect(screen.getByText('Old Van')).toBeTruthy();
+    });
+
+    it('hides decommissioned vehicles again when toggle is unchecked', () => {
+      render(<VehicleList vehicles={vehiclesWithDecommissioned} />);
+      const toggle = screen.getByRole('checkbox', { name: /decommissioned/i });
+      fireEvent.click(toggle);
+      expect(screen.getByText('Old Van')).toBeTruthy();
+      fireEvent.click(toggle);
+      expect(screen.queryByText('Old Van')).toBeNull();
+    });
+  });
+
   // Empty state
   describe('empty state', () => {
     it('shows empty state when no vehicles', () => {

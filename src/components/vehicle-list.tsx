@@ -44,9 +44,17 @@ export function VehicleList({ vehicles }: VehicleListProps) {
   const [statusFilter, setStatusFilter] = useState('');
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDirection, setSortDirection] = useState<SortDirection>('ascending');
+  const [showDecommissioned, setShowDecommissioned] = useState(false);
+
+  const hasDecommissioned = useMemo(() => vehicles.some(v => v.status === 'DECOMMISSIONED'), [vehicles]);
 
   const filteredAndSorted = useMemo(() => {
     let result = vehicles;
+
+    // Hide decommissioned by default
+    if (!showDecommissioned) {
+      result = result.filter(v => v.status !== 'DECOMMISSIONED');
+    }
 
     // Filter by search
     if (search) {
@@ -76,7 +84,7 @@ export function VehicleList({ vehicles }: VehicleListProps) {
     });
 
     return sorted;
-  }, [vehicles, search, statusFilter, sortField, sortDirection]);
+  }, [vehicles, search, statusFilter, sortField, sortDirection, showDecommissioned]);
 
   function handleSort(field: SortField) {
     if (sortField === field) {
@@ -122,6 +130,17 @@ export function VehicleList({ vehicles }: VehicleListProps) {
           <option value="ORANGE">Requires attention</option>
           <option value="RED">Overdue</option>
         </select>
+        {hasDecommissioned && (
+          <label className="flex items-center gap-2 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              checked={showDecommissioned}
+              onChange={e => setShowDecommissioned(e.target.checked)}
+              className="rounded border-slate-300 text-fleet-sidebar focus:ring-fleet-sidebar"
+            />
+            Show decommissioned
+          </label>
+        )}
       </div>
 
       {/* No results */}

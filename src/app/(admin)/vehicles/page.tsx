@@ -7,7 +7,6 @@ export default async function VehiclesPage() {
   const { data: vehicles, error } = await supabase
     .from('vehicles')
     .select('id, name, make, model, year, license_plate, status, odometer, traffic_light')
-    .neq('status', 'DECOMMISSIONED')
     .order('name', { ascending: true });
 
   if (error) {
