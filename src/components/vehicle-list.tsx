@@ -50,6 +50,18 @@ export function VehicleList({ vehicles }: VehicleListProps) {
 
   const hasDecommissioned = useMemo(() => vehicles.some(v => v.status === 'DECOMMISSIONED'), [vehicles]);
 
+  const healthSummary = useMemo(() => {
+    let pool = vehicles;
+    if (!showDecommissioned) {
+      pool = pool.filter(v => v.status !== 'DECOMMISSIONED');
+    }
+    const total = pool.length;
+    const red = pool.filter(v => v.trafficLight === 'RED').length;
+    const orange = pool.filter(v => v.trafficLight === 'ORANGE').length;
+    const green = pool.filter(v => v.trafficLight === 'GREEN').length;
+    return { total, red, orange, green };
+  }, [vehicles, showDecommissioned]);
+
   const filteredAndSorted = useMemo(() => {
     let result = vehicles;
 
@@ -142,6 +154,32 @@ export function VehicleList({ vehicles }: VehicleListProps) {
             />
             Show decommissioned
           </label>
+        )}
+      </div>
+
+      {/* Fleet health summary */}
+      <div
+        data-testid="fleet-health-summary"
+        className="mb-4 flex flex-wrap items-center gap-4 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm"
+      >
+        <span className="font-medium text-slate-900">{healthSummary.total} vehicles</span>
+        {healthSummary.red > 0 && (
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2 w-2 rounded-full bg-fleet-red" />
+            <span className="text-slate-600">{healthSummary.red} overdue</span>
+          </span>
+        )}
+        {healthSummary.orange > 0 && (
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2 w-2 rounded-full bg-fleet-orange" />
+            <span className="text-slate-600">{healthSummary.orange} attention</span>
+          </span>
+        )}
+        {healthSummary.green > 0 && (
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2 w-2 rounded-full bg-fleet-green" />
+            <span className="text-slate-600">{healthSummary.green} clear</span>
+          </span>
         )}
       </div>
 

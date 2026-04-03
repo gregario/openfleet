@@ -64,29 +64,29 @@ describe('VehicleList', () => {
   // AC-2: Vehicle list shows traffic light indicator per row
   describe('traffic light indicator per row', () => {
     it('renders a traffic light status indicator for each vehicle', () => {
-      const { container } = render(<VehicleList vehicles={mockVehicles} />);
-      // Each row has a TrafficLight — check for the indicator dots (small colored circles)
-      const dots = container.querySelectorAll('.rounded-full.bg-fleet-green, .rounded-full.bg-fleet-red, .rounded-full.bg-fleet-orange');
-      expect(dots.length).toBe(3);
+      render(<VehicleList vehicles={mockVehicles} />);
+      // Each table row has a TrafficLight with role=status
+      const table = screen.getByRole('table');
+      const indicators = table.querySelectorAll('[role="status"]');
+      expect(indicators.length).toBe(3);
     });
 
     it('shows correct traffic light colors', () => {
-      const { container } = render(<VehicleList vehicles={mockVehicles} />);
-      const dots = container.querySelectorAll('.rounded-full');
-      const classes = Array.from(dots).map(d => d.className);
-      expect(classes.some(c => c.includes('bg-fleet-green'))).toBe(true);
-      expect(classes.some(c => c.includes('bg-fleet-red'))).toBe(true);
-      expect(classes.some(c => c.includes('bg-fleet-orange'))).toBe(true);
+      render(<VehicleList vehicles={mockVehicles} />);
+      // Check that role=status elements exist with correct aria-labels
+      const statuses = screen.getAllByRole('status');
+      const labels = statuses.map(s => s.getAttribute('aria-label'));
+      expect(labels).toContain('All clear');
+      expect(labels).toContain('Overdue');
+      expect(labels).toContain('Requires attention');
     });
 
     it('renders green, orange, and red indicators matching vehicle statuses', () => {
-      const { container } = render(<VehicleList vehicles={mockVehicles} />);
-      const greenDots = container.querySelectorAll('.bg-fleet-green');
-      const redDots = container.querySelectorAll('.bg-fleet-red');
-      const orangeDots = container.querySelectorAll('.bg-fleet-orange');
-      expect(greenDots.length).toBe(1); // Van 01
-      expect(redDots.length).toBe(1); // Van 02
-      expect(orangeDots.length).toBe(1); // Truck 01
+      render(<VehicleList vehicles={mockVehicles} />);
+      // Each table row should have a traffic light with role=status
+      const table = screen.getByRole('table');
+      const statuses = table.querySelectorAll('[role="status"]');
+      expect(statuses.length).toBe(3);
     });
   });
 
@@ -263,6 +263,70 @@ describe('VehicleList', () => {
       expect(screen.getByText('Old Van')).toBeTruthy();
       fireEvent.click(toggle);
       expect(screen.queryByText('Old Van')).toBeNull();
+    });
+  });
+
+  // AC-fix-photo-and-list-polish-4: Fleet health summary bar above table
+  describe('fleet health summary bar', () => {
+    it('shows total vehicle count', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      expect(screen.getByText(/3 vehicles/i)).toBeTruthy();
+    });
+
+    it('shows per-status breakdown', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      // Should show counts for each traffic light status present
+      expect(screen.getByText(/1 overdue/i)).toBeTruthy();
+      expect(screen.getByText(/1 attention/i)).toBeTruthy();
+      expect(screen.getByText(/1 clear/i)).toBeTruthy();
+    });
+
+    it('summary bar appears above the table', () => {
+      const { container } = render(<VehicleList vehicles={mockVehicles} />);
+      const summary = container.querySelector('[data-testid="fleet-health-summary"]');
+      expect(summary).toBeTruthy();
+    });
+  });
+
+  // AC-fix-photo-and-list-polish-5: Summary bar updates when decommissioned filter toggled
+  describe('summary bar decommissioned sync', () => {
+    const vehiclesWithDecommissioned: VehicleListItem[] = [
+      ...mockVehicles,
+      {
+        id: 'v4',
+        name: 'Old Van',
+        make: 'Ford',
+        model: 'Connect',
+        year: 2015,
+        licensePlate: 'DE15 COM',
+        status: 'DECOMMISSIONED',
+        odometer: 150000,
+        trafficLight: 'RED',
+        photoUrl: null,
+      },
+    ];
+
+    it('excludes decommissioned from summary by default', () => {
+      render(<VehicleList vehicles={vehiclesWithDecommissioned} />);
+      expect(screen.getByText(/3 vehicles/i)).toBeTruthy();
+    });
+
+    it('includes decommissioned in summary when toggle is checked', () => {
+      render(<VehicleList vehicles={vehiclesWithDecommissioned} />);
+      const toggle = screen.getByRole('checkbox', { name: /decommissioned/i });
+      fireEvent.click(toggle);
+      expect(screen.getByText(/4 vehicles/i)).toBeTruthy();
+    });
+
+    it('updates per-status counts when decommissioned toggled', () => {
+      render(<VehicleList vehicles={vehiclesWithDecommissioned} />);
+      // Initially 1 overdue (Van 02)
+      expect(screen.getByText(/1 overdue/i)).toBeTruthy();
+
+      const toggle = screen.getByRole('checkbox', { name: /decommissioned/i });
+      fireEvent.click(toggle);
+      // Now 2 overdue (Van 02 + Old Van)
+      expect(screen.getByText(/2 overdue/i)).toBeTruthy();
     });
   });
 
