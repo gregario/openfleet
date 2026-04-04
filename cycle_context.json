@@ -12,8 +12,8 @@
   },
   "evaluation_tier": "full",
   "cycle_type": "re-evaluation",
-  "dual_voice_po_review": true,
-  "tier_rationale": "Full-tier re-evaluation: Previous vehicle-registry PO review returned NEEDS_IMPROVEMENT (confidence 0.676). Analyzing phase generated change specs for 6 quality gaps. 3 fix stories built (fix-vehicle-edit, fix-photo-and-list-polish, fix-add-vehicle-form-ux) adding edit mode, photo display, success toast, field markers, fleet health summary. 33 files changed, 7229 insertions. All sub-phases required.",
+  "dual_voice_po_review": false,
+  "tier_rationale": "Full-tier re-evaluation: milestone-check after vehicle-registry loop-2 fix stories completed. Previous PO review was NEEDS_IMPROVEMENT (confidence 0.87) with 2 quality gaps (qg-fa2-8: edit error feedback, qg-fa2-9: form responsive layout). Both gaps addressed by loop-2 stories (openfleet-loop-2-vehicle-edit-error-feedback, openfleet-loop-2-add-vehicle-form-responsive). Additionally, 9 QA fix tasks from prior evaluation all resolved. Dual-voice disabled: previous PO confidence 0.87 > 0.8 and active_spec unchanged.",
   "vision": {
     "product_name": "OpenFleet",
     "one_liner": "Open-source fleet management for small businesses — see your vehicles, track your maintenance, own your data.",
@@ -886,88 +886,166 @@
         "url": "https://openfleet-v2-staging.gregj64.workers.dev",
         "timestamp": "2026-04-03T23:57:38.341Z",
         "cycle": 1
+      },
+      {
+        "version": "c6a73c7e-cc1c-44f0-bd13-b82945dabb89",
+        "previous": "036688f0-4f31-4009-a29d-8845a8f790f7",
+        "url": "https://openfleet-v2-staging.gregj64.workers.dev",
+        "timestamp": "2026-04-04T06:49:17.743Z",
+        "cycle": 1
       }
     ]
   },
   "review_readiness_dashboard": {
     "test_integrity": {
       "passed": true,
-      "timestamp": "2026-04-04T00:02:50.909165+00:00"
+      "timestamp": "2026-04-04T07:21:54.384556+00:00"
     },
     "qa_gate": {
       "passed": true,
-      "timestamp": "2026-04-04T00:06:52.915088+00:00"
+      "timestamp": "2026-04-04T07:25:44.812503+00:00"
     },
     "ai_code_audit": {
       "passed": true,
-      "timestamp": "2026-04-04T00:06:52.934564+00:00"
+      "timestamp": "2026-04-04T07:25:44.831316+00:00"
     },
     "security_review": {
       "passed": true,
-      "timestamp": "2026-04-04T00:06:52.952154+00:00"
+      "timestamp": "2026-04-04T07:25:44.848859+00:00"
     },
     "a11y_review": {
       "passed": true,
-      "timestamp": "2026-04-04T00:06:52.969465+00:00"
+      "timestamp": "2026-04-04T07:25:44.866599+00:00"
     },
     "design_review": {
       "passed": true,
-      "timestamp": "2026-04-04T00:06:52.986919+00:00"
+      "timestamp": "2026-04-04T07:25:44.883972+00:00"
     },
     "po_review": {
-      "passed": false,
-      "timestamp": "2026-04-04T00:16:31.881270+00:00"
+      "passed": true,
+      "timestamp": "2026-04-04T07:30:45.352437+00:00",
+      "confidence": 0.92
     }
   },
   "qa_fix_results": {
-    "phase": "qa-fixing",
-    "cycle": 1,
-    "timestamp": "2026-04-01T10:48:00.000Z",
+    "phase": "milestone-fix",
+    "cycle": "1",
+    "timestamp": "2026-04-04T08:12:00.000Z",
     "criteria_fixed": [
       {
-        "criterion_id": "fix-qa-sse-mismatch",
-        "root_cause": "code_bug",
-        "hypothesis": "Server wraps SSE updates in {vehicles:[...]} envelope but client destructures as bare PositionUpdate[]",
-        "fix_description": "Changed JSON.parse destructuring in useRealtimeVehicles to unwrap {vehicles} key; updated test mock to match real server format",
+        "criterion_id": "fix-next-service-sort",
+        "root_cause": "missing_implementation",
+        "hypothesis": "SortField type and VehicleListItem interface lacked nextService; sort column never implemented",
+        "fix_description": "Added nextService optional field to VehicleListItem, sort-by-nextService column header, date display with null-to-end sorting",
         "files_changed": [
-          "src/hooks/use-realtime-vehicles.ts",
-          "src/hooks/use-realtime-vehicles.test.ts"
+          "src/components/vehicle-list.tsx"
         ],
-        "test_added": "src/hooks/use-realtime-vehicles.test.ts — REGRESSION: fix-qa-sse-mismatch — unwraps {vehicles:[...]} envelope from server",
-        "regression_test_added": "src/hooks/use-realtime-vehicles.test.ts — REGRESSION: fix-qa-sse-mismatch — unwraps {vehicles:[...]} envelope from server",
-        "commit_sha": "74b0826"
+        "test_added": "src/components/vehicle-list.test.tsx — AC-1: sorts by next service date",
+        "regression_test_added": "src/components/vehicle-list.test.tsx — REGRESSION: fix-next-service-sort — null nextService values sort to end",
+        "commit_sha": "348f67b"
       },
       {
-        "criterion_id": "fix-qa-xss-popup",
+        "criterion_id": "fix-traffic-light-labels",
         "root_cause": "code_bug",
-        "hypothesis": "buildPopupHTML interpolates user-controllable strings (name, licensePlate, driverName) into HTML template literals without escaping",
-        "fix_description": "Added escapeHTML helper function; applied to name, licensePlate, and driverName before HTML interpolation",
+        "hypothesis": "TrafficLight rendered in list rows without label prop — only colored dot, no text",
+        "fix_description": "Added TRAFFIC_LIGHT_LABELS map and passed label prop to TrafficLight in table rows",
         "files_changed": [
-          "src/lib/map-utils.ts",
-          "src/lib/map-utils.test.ts"
+          "src/components/vehicle-list.tsx"
         ],
-        "test_added": "src/lib/map-utils.test.ts — AC-fa1-xss-001: escapes HTML in user-controllable fields to prevent XSS",
-        "regression_test_added": "src/lib/map-utils.test.ts — REGRESSION: fix-qa-xss-popup — ampersands and quotes in names are escaped",
-        "commit_sha": "140fd05"
+        "test_added": "src/components/vehicle-list.test.tsx — AC-2: fix-traffic-light-labels — shows color+text label in each row",
+        "regression_test_added": "same test covers regression — checks visible text in table cells",
+        "commit_sha": "012529f"
       },
       {
-        "criterion_id": "fix-qa-json-parse-safety",
+        "criterion_id": "fix-search-a11y",
         "root_cause": "code_bug",
-        "hypothesis": "JSON.parse in useRealtimeVehicles SSE handler has no error handling — malformed data crashes the hook and kills the stream",
-        "fix_description": "Wrapped JSON.parse in try/catch with early return; added Array.isArray guard on parsed.vehicles",
+        "hypothesis": "Search input used type='text' with no aria-label, inaccessible to screen readers",
+        "fix_description": "Changed to type='search' and added aria-label='Search vehicles'",
         "files_changed": [
-          "src/hooks/use-realtime-vehicles.ts",
-          "src/hooks/use-realtime-vehicles.test.ts"
+          "src/components/vehicle-list.tsx"
         ],
-        "test_added": "src/hooks/use-realtime-vehicles.test.ts — AC-fa1-json-safety-001: does not crash on malformed SSE data",
-        "regression_test_added": "src/hooks/use-realtime-vehicles.test.ts — REGRESSION: fix-qa-json-parse-safety — survives missing vehicles key in parsed JSON",
-        "commit_sha": "bc2ebde"
+        "test_added": "src/components/vehicle-list.test.tsx — AC-1: fix-search-a11y — search input has accessible name via aria-label",
+        "regression_test_added": "same test covers regression",
+        "commit_sha": "b43f429"
+      },
+      {
+        "criterion_id": "fix-status-display",
+        "root_cause": "code_bug",
+        "hypothesis": "OverviewTab rendered vehicle.status directly (raw enum like ACTIVE, IN_SHOP) without formatting",
+        "fix_description": "Added formatStatus() that maps enum values to human-readable labels via STATUS_OPTIONS",
+        "files_changed": [
+          "src/components/vehicle-detail.tsx"
+        ],
+        "test_added": "src/components/vehicle-detail.test.tsx — AC-fix-status-display: shows human-readable status (not raw enum)",
+        "regression_test_added": "src/components/vehicle-detail.test.tsx — AC-fix-status-display: shows In Shop for IN_SHOP status",
+        "commit_sha": "02243d2"
+      },
+      {
+        "criterion_id": "fix-upload-security",
+        "root_cause": "code_bug",
+        "hypothesis": "Upload route trusted client-provided MIME type and derived extension from user-controlled filename",
+        "fix_description": "Added magic-byte detection for JPEG/PNG/GIF/WebP, reject mismatched files, derive extension from validated type",
+        "files_changed": [
+          "src/app/api/uploads/route.ts"
+        ],
+        "test_added": "src/app/api/uploads/route.test.ts — AC-fix-upload-security: rejects file with spoofed MIME type",
+        "regression_test_added": "src/app/api/uploads/route.test.ts — AC-fix-upload-security: derives extension from validated MIME type, not filename",
+        "commit_sha": "c454b5a"
+      },
+      {
+        "criterion_id": "fix-post-vehicles-auth",
+        "root_cause": "code_bug",
+        "hypothesis": "POST /api/vehicles only checked session existence, not ADMIN role — drivers could create vehicles",
+        "fix_description": "Added session.role !== 'ADMIN' check returning 403, matching PUT handler pattern",
+        "files_changed": [
+          "src/app/api/vehicles/route.ts"
+        ],
+        "test_added": "src/app/api/vehicles/route.test.ts — AC-fix-post-vehicles-auth: returns 403 when non-ADMIN user creates vehicle",
+        "regression_test_added": "same test covers regression",
+        "commit_sha": "e34ff21"
+      },
+      {
+        "criterion_id": "fix-form-a11y",
+        "root_cause": "code_bug",
+        "hypothesis": "Form inputs lacked aria-required and aria-describedby attributes for accessibility",
+        "fix_description": "Added aria-required='true' on required fields, aria-describedby linking inputs to error message IDs",
+        "files_changed": [
+          "src/components/add-vehicle-form.tsx"
+        ],
+        "test_added": "src/components/add-vehicle-form.test.tsx — AC-fix-form-a11y: required fields have aria-required attribute",
+        "regression_test_added": "src/components/add-vehicle-form.test.tsx — AC-fix-form-a11y: error messages are linked via aria-describedby",
+        "commit_sha": "dafdd09"
+      },
+      {
+        "criterion_id": "fix-toast-dismiss",
+        "root_cause": "missing_implementation",
+        "hypothesis": "Toast only had auto-dismiss timer, no manual close button",
+        "fix_description": "Added close button with X icon and aria-label='Close' that sets visible to false",
+        "files_changed": [
+          "src/components/vehicle-created-toast.tsx"
+        ],
+        "test_added": "src/components/vehicle-created-toast.test.tsx — AC-fix-toast-dismiss: has a close button that dismisses the toast",
+        "regression_test_added": "same test covers regression",
+        "commit_sha": "6e40510"
+      },
+      {
+        "criterion_id": "fix-loading-skeletons",
+        "root_cause": "missing_implementation",
+        "hypothesis": "No loading.tsx files existed for vehicles list and detail routes",
+        "fix_description": "Created loading.tsx skeleton components for /vehicles and /vehicles/[id] routes",
+        "files_changed": [
+          "src/app/(admin)/vehicles/loading.tsx",
+          "src/app/(admin)/vehicles/[id]/loading.tsx"
+        ],
+        "test_added": "src/app/(admin)/vehicles/loading.test.tsx and src/app/(admin)/vehicles/[id]/loading.test.tsx",
+        "regression_test_added": "REGRESSION: fix-loading-skeletons — default export is a valid component (both files)",
+        "commit_sha": "1be6e10"
       }
     ],
     "criteria_escalated": [],
     "criteria_skipped": [],
-    "deployment_url": null,
-    "total_commits": 3,
+    "deployment_url": "https://openfleet-v2-staging.gregj64.workers.dev",
+    "total_commits": 10,
     "escalation_needed": false
   },
   "retry_counts": {
@@ -1000,6 +1078,105 @@
           "cycle": 1,
           "phase": "qa-fixing",
           "what_tried": "Wrapped JSON.parse in try/catch with early return; added Array.isArray guard",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-next-service-sort": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Added nextService optional field to VehicleListItem, sortable column header with null-to-end sorting, date display",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-traffic-light-labels": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Added TRAFFIC_LIGHT_LABELS map and passed label prop to TrafficLight in table rows",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-search-a11y": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Changed input type to search, added aria-label='Search vehicles'",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-status-display": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Added formatStatus() mapping enum values to human-readable labels via STATUS_OPTIONS",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-upload-security": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Added magic-byte MIME validation for JPEG/PNG/GIF/WebP, reject mismatched, derive extension from validated type",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-post-vehicles-auth": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Added session.role !== ADMIN check returning 403 on POST /api/vehicles",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-form-a11y": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Added aria-required on required fields, aria-describedby linking inputs to error message IDs",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-toast-dismiss": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Added close button with X icon and aria-label='Close' to VehicleCreatedToast",
+          "result": "fixed"
+        }
+      ]
+    },
+    "fix-loading-skeletons": {
+      "attempts": 1,
+      "history": [
+        {
+          "cycle": 1,
+          "phase": "milestone-fix",
+          "what_tried": "Created loading.tsx skeleton components for /vehicles and /vehicles/[id] routes",
           "result": "fixed"
         }
       ]
@@ -1456,6 +1633,46 @@
         "Could round up to PRODUCTION_READY since 0.87 adjusted is close to 0.90 — rejected because threshold is clear and the edit error gap is legitimate"
       ],
       "confidence": 0.96
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "timestamp": "2026-04-04T06:54:17.419988+00:00",
+      "decision": "PASS — test suite green (271/271), all FA2 acceptance criteria covered by functional tests",
+      "reasoning": "Test suite passes. FA2 spec criteria all have matching tests. Minor annotation gaps (PO-3 lacks explicit ID, 6 files without @criterion) do not impact functional coverage. Sort-by-next-service gap is a feature gap, not a test gap.",
+      "alternatives_considered": [
+        "FAIL for missing sort-by-next-service test — rejected because the feature itself is likely unimplemented; QA gate will surface this"
+      ],
+      "confidence": 0.92
+    },
+    {
+      "phase": "qa-gate",
+      "cycle": 1,
+      "timestamp": "2026-04-04T06:57:33.757072+00:00",
+      "decision": "FAIL — functional gap (sort by next service), a11y violations (search label, traffic light color-only), design violations (traffic light text, raw enum status)",
+      "reasoning": "Three of five sub-checks failed. Functional: AC-1 partially unmet (sort by next service missing). A11y: two WCAG Level A violations. Design: traffic light missing text label in list, raw enum values in detail view. Security and code audit passed with medium recommendations.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-04T06:58:17.995842+00:00",
+      "decision": "Evaluation complete. Verdict: FAIL. Gates: test_integrity=PASS, qa_gate=FAIL, ai_code_audit=PASS, security_review=PASS, a11y_review=FAIL, design_review=FAIL, po_review=SKIPPED",
+      "reasoning": "QA Gate failed on 3 sub-checks (functional, a11y, design). PO Review skipped per anti-pattern rule. Routing to milestone-fix with 9 fix tasks extracted from QA failure reports.",
+      "alternatives_considered": [],
+      "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "timestamp": "2026-04-04T07:31:00.000Z",
+      "decision": "Evaluation complete. Verdict: PASS. All 7 gates pass. test_integrity=PASS (290/290 tests), qa_gate=PASS (11/11 fixes verified, 0 critical findings), ai_code_audit=PASS (78/100), security_review=PASS, a11y_review=PASS, design_review=PASS, po_review=PASS (PRODUCTION_READY, confidence 0.92).",
+      "reasoning": "Re-evaluation after loop-2 fix stories: both PO quality gaps resolved (qg-fa2-8 edit error feedback, qg-fa2-9 form responsive layout). All 9 prior QA fix tasks verified. PO confidence improved from 0.87 to 0.92 (adjusted), exceeding 0.90 promote threshold. Zero quality gaps remain. 6 improvement items tracked (decommissioned filter, PUT try/catch, toast close buttons, session secret, timing-safe API key, loading ARIA). Routing to analyzing — the analyzing phase decides whether to promote this milestone.",
+      "alternatives_considered": [
+        "Could route directly to shipping since all gates pass — but the orchestrator NEVER routes to shipping. The analyzing phase makes that decision."
+      ],
+      "confidence": 0.95
     }
   ],
   "code_review_report": {
@@ -1600,286 +1817,24 @@
   },
   "test_integrity_report": {
     "spec_coverage_pct": 100,
-    "po_check_coverage_pct": 100,
-    "total_criteria": 10,
-    "total_criteria_breakdown": {
-      "in_scope_tested": 10,
-      "on_other_branches": 0,
-      "on_other_branches_detail": [
-        "fa1-sidebar-alerts (AC#5 — source+tests on rouge/story-dashboard-features-fleet-sidebar branch)",
-        "fa1-filter-map (filter by status/driver/motion — source+tests on rouge/story-dashboard-features-fleet-sidebar branch)"
-      ],
-      "note": "8 source files and 9 test files for fleet-sidebar, map-filters, dashboard-responsive, session-navigation, and coming-soon stories exist on separate story branches, not merged to current branch"
-    },
-    "total_po_checks": 5,
-    "total_tests": 300,
-    "total_test_files": 29,
-    "criteria_map": {
-      "fa1-map-load-001": {
-        "criterion": "Map loads in <2s with 50 vehicle markers",
-        "status": "covered",
-        "test_files": [
-          "src/lib/map-utils.test.ts",
-          "src/components/fleet-map.test.tsx",
-          "src/lib/vehicles.test.ts"
-        ],
-        "test_count": 5,
-        "env_limitation": "WebGL rendering performance cannot be measured in jsdom; tests verify data layer handles 50 markers correctly"
-      },
-      "fa1-traffic-light-002": {
-        "criterion": "Vehicle markers color-coded by traffic light status",
-        "status": "covered",
-        "test_files": [
-          "src/lib/map-utils.test.ts",
-          "src/components/fleet-map.test.tsx",
-          "src/components/traffic-light.test.tsx"
-        ],
-        "test_count": 8
-      },
-      "fa1-clustering-003": {
-        "criterion": "Map clusters markers at low zoom levels",
-        "status": "covered",
-        "test_files": [
-          "src/components/fleet-map.test.tsx"
-        ],
-        "test_count": 1,
-        "env_limitation": "Cluster visual behavior requires WebGL; test verifies cluster config is set on GeoJSON source"
-      },
-      "fa1-realtime-004": {
-        "criterion": "Vehicle positions update in real-time via SSE (<5s latency)",
-        "status": "covered",
-        "test_files": [
-          "src/app/api/positions/stream/route.test.ts",
-          "src/lib/position-events.test.ts",
-          "src/hooks/use-realtime-vehicles.test.ts"
-        ],
-        "test_count": 14
-      },
-      "fa1-direction-005": {
-        "criterion": "Vehicle markers show direction of travel when moving",
-        "status": "covered",
-        "test_files": [
-          "src/components/fleet-map.test.tsx",
-          "src/lib/map-utils.test.ts"
-        ],
-        "test_count": 3
-      },
-      "fa1-popup-006": {
-        "criterion": "Clicking vehicle marker opens popup with key stats and link to detail",
-        "status": "covered",
-        "test_files": [
-          "src/components/fleet-map.test.tsx",
-          "src/lib/map-utils.test.ts"
-        ],
-        "test_count": 12
-      },
-      "fa1-persistence-007": {
-        "criterion": "Map remembers zoom level and center between sessions",
-        "status": "covered",
-        "test_files": [
-          "src/lib/map-utils.test.ts",
-          "src/components/fleet-map.test.tsx"
-        ],
-        "test_count": 6
-      },
-      "fa1-sidebar-alerts": {
-        "criterion": "Sidebar shows top-priority alerts sorted by urgency",
-        "status": "covered",
-        "test_files": [
-          "src/lib/alerts.test.ts",
-          "src/components/fleet-sidebar.test.tsx",
-          "src/app/api/alerts/route.test.ts"
-        ],
-        "test_count": 12
-      },
-      "fa1-responsive-tablet": {
-        "criterion": "Responsive: usable on tablet with sidebar collapsing to bottom sheet",
-        "status": "covered",
-        "test_files": [
-          "src/components/dashboard-layout.test.tsx",
-          "src/components/admin-layout.test.tsx"
-        ],
-        "test_count": 14
-      },
-      "fa1-filter-map": {
-        "criterion": "Filter map by traffic light status, by driver, by motion state",
-        "status": "covered",
-        "test_files": [
-          "src/lib/map-filters.test.ts",
-          "src/components/map-filters.test.tsx",
-          "src/components/dashboard-map.test.tsx"
-        ],
-        "test_count": 22
-      }
-    },
-    "po_checks_map": {
-      "po-check-001": {
-        "check": "Can I see all my vehicles on a map right now?",
-        "status": "covered",
-        "test_files": [
-          "src/components/fleet-map.test.tsx",
-          "src/components/dashboard-map.test.tsx",
-          "src/lib/vehicles.test.ts"
-        ],
-        "test_count": 4
-      },
-      "po-check-002": {
-        "check": "Can I click a vehicle and see its details without leaving the map?",
-        "status": "covered",
-        "test_files": [
-          "src/lib/map-utils.test.ts",
-          "src/components/fleet-map.test.tsx"
-        ],
-        "test_count": 8
-      },
-      "po-check-003": {
-        "check": "Can I tell which vehicles need attention (service, inspection, documents)?",
-        "status": "covered",
-        "test_files": [
-          "src/components/fleet-sidebar.test.tsx",
-          "src/lib/alerts.test.ts"
-        ],
-        "test_count": 6
-      },
-      "po-check-004": {
-        "check": "Can I deploy this with a single docker compose up?",
-        "status": "covered",
-        "test_files": [
-          "src/lib/po-checks.test.ts"
-        ],
-        "test_count": 1
-      },
-      "po-check-005": {
-        "check": "Is my data on my own server, not someone else's cloud?",
-        "status": "covered",
-        "test_files": [
-          "src/lib/po-checks.test.ts"
-        ],
-        "test_count": 1
-      }
-    },
-    "gap_criteria_coverage": {
-      "gap-loading-skeleton": {
-        "status": "covered",
-        "test_files": [
-          "src/components/dashboard-map.test.tsx",
-          "src/components/loading.test.tsx"
-        ],
-        "test_count": 5
-      },
-      "gap-error-boundary": {
-        "status": "covered",
-        "test_files": [
-          "src/components/dashboard-map.test.tsx"
-        ],
-        "test_count": 3
-      },
-      "gap-empty-state": {
-        "status": "covered",
-        "test_files": [
-          "src/components/dashboard-map.test.tsx",
-          "src/components/empty-state.test.tsx"
-        ],
-        "test_count": 6
-      }
-    },
+    "po_check_coverage_pct": 80,
+    "total_criteria": 7,
+    "total_po_checks": 10,
+    "total_tests": 271,
     "orphaned_count": 0,
+    "orphaned_removed": [],
+    "orphaned_renamed": [],
     "stale_regenerated_count": 0,
     "newly_generated_count": 0,
-    "newly_generated_tests": [
-      "fleet-map.test.tsx: 'PO-CHECK: all vehicles appear as markers on the map source'",
-      "fleet-map.test.tsx: 'handles 50 vehicle markers without error'",
-      "dashboard-map.test.tsx: 'PO-CHECK: all vehicles with positions are visible on the map'"
-    ],
-    "annotations_added": [
-      "traffic-light.test.tsx: added @criterion fa1-traffic-light-002",
-      "empty-state.test.tsx: added @criterion gap-empty-state-001",
-      "loading.test.tsx: added @criterion gap-loading-skeleton-001",
-      "vehicles.test.ts: added @criterion fa1-map-load-001, po-check-001",
-      "dashboard-map.test.tsx: added @criterion for all covered FA1 and gap criteria"
-    ],
     "test_suite_pass": true,
-    "test_run_summary": "23 files, 223 tests, 0 failures, 4.24s",
     "verdict": "PASS",
-    "vehicle_registry_coverage": {
-      "fa2_criteria": {
-        "fa2-search-sort-filter": {
-          "criterion": "Vehicle list supports search, sort (name, status, mileage, next service), and filter",
-          "status": "covered",
-          "test_files": [
-            "src/components/vehicle-list.test.tsx"
-          ],
-          "test_count": 14
-        },
-        "fa2-traffic-light-row": {
-          "criterion": "Vehicle list shows traffic light indicator per row",
-          "status": "covered",
-          "test_files": [
-            "src/components/vehicle-list.test.tsx",
-            "src/components/traffic-light.test.tsx"
-          ],
-          "test_count": 8
-        },
-        "fa2-tabbed-detail": {
-          "criterion": "Vehicle detail loads all tabs without page refresh",
-          "status": "covered",
-          "test_files": [
-            "src/components/vehicle-detail.test.tsx"
-          ],
-          "test_count": 5
-        },
-        "fa2-traffic-light-semantics": {
-          "criterion": "Traffic light: green = all clear, orange = requires attention, red = overdue/compliance failure",
-          "status": "covered",
-          "test_files": [
-            "src/components/vehicle-detail.test.tsx",
-            "src/components/traffic-light.test.tsx"
-          ],
-          "test_count": 8
-        },
-        "fa2-photo-upload": {
-          "criterion": "Vehicle photo upload supported",
-          "status": "covered",
-          "test_files": [
-            "src/app/api/uploads/route.test.ts",
-            "src/components/add-vehicle-form.test.tsx",
-            "src/app/api/vehicles/route.test.ts"
-          ],
-          "test_count": 10
-        },
-        "fa2-decommissioned-filter": {
-          "criterion": "Decommissioned vehicles hidden from map and dashboard by default, visible via filter",
-          "status": "covered",
-          "test_files": [
-            "src/components/vehicle-list.test.tsx"
-          ],
-          "test_count": 3
-        },
-        "fa2-mini-map": {
-          "criterion": "Vehicle detail overview shows mini-map with current position",
-          "status": "covered",
-          "test_files": [
-            "src/components/vehicle-detail.test.tsx"
-          ],
-          "test_count": 2
-        }
-      },
-      "fa2_po_checks": {
-        "po-check-003": {
-          "check": "Can I tell which vehicles need attention?",
-          "status": "covered",
-          "test_files": [
-            "src/components/vehicle-list.test.tsx",
-            "src/components/vehicle-detail.test.tsx",
-            "src/components/traffic-light.test.tsx"
-          ],
-          "test_count": 11
-        }
-      },
-      "vehicle_registry_tests": 73,
-      "vehicle_registry_test_files": 8
-    },
-    "integration_note": "Vehicle-registry milestone: 3 stories complete (vehicle-list, add-vehicle, vehicle-detail). All 7 FA2 acceptance criteria covered with 73 tests across 8 files. Full test suite: 223 tests passing."
+    "notes": [
+      "All 271 tests pass across 25 test files",
+      "All 7 FA2 acceptance criteria have functional test coverage",
+      "Sort by next_service in FA2-AC-1 not explicitly tested (feature likely not yet implemented — deferred to QA gate)",
+      "PO-3 lacks explicit @po-check annotation but is covered by traffic-light tests",
+      "6 utility test files lack @criterion annotations — low traceability risk"
+    ]
   },
   "previous_evaluations": [],
   "evaluation_deltas": [],
@@ -2019,332 +1974,175 @@
   },
   "evaluation_report": {
     "test_integrity_report": {
-      "timestamp": "2026-04-04T00:02:00.000Z",
+      "timestamp": "2026-04-04T07:20:00.000Z",
       "cycle": 1,
-      "run": 10,
+      "run": 11,
       "milestone": "vehicle-registry",
       "verdict": "PASS",
-      "tests_total": 263,
-      "tests_passing": 263,
+      "tests_total": 290,
+      "tests_passing": 290,
       "tests_failing": 0,
-      "test_files": 25,
+      "test_files": 27,
       "typescript_errors": 0,
       "criterion_annotations_verified": true,
       "coverage_gaps": [],
       "orphaned_tests": 0,
       "stale_tests": 0,
-      "vehicle_registry_tests": 105,
-      "vehicle_registry_test_files": 8,
       "fa2_criteria_covered": "7/7",
       "fix_story_criteria_covered": {
         "fix-vehicle-edit": "6/6",
         "fix-photo-and-list-polish": "5/5",
         "fix-add-vehicle-form-ux": "6/6"
       },
-      "notes": "All 7 FA2 acceptance criteria covered with @criterion annotations. All 3 fix story criteria fully covered (fix-vehicle-edit 6/6, fix-photo-and-list-polish 5/5, fix-add-vehicle-form-ux 6/6). 105 vehicle-registry tests across 8 files. Full suite: 263/263 tests pass across 25 files. TypeScript compiles with zero errors. No orphaned or stale tests. No coverage gaps.",
-      "test_run_summary": "25 files, 263 tests, 0 failures, 4.49s"
+      "loop2_criteria_covered": {
+        "vehicle-edit-error-feedback": "AC-edit-error",
+        "add-vehicle-form-responsive": "AC-form-responsive-1, AC-form-responsive-2, AC-form-responsive-3"
+      },
+      "qa_fix_criteria_covered": {
+        "fix-loading-skeletons": "AC-fix-loading-skeletons (2 files)",
+        "fix-toast-dismiss": "AC-fix-add-vehicle-form-ux-1",
+        "fix-form-a11y": "AC-fix-add-vehicle-form-ux-5, AC-fix-add-vehicle-form-ux-6",
+        "fix-post-vehicles-auth": "AC-vehicle-route-consolidation",
+        "fix-next-service-sort": "fa2-vehicle-list-001",
+        "fix-traffic-light-labels": "fa2-vehicle-list-002",
+        "fix-search-a11y": "fa2-vehicle-list-001",
+        "fix-status-display": "AC-fix-vehicle-edit",
+        "fix-upload-security": "fa2-vehicle-photo-upload"
+      },
+      "unannotated_test_files": [
+        "src/components/vehicle-avatar.test.tsx",
+        "src/lib/auth.test.ts",
+        "src/lib/position-events.test.ts",
+        "src/lib/schema.test.ts",
+        "src/lib/session.test.ts",
+        "src/lib/validators.test.ts"
+      ],
+      "unannotated_rationale": "All 6 files test infrastructure/foundation code (auth, session, schema, validators, position-events) or utility components (vehicle-avatar) not directly tied to FA2 acceptance criteria. Not orphaned.",
+      "notes": "All 7 FA2 acceptance criteria covered. All fix story and loop-2 story criteria covered. 290/290 tests pass across 27 files. 27 new tests since last run (loop-2 stories + QA fix stories). No coverage gaps, no orphaned tests, no stale tests.",
+      "test_run_summary": "27 files, 290 tests, 0 failures, 4.81s"
+    },
+    "qa_previous": {
+      "timestamp": "2026-04-04T06:57:33.757072+00:00",
+      "verdict": "FAIL",
+      "note": "Previous QA gate — pre-fix-stories. Preserved for trend comparison."
     },
     "qa": {
-      "timestamp": "2026-04-03T20:00:00.000Z",
-      "cycle": 1,
-      "run": 8,
+      "timestamp": "2026-04-04T07:25:00.000Z",
       "verdict": "PASS",
-      "health_score": 85,
-      "criteria_pass_rate": "9/9 (7 pass + 2 env_limited)",
-      "functional_correctness": {
-        "verdict": "PASS",
-        "tests_total": 358,
-        "tests_passing": 358,
-        "tests_failing": 0,
-        "typescript_errors": 7,
-        "typescript_errors_note": "All 7 in admin-layout.test.tsx — missing userName prop added by session-navigation story. Pre-existing, not a regression. Tests pass at runtime (esbuild transpilation).",
-        "console_errors": 0,
-        "dead_elements": 0,
-        "broken_links": 0
-      },
-      "ai_code_audit": {
-        "verdict": "PASS",
-        "score": 80,
-        "dead_code": 0,
-        "circular_deps": 0,
-        "duplication_pct": 2,
-        "files_over_300_lines": 1,
-        "files_over_300_lines_detail": [
-          "src/components/fleet-map.tsx (326 lines, single map component with layers/events — splitting would hurt readability)"
-        ],
-        "improvements_this_run": [
-          "formatTimeAgo removed from fleet-sidebar.tsx — consolidated to shared formatRelativeTime",
-          "escapeHTML exported from map-utils.ts — no longer duplicated private function"
-        ]
-      },
-      "code_quality_baseline": {
-        "verdict": "PASS",
-        "degraded": false,
-        "total_source_lines": 4022,
-        "npm_audit": {
-          "critical": 0,
-          "high": 7,
-          "moderate": 5,
-          "low": 0,
-          "note": "All in dependencies (next.js, prisma/effect, glob, esbuild/vite) — not in project code"
-        }
-      },
-      "security_review": {
-        "verdict": "CONDITIONAL_PASS",
-        "critical": 0,
-        "high": 3,
-        "medium": 7,
-        "low": 4,
-        "run": 8,
-        "high_findings": [
-          {
-            "id": "H1",
-            "title": "Hardcoded session secret fallback in production",
-            "file": "src/lib/session.ts:11-13",
-            "is_regression": false,
-            "is_new": false
-          },
-          {
-            "id": "H2",
-            "title": "Supabase client uses anon key server-side",
-            "file": "src/lib/db.ts:17-19",
-            "is_regression": false,
-            "is_new": false
-          },
-          {
-            "id": "H3",
-            "title": "API key comparison is timing-attack vulnerable",
-            "file": "src/lib/auth.ts:58",
-            "is_regression": false,
-            "is_new": false
-          }
-        ],
-        "new_findings_this_run": [
-          {
-            "id": "M1",
-            "severity": "medium",
-            "title": "API routes lack role-based authorization (session-only check)",
-            "note": "Downgraded from CRITICAL — driver-auth milestone pending, only admin users exist"
-          },
-          {
-            "id": "M2",
-            "severity": "medium",
-            "title": "Rate limit bypass via x-forwarded-for spoofing",
-            "file": "src/lib/rate-limit.ts:40-41"
-          },
-          {
-            "id": "M3",
-            "severity": "medium",
-            "title": "Validation error details leaked in login response",
-            "file": "src/app/api/auth/login/route.ts:19"
-          }
-        ],
-        "positive_findings": [
-          "API auth middleware implemented on all data routes",
-          "Login route correctly whitelists columns",
-          "Rate limiting on login (5/min) and positions (100/min)",
-          "No SQL injection risk — Supabase query builder parameterizes all queries",
-          "No XSS in API routes — all return JSON via NextResponse.json()",
-          "Bcrypt cost factor 12, session cookies httpOnly+secure",
-          "HTML escaping on ALL .setHTML() sites — both click popup (buildPopupHTML) and hover tooltip (escapeHTML(name))",
-          "escapeHTML exported and reusable — covers &, <, >, \", '",
-          "Security comments at every .setHTML() call site documenting escaping requirement",
-          "XSS test verifies malicious payload (<img src=x onerror=alert(1)>) is escaped in hover tooltip"
-        ],
-        "xss_fix_verified": {
-          "status": "RESOLVED",
-          "call_sites_protected": 2,
-          "call_sites_total": 2,
-          "evidence": "fleet-map.tsx:267 uses escapeHTML(name), fleet-map.tsx:232 delegates to buildPopupHTML which escapes internally. No unprotected .setHTML() or innerHTML usage anywhere in codebase."
-        }
-      },
-      "a11y_review": {
-        "verdict": "CONDITIONAL_PASS",
-        "high": 4,
-        "medium": 3,
-        "low": 6,
-        "fixed_this_cycle": [
-          {
-            "id": "H1-FIXED",
-            "title": "Focus trap, Escape dismiss, focus restore on mobile sidebar",
-            "file": "src/components/admin-layout.tsx"
-          },
-          {
-            "id": "H7-FIXED",
-            "title": "TrafficLight role=status with descriptive aria-labels",
-            "file": "src/components/traffic-light.tsx"
-          }
-        ],
-        "high_findings": [
-          {
-            "id": "H3b",
-            "title": "Map popup content not keyboard-accessible (env_limited — MapLibre)",
-            "file": "src/lib/map-utils.ts:69-88"
-          },
-          {
-            "id": "H4",
-            "title": "Login form error message not linked to inputs",
-            "file": "src/app/login/page.tsx:88-91"
-          },
-          {
-            "id": "H5",
-            "title": "Loading spinner has no role=status",
-            "file": "src/components/loading.tsx:1-26"
-          },
-          {
-            "id": "H6",
-            "title": "Map popup content keyboard-inaccessible (env_limited — MapLibre)",
-            "file": "src/lib/map-utils.ts:69-88"
-          }
-        ],
-        "medium_findings": [
-          {
-            "id": "M1",
-            "title": "SVG nav icons lack aria-hidden (downgraded — icons redundant to text labels)",
-            "file": "src/components/sidebar.tsx"
-          },
-          {
-            "id": "M2",
-            "title": "Connection status changes not announced (aria-live missing)",
-            "file": "src/components/dashboard-map.tsx"
-          },
-          {
-            "id": "M3",
-            "title": "Alert list uses non-semantic div structure",
-            "file": "src/components/fleet-sidebar.tsx"
-          }
-        ],
-        "improvements_this_cycle": [
-          "FIXED H1: Focus trap with Tab wrapping, Escape dismiss, focus restore on mobile sidebar",
-          "FIXED H7: TrafficLight role=status with descriptive aria-labels",
-          "Map container (DashboardMap) has role=region, aria-label, aria-busy",
-          "AdminLayout hamburger button has 44px tap target",
-          "matchMedia auto-closes mobile sidebar on resize to desktop"
-        ]
-      },
-      "design_review": {
-        "verdict": "PASS",
-        "findings": [
-          {
-            "severity": "medium",
-            "title": "Inconsistent button sizing (32-44px)",
-            "note": "Standardize to 44px minimum"
-          },
-          {
-            "severity": "high",
-            "title": "Alert severity labels use jargon (CRITICAL/WARNING/INFO) instead of traffic light language",
-            "note": "Should use Overdue/Attention/Info to match vehicle status system"
-          },
-          {
-            "severity": "medium",
-            "title": "Inconsistent button sizing across pages (32-44px)",
-            "note": "Standardize to 44px minimum for touch targets"
-          },
-          {
-            "severity": "medium",
-            "title": "Duplicate error state implementations (DashboardMap error vs ErrorBoundary)",
-            "note": "Consider consolidating"
-          },
-          {
-            "severity": "medium",
-            "title": "EmptyState and ComingSoon components nearly identical",
-            "note": "Could consolidate into parameterized component"
-          },
-          {
-            "severity": "medium",
-            "title": "No active filter indicator when map filters applied",
-            "note": "Add vehicle count or filter badge"
-          },
-          {
-            "severity": "low",
-            "title": "Nav icons use Unicode box-drawing characters instead of SVGs"
-          }
-        ],
-        "positive": [
-          "Map dominance (70/30 split) correctly implemented",
-          "Traffic light system consistently applied across components",
-          "Loading/error/empty states present and well-structured",
-          "Responsive layout stacks correctly at mobile breakpoints",
-          "Sidebar navigation clear and practical",
-          "Coming Soon and 404 pages provide clear context"
-        ]
-      },
-      "vehicle_registry_qa": {
-        "milestone": "vehicle-registry",
-        "run": 2,
-        "timestamp": "2026-04-04T00:03:00.000Z",
-        "verdict": "PASS",
-        "health_score": 90,
-        "criteria_pass_rate": "7/7",
-        "criteria_results": {
-          "fa2-search-sort-filter": "PASS",
-          "fa2-traffic-light-row": "PASS",
-          "fa2-tabbed-detail": "PASS",
-          "fa2-traffic-light-semantics": "PASS",
-          "fa2-photo-upload": "PASS",
-          "fa2-decommissioned-filter": "PASS",
-          "fa2-mini-map": "PASS"
-        },
-        "fix_story_results": {
-          "fix-vehicle-edit": "PASS — edit mode, status dropdown, PUT endpoint, success toast, cancel all implemented and tested",
-          "fix-photo-and-list-polish": "PASS — photo display in avatar, traffic light with role=status and aria-label, fleet health summary bar",
-          "fix-add-vehicle-form-ux": "PASS — success toast on redirect, photo warning on failure, required/optional field markers with legend"
-        },
-        "ai_code_audit_scores": {
-          "architecture": 92,
-          "consistency": 90,
-          "robustness": 85,
-          "production_risks": 82,
-          "security": 88,
-          "dead_hallucinated_code": 95,
-          "tech_debt": 82,
-          "weighted_overall": 90
-        },
-        "security_findings": {
-          "critical": 0,
-          "high": 0,
-          "medium": 2,
-          "low": 1,
-          "medium_detail": [
-            "File uploads write to local filesystem — incompatible with serverless/edge deployments",
-            "No rate limiting on POST /api/vehicles or POST /api/uploads"
+      "run": 2,
+      "sub_checks": {
+        "functional_correctness": {
+          "verdict": "PASS",
+          "previous_fixes_verified": "11/11 — all QA fix tasks and loop-2 stories verified as resolved",
+          "findings": [
+            {
+              "severity": "medium",
+              "description": "GET /api/vehicles excludes DECOMMISSIONED server-side (.neq filter), making client Show decommissioned toggle non-functional. AC says visible via filter.",
+              "file": "src/app/api/vehicles/route.ts:16"
+            }
           ]
         },
-        "a11y_findings": {
-          "critical": 0,
-          "high": 0,
-          "medium": 0,
-          "low": 3,
-          "low_detail": [
-            "Search input lacks aria-label (placeholder alone insufficient)",
-            "Tab buttons lack arrow-key navigation per WAI-ARIA tabs pattern",
-            "Mini-map marker uses title instead of aria-label"
+        "ai_code_audit": {
+          "verdict": "PASS",
+          "score": 78,
+          "findings": [
+            {
+              "severity": "high",
+              "description": "PUT /api/vehicles/[id] request.json() not in try/catch (unlike POST). Malformed JSON returns 500 instead of 400.",
+              "file": "src/app/api/vehicles/[id]/route.ts:82"
+            },
+            {
+              "severity": "medium",
+              "description": "Upload route mkdir/writeFile not in try/catch — disk errors return unhandled 500",
+              "file": "src/app/api/uploads/route.ts:80-82"
+            },
+            {
+              "severity": "low",
+              "description": "TRAFFIC_LIGHT_LABELS duplicated in 3 files",
+              "file": "multiple"
+            }
           ]
         },
-        "notable_issues": [
-          {
-            "severity": "MEDIUM",
-            "description": "File uploads write to local filesystem — incompatible with edge deployments"
-          },
-          {
-            "severity": "MEDIUM",
-            "description": "No rate limiting on POST endpoints"
-          },
-          {
-            "severity": "LOW",
-            "description": "GET /api/vehicles has no pagination"
-          },
-          {
-            "severity": "LOW",
-            "description": "No UUID format validation on [id] path parameters"
-          },
-          {
-            "severity": "LOW",
-            "description": "photoUrl accepts arbitrary URLs without domain allowlist"
-          }
-        ]
+        "security_review": {
+          "verdict": "PASS",
+          "findings": [
+            {
+              "severity": "medium",
+              "description": "Session secret has hardcoded fallback — no runtime check in production",
+              "file": "src/lib/session.ts"
+            },
+            {
+              "severity": "medium",
+              "description": "Vehicle CRUD and upload endpoints lack rate limiting",
+              "file": "src/app/api/vehicles/route.ts"
+            },
+            {
+              "severity": "low",
+              "description": "API key comparison uses === instead of crypto.timingSafeEqual",
+              "file": "src/lib/auth.ts:58"
+            }
+          ]
+        },
+        "a11y_review": {
+          "verdict": "PASS",
+          "notes": "All previous HIGH a11y issues resolved. Remaining items are MEDIUM improvements.",
+          "findings": [
+            {
+              "severity": "medium",
+              "description": "vehicle-detail inline success/error toasts auto-dismiss at 5s with no close button",
+              "file": "src/components/vehicle-detail.tsx:146-162"
+            },
+            {
+              "severity": "low",
+              "description": "Loading skeleton files lack role=status and aria-busy",
+              "file": "src/app/(admin)/vehicles/loading.tsx"
+            }
+          ]
+        },
+        "design_review": {
+          "verdict": "PASS",
+          "findings": [],
+          "notes": "All design criteria met: human-readable status, loading skeletons, consistent responsive breakpoints, fleet health summary, vehicle photo avatars."
+        }
       },
-      "overall_assessment": "QA Gate PASS (run 2) for vehicle-registry re-evaluation. 263/263 tests pass across 25 files. Health score 90/100 (up from 82). All 7 FA2 acceptance criteria pass. All 3 fix stories verified implemented correctly. Code audit 90/100 — excellent architecture, consistency, a11y. Security: 0 critical, 0 high, 2 medium (edit save error feedback, API field gap — neither blocking). A11y significantly improved this run: traffic light role=status, avatar alt text, form field markers with aria-required. No blocking findings. Previous quality gaps all addressed."
+      "improvement_items": [
+        {
+          "id": "imp-decommissioned-filter",
+          "description": "Remove .neq DECOMMISSIONED from GET /api/vehicles or add query param",
+          "severity": "medium",
+          "scope": "this-milestone"
+        },
+        {
+          "id": "imp-put-json-trycatch",
+          "description": "Wrap request.json() in try/catch in PUT /api/vehicles/[id]",
+          "severity": "high",
+          "scope": "this-milestone"
+        },
+        {
+          "id": "imp-detail-toast-close",
+          "description": "Add close button to vehicle-detail inline toasts",
+          "severity": "medium",
+          "scope": "this-milestone"
+        },
+        {
+          "id": "imp-session-secret",
+          "description": "Gate session secret fallback behind NODE_ENV=development",
+          "severity": "medium",
+          "scope": "global"
+        },
+        {
+          "id": "imp-timing-safe-apikey",
+          "description": "Use crypto.timingSafeEqual for API key comparison",
+          "severity": "low",
+          "scope": "global"
+        },
+        {
+          "id": "imp-loading-role",
+          "description": "Add role=status and aria-busy to loading skeleton components",
+          "severity": "low",
+          "scope": "global"
+        }
+      ]
     },
     "po_previous": {
       "timestamp": "2026-04-03T16:50:00Z",
@@ -2575,12 +2373,6 @@
       "quality_gaps_note": "All 9 previous quality gaps RESOLVED: gap-popup-dead-link, gap-static-alerts, gap-inert-alert-items, gap-no-route-error-boundary, gap-filter-empty-feedback, gap-no-hover-preview, gap-driver-select-no-label, gap-no-last-updated, gap-sidebar-static-counts. Additionally: gap-xss-hover-tooltip RESOLVED (escapeHTML applied, test added), gap-duplicate-time-format RESOLVED (consolidated to formatRelativeTime). Zero quality gaps remain."
     },
     "po_vehicle_registry_previous": {
-      "timestamp": "2026-04-03T21:30:00.000Z",
-      "milestone": "vehicle-registry",
-      "run": 1,
-      "note": "Previous PO review — pre-fix-stories. Preserved for trend comparison. Confidence 0.676, 7 quality gaps."
-    },
-    "po_vehicle_registry": {
       "timestamp": "2026-04-04T00:04:00.000Z",
       "milestone": "vehicle-registry",
       "run": 2,
@@ -2737,34 +2529,190 @@
         "julie_zhuo": 7.5,
         "overall": "Massive improvement from run 1. All 7 previous quality gaps resolved. Vehicle edit mode functional with status dropdown. Photos displayed. Success toasts present. Traffic lights accessible. Fleet health summary implemented. Two remaining polish gaps: edit error feedback and form responsive layout."
       },
-      "recommended_action_rationale": "Two quality gaps remain: (1) HIGH — edit save failure silent (no error toast), (2) MEDIUM — add-vehicle form layout not responsive. Both are narrow, one-line fixes. Previous 7 gaps ALL resolved. Confidence improved from 0.676 to 0.83 raw / 0.87 adjusted. One targeted fix cycle should push above 0.90."
+      "recommended_action_rationale": "Two quality gaps remain: (1) HIGH — edit save failure silent (no error toast), (2) MEDIUM — add-vehicle form layout not responsive. Both are narrow, one-line fixes. Previous 7 gaps ALL resolved. Confidence improved from 0.676 to 0.83 raw / 0.87 adjusted. One targeted fix cycle should push above 0.90.",
+      "note": "Previous PO review (run 2) — pre-loop-2-fixes. Preserved for trend comparison. Confidence 0.83/0.87, 2 quality gaps."
+    },
+    "po_vehicle_registry": {
+      "timestamp": "2026-04-04T07:30:00.000Z",
+      "milestone": "vehicle-registry",
+      "run": 3,
+      "dual_voice": false,
+      "verdict": "PRODUCTION_READY",
+      "confidence": 0.9,
+      "confidence_adjusted": 0.92,
+      "confidence_breakdown": {
+        "qa_criteria_pass_rate": {
+          "value": 1,
+          "weight": 0.3,
+          "weighted": 0.3
+        },
+        "design_overall": {
+          "value": 0.82,
+          "weight": 0.2,
+          "weighted": 0.164
+        },
+        "heuristic_pass_rate": {
+          "value": 0.8,
+          "weight": 0.2,
+          "weighted": 0.16
+        },
+        "journey_quality": {
+          "value": 0.875,
+          "weight": 0.15,
+          "weighted": 0.131
+        },
+        "trend": {
+          "value": 0.95,
+          "weight": 0.15,
+          "weighted": 0.143
+        }
+      },
+      "recommended_action": "continue",
+      "recommended_action_rationale": "Both previous quality gaps RESOLVED: qg-fa2-8 (edit error feedback — error toast with role=alert, form preserved on failure) and qg-fa2-9 (form responsive layout — sm:grid-cols-2 applied). Zero quality gaps remain. Adjusted confidence 0.92 exceeds 0.90 promote threshold. Trend: 0.676 → 0.87 → 0.92 (consistent improvement across 3 runs). 8/10 Nielsen heuristics pass. 290/290 tests pass. Ready for milestone promotion.",
+      "journey_quality": [
+        {
+          "id": "FA2-J1",
+          "name": "Add a vehicle",
+          "verdict": "polished",
+          "score": 9,
+          "notes": "Responsive form layout fixed (sm:grid-cols-2). Required/optional field markers, photo preview, success toast, validation errors with aria-describedby. All gaps resolved.",
+          "delta_from_run2": "+1.0 — responsive form layout fixed"
+        },
+        {
+          "id": "FA2-J2",
+          "name": "View vehicle detail",
+          "verdict": "polished",
+          "score": 9,
+          "notes": "Clean layout: avatar, breadcrumb, tabs, mini-map. Traffic light with label. All gaps resolved in previous run.",
+          "delta_from_run2": "0 (maintained)"
+        },
+        {
+          "id": "FA2-J3",
+          "name": "Check vehicle health",
+          "verdict": "polished",
+          "score": 8.5,
+          "notes": "Fleet health summary bar, traffic light per row with labels and tooltips, filter/sort by status. Solid.",
+          "delta_from_run2": "0 (maintained)"
+        },
+        {
+          "id": "FA2-J4",
+          "name": "Change vehicle status",
+          "verdict": "polished",
+          "score": 8.5,
+          "notes": "Edit mode with status dropdown. Error toast on save failure with role=alert, form preserved. Success toast on save. Cancel discards. Decommissioned filter toggle present (though API-side filter issue noted as improvement item).",
+          "delta_from_run2": "+1.0 — error feedback added (was silent failure)"
+        }
+      ],
+      "screen_quality": [
+        {
+          "screen": "/vehicles",
+          "score": 8.3,
+          "notes": "Fleet health summary, accessible traffic lights, photo thumbnails, search/filter/sort. Unchanged."
+        },
+        {
+          "screen": "/vehicles/new",
+          "score": 8,
+          "delta_from_run2": "+0.8",
+          "notes": "Responsive layout fixed. Required/optional markers, photo preview, validation. Clean."
+        },
+        {
+          "screen": "/vehicles/[id]",
+          "score": 9,
+          "delta_from_run2": "+0.5",
+          "notes": "Error feedback on edit save failure. Vehicle avatar, tabs, mini-map, edit mode all working."
+        }
+      ],
+      "heuristic_results": {
+        "total": 10,
+        "passed": 8,
+        "pass_rate_pct": 80,
+        "unchanged_from_run2": true,
+        "still_partial": "Flexibility and efficiency — no keyboard shortcuts",
+        "still_fail": "Help and documentation — no help text or onboarding (acceptable for v1)"
+      },
+      "previous_gaps_resolved": [
+        {
+          "id": "qg-fa2-8",
+          "status": "RESOLVED",
+          "fix_story": "openfleet-loop-2-vehicle-edit-error-feedback",
+          "evidence": "Error toast in handleSave catch/else path with role=alert, form preserved on failure"
+        },
+        {
+          "id": "qg-fa2-9",
+          "status": "RESOLVED",
+          "fix_story": "openfleet-loop-2-add-vehicle-form-responsive",
+          "evidence": "sm:grid-cols-2 at lines 171, 184 in add-vehicle-form.tsx"
+        }
+      ],
+      "quality_gaps": [],
+      "quality_gaps_note": "All 9 quality gaps across runs 1-2 RESOLVED. Zero quality gaps remain. The decommissioned API filter issue (GET excludes DECOMMISSIONED server-side) is tracked as QA improvement item imp-decommissioned-filter, not a PO quality gap.",
+      "env_limited_impact": {
+        "excluded_criteria": [
+          "fa2-vehicle-detail-minimap"
+        ],
+        "excluded_journeys": [],
+        "excluded_screens": [],
+        "rationale": "MapLibre GL requires WebGL. Mini-map in vehicle detail verified via code review + tests. Minimal impact on FA2 confidence."
+      },
+      "improvement_items": [
+        {
+          "id": "imp-decommissioned-filter",
+          "description": "GET /api/vehicles excludes DECOMMISSIONED server-side, making Show decommissioned toggle non-functional",
+          "severity": "medium",
+          "scope": "this-milestone",
+          "grounding": "FA2 AC: Decommissioned vehicles hidden from map and dashboard by default, visible via filter"
+        },
+        {
+          "id": "imp-detail-toast-close",
+          "description": "vehicle-detail inline toasts lack close button (unlike vehicle-created-toast)",
+          "severity": "low",
+          "scope": "this-milestone",
+          "grounding": "WCAG 2.2.1 Timing Adjustable — consistency with vehicle-created-toast pattern"
+        },
+        {
+          "id": "imp-edit-client-validation",
+          "description": "Edit form sends directly to API without client-side Zod pre-validation (unlike add form)",
+          "severity": "low",
+          "scope": "this-milestone",
+          "grounding": "Consistency with add-vehicle-form pattern"
+        }
+      ],
+      "confidence_trend": {
+        "run1": 0.676,
+        "run2_raw": 0.83,
+        "run2_adjusted": 0.87,
+        "run3_raw": 0.9,
+        "run3_adjusted": 0.92,
+        "direction": "improving",
+        "consecutive_improvements": 3
+      }
     }
   },
   "analysis_recommendation": {
-    "action": "deepen:vehicle-edit-error-and-form-mobile",
-    "rationale": "Vehicle-registry re-evaluation after 3 fix stories: PO verdict NEEDS_IMPROVEMENT, adjusted confidence 0.87 (up from 0.676). All 7 previous quality gaps RESOLVED. 2 new gaps remain: (1) HIGH — vehicle edit save failure is silent (no error toast when PUT fails), (2) MEDIUM — add-vehicle form grid-cols-2 without sm: breakpoint (narrow on tablets). Both are bounded implementation fixes requiring no new capabilities or design revision. One targeted fix cycle should push adjusted confidence above 0.90 for promotion."
+    "action": "deepen:improvements",
+    "rationale": "Vehicle-registry milestone: PO verdict PRODUCTION_READY, adjusted confidence 0.92 (above 0.90 promote threshold). Zero quality gaps remain — all 9 resolved across 3 deepen cycles. Would normally promote, but 4 validated this-milestone improvement items exist: (1) HIGH — imp-put-json-trycatch: PUT handler request.json() not in try/catch, malformed JSON returns 500 instead of 400; (2) MEDIUM — imp-decommissioned-filter: GET /api/vehicles server-side excludes DECOMMISSIONED, making client Show decommissioned toggle non-functional (violates FA2 AC); (3) LOW — imp-detail-toast-close: vehicle-detail inline toasts lack close button (WCAG 2.2.1 consistency); (4) LOW — imp-edit-client-validation: edit form skips client-side Zod pre-validation (inconsistent with add form). Per Step 2.7, deepen:improvements before promoting. First deepen:improvements cycle — no convergence guardrail."
   },
   "analysis_result": {
     "phase": "analyzing",
     "cycle": 1,
-    "analysis_run": 9,
+    "analysis_run": 10,
     "milestone": "vehicle-registry",
-    "timestamp": "2026-04-04T00:10:00.000Z",
+    "timestamp": "2026-04-04T08:00:00.000Z",
     "confidence_trend": {
-      "current": 0.87,
-      "current_raw": 0.83,
-      "previous": 0.676,
-      "previous_raw": 0.676,
-      "delta": 0.194,
+      "current": 0.92,
+      "current_raw": 0.9,
+      "previous": 0.87,
+      "previous_raw": 0.83,
+      "delta": 0.05,
       "direction": "improving",
-      "consecutive_same_direction": 1,
+      "consecutive_same_direction": 3,
       "flags": [
-        "steep_improvement"
+        "none"
       ],
-      "note": "Steep improvement validated: all 7 previous quality gaps resolved by 3 targeted fix stories (fix-vehicle-edit, fix-photo-and-list-polish, fix-add-vehicle-form-ux). FA2-J4 went from 3/10 (unimplemented) to 7.5/10 (functional). Adjusted confidence 0.87 excludes env_limited map features. 2 new gaps discovered (edit error feedback, form responsive layout) keeping confidence below 0.90 promote threshold."
+      "note": "Steady improvement: 0.676 → 0.87 → 0.92 (adjusted). Three consecutive improving cycles. Both loop-2 quality gaps (qg-fa2-8 edit error feedback, qg-fa2-9 form responsive layout) resolved. Adjusted confidence 0.92 now exceeds 0.90 promote threshold. Delta +0.05 is moderate — consistent with targeted 2-gap fix cycle."
     },
-    "recommendation": "deepen:vehicle-edit-error-and-form-mobile",
-    "recommendation_reasoning": "Vehicle-registry re-evaluation (run 2): PO verdict NEEDS_IMPROVEMENT, adjusted confidence 0.87 (up from 0.676, delta +0.194). All 7 previous quality gaps RESOLVED. 2 new gaps remain: (1) qg-fa2-8 HIGH — vehicle edit save failure is silent (handleSave has success toast but no error path), (2) qg-fa2-9 MEDIUM — add-vehicle form grid-cols-2 without sm: breakpoint (inconsistent with vehicle-detail edit form which correctly uses sm:grid-cols-2). Both are implementation_bug classification — bounded code fixes requiring no new capabilities, no design revision, no human judgment. The PO itself recommends 'deepen:vehicle-edit-error-and-form-mobile' which aligns. One targeted fix cycle should resolve both gaps and push adjusted confidence above 0.90 for promotion. Deepen conditions met: confidence 0.7-0.9, gaps concentrated in 2 specific areas, addressable, trend improving.",
+    "recommendation": "deepen:improvements",
+    "recommendation_reasoning": "Vehicle-registry run 3: PO verdict PRODUCTION_READY, adjusted confidence 0.92 (up from 0.87, delta +0.05). Zero quality gaps — all 9 resolved across runs 1-3. Trend: 3 consecutive improvements (0.676 → 0.87 → 0.92). Promote conditions ARE met (PRODUCTION_READY, adjusted >= 0.90, no critical gaps, improving trend). However, 4 validated this-milestone improvement items remain: (1) imp-put-json-trycatch HIGH — PUT handler returns 500 on malformed JSON instead of 400, (2) imp-decommissioned-filter MEDIUM — server-side .neq filter makes client decommissioned toggle non-functional (violates FA2 AC 'visible via filter'), (3) imp-detail-toast-close LOW — WCAG 2.2.1 consistency, (4) imp-edit-client-validation LOW — inconsistent validation pattern. Per Step 2.7, promote overridden to deepen:improvements. This is the first deepen:improvements cycle — convergence guardrail not triggered. PO recommends 'continue' which we override because improvement items would be lost on promotion.",
     "decomposition_health": {
       "foundation_gaps": [],
       "integration_gaps": [
@@ -2773,31 +2721,31 @@
       ],
       "schema_debt": [],
       "silent_degradation": [],
-      "restructure_scope": "0% — no structural changes needed. Both remaining gaps are implementation fixes, not infrastructure issues.",
+      "restructure_scope": "0% — no structural changes needed. Improvement items are code-level fixes, not infrastructure.",
       "structural_issues_found": false
     },
     "root_cause_analysis": [
       {
         "gap_id": "qg-fa2-8",
-        "gap_description": "Vehicle edit save failure is completely silent. When PUT /api/vehicles/[id] fails, the form clears saving state with no error message. User doesn't know if changes were saved or lost.",
+        "gap_description": "Vehicle edit save failure is completely silent.",
         "root_cause": "implementation_bug",
         "classification_confidence": 0.85,
-        "evidence": "The builder explicitly implemented a success toast for edit saves (factory_decision: 'Inline toast in vehicle-detail.tsx'). handleSave has a success path with toast but no error path — the catch block clears saving state without user feedback. Error handling for API calls is a basic engineering practice, especially when the success path already has a toast. The vehicle-detail edit form and PUT endpoint are well-structured; the gap is a missing else clause. A different builder focused on error handling would not make this mistake.",
-        "related_factory_decision": "Inline toast in vehicle-detail.tsx — describes success toast implementation, no mention of error handling",
+        "evidence": "RESOLVED by openfleet-loop-2-vehicle-edit-error-feedback. Error toast in handleSave catch/else path with role=alert, form preserved on failure.",
+        "related_factory_decision": "Separate errorToast state instead of reusing toast state with a type flag",
         "related_factory_question": null,
         "qa_coverage_gap": true,
-        "status": "open"
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-9",
-        "gap_description": "Add vehicle form uses grid-cols-2 without sm: breakpoint. On tablets in portrait, form fields are too narrow. Inconsistent with vehicle-detail edit form which correctly uses sm:grid-cols-2.",
+        "gap_description": "Add vehicle form uses grid-cols-2 without sm: breakpoint.",
         "root_cause": "implementation_bug",
         "classification_confidence": 0.82,
-        "evidence": "The vehicle-detail edit form (built by the same builder in fix-vehicle-edit story) correctly uses sm:grid-cols-2 for responsive layout. The add-vehicle form uses grid-cols-2 without the sm: prefix — inconsistency within the same product on the same type of component (form layout). The responsive pattern exists in the codebase and was not applied consistently. No spec instruction needed when the pattern is already established elsewhere.",
-        "related_factory_decision": "Search Before Building audit for fix-add-vehicle-form-ux — mentions 'same form pattern from add-vehicle-form.tsx' but does not flag responsive layout",
+        "evidence": "RESOLVED by openfleet-loop-2-add-vehicle-form-responsive. sm:grid-cols-2 applied at lines 171, 184 in add-vehicle-form.tsx.",
+        "related_factory_decision": "CSS-only fix: two class changes, one test added",
         "related_factory_question": null,
         "qa_coverage_gap": false,
-        "status": "open"
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-1",
@@ -2881,37 +2829,31 @@
       {
         "pattern": "Interaction feedback gaps recurring — error paths missed when success paths implemented",
         "frequency": 3,
-        "systemic_cause": "Specs and change spec briefs describe happy-path behavior but omit error/failure feedback. Builders implement success paths (toasts, redirects) and miss error paths because specs don't mention them. FA1 runs 4-5: missing refresh, hover, click feedback. FA2 run 8: no success toast, silent upload error. FA2 run 9: silent edit save error — builder added success toast but no error toast.",
-        "recommended_action": "Future change spec briefs should include 'error feedback' as a required element alongside 'what_good_looks_like'. When an approach_hint describes a success action (toast, redirect), explicitly add 'and error feedback when the action fails.' This prevents the success-path-only implementation pattern."
-      },
-      {
-        "pattern": "Both remaining gaps are implementation_bug (100% concentration, n=2)",
-        "frequency": 1,
-        "systemic_cause": "Small sample (2 gaps) — both follow the same pattern: builder implemented happy path correctly, missed edge/error case. Not systemic QA gate failure.",
-        "recommended_action": "Observation only. If implementation_bug concentration persists at n>=4 in next cycle, flag QA test coverage for error paths specifically."
+        "systemic_cause": "RESOLVED for vehicle-registry. All error feedback gaps addressed: edit save error toast (loop-2), upload failure warning (fix-add-vehicle-form-ux). Pattern recommendation (include 'error feedback' in change spec briefs) should carry forward to future milestones.",
+        "recommended_action": "Carry forward to future milestones: change spec briefs should always include error feedback alongside happy-path behavior."
       },
       {
         "pattern": "Deepen cycles effectively resolve quality gaps when scoped to specific areas",
-        "frequency": 3,
-        "systemic_cause": "Dashboard-features: 7 analysis runs, all deepen cycles resolved gaps. Vehicle-registry run 8→9: confidence jumped +0.194 from one deepen cycle resolving all 7 gaps.",
-        "recommended_action": "Positive signal — continue using this pattern. The 2 remaining vehicle-registry gaps are the narrowest yet (1 error toast, 1 CSS breakpoint). Should resolve in a single pass."
+        "frequency": 4,
+        "systemic_cause": "Dashboard-features: 7 runs, all deepen cycles resolved gaps. Vehicle-registry: 0.676 → 0.87 (7 gaps resolved), 0.87 → 0.92 (2 gaps resolved). Three consecutive improving cycles. Every deepen cycle produced measurable confidence improvement.",
+        "recommended_action": "Positive signal — pattern validated across 2 milestones. Deepen:improvements cycle for 4 remaining improvement items should follow the same pattern."
       },
       {
-        "pattern": "Story decomposition misses specified journeys",
-        "frequency": 1,
-        "systemic_cause": "RESOLVED — FA2-J4 was missed in original decomposition but fully implemented via fix-vehicle-edit story.",
-        "recommended_action": "Pattern addressed. The decomposition phase should still verify journey coverage for future milestones."
+        "pattern": "QA code audit catches robustness issues missed by functional testing",
+        "frequency": 2,
+        "systemic_cause": "AI code audit found PUT handler missing try/catch for request.json() (returns 500 instead of 400 for malformed JSON). Similar pattern in uploads route. Unit tests cover happy paths and known error codes but not malformed request bodies. This is a boundary-input testing gap.",
+        "recommended_action": "Improvement items address the specific instances. For future milestones, QA change spec briefs should include boundary-input testing (malformed JSON, empty body, wrong content-type) as a standard check for all API endpoints."
       },
       {
-        "pattern": "Accessible components exist but aren't reused in new contexts",
+        "pattern": "Server-side filtering inconsistent with client-side UI expectations",
         "frequency": 1,
-        "systemic_cause": "RESOLVED — TrafficLight component now used consistently in vehicle list (fix-photo-and-list-polish story).",
-        "recommended_action": "Pattern addressed for vehicle-registry. Keep 'Search Before Building REUSE → explicit AC reference' recommendation for future milestones."
+        "systemic_cause": "GET /api/vehicles applies .neq('status', 'DECOMMISSIONED') server-side, making the client Show decommissioned toggle non-functional. The AC says 'visible via filter' but the API was implemented to always exclude. Root cause: AC ambiguity — 'hidden by default' was interpreted as 'never returned by API' rather than 'returned but hidden in UI by default'.",
+        "recommended_action": "The decommissioned filter improvement item addresses this. For future milestones, when ACs mention 'hidden by default, visible via filter', the change spec should specify whether filtering is client-side or server-side."
       }
     ],
     "change_spec_briefs": [
       {
-        "gap_id": "qg-fa2-8",
+        "gap_id": "imp-put-json-trycatch",
         "root_cause": "implementation_bug",
         "priority": "high",
         "affected_screens": [
@@ -2920,35 +2862,94 @@
         "affected_journeys": [
           "FA2-J4"
         ],
-        "what_good_looks_like": "When PUT /api/vehicles/[id] fails, an error toast appears: 'Could not save changes. Please try again.' Form remains in edit mode with user's changes preserved. Error toast uses role=alert for screen reader announcement. Toast auto-dismisses after 5 seconds or dismissible manually.",
+        "what_good_looks_like": "PUT /api/vehicles/[id] returns 400 with a JSON error message when request body is not valid JSON, instead of crashing with 500. Same pattern as POST handler which already handles this correctly.",
         "requires_design_mode": false,
-        "approach_hint": "Add else/catch clause to handleSave in vehicle-detail.tsx. Reuse the existing inline toast pattern (same as success toast but with red/amber styling and error message). Set role=alert instead of role=status for error severity. Keep form in edit mode (don't call setIsEditing(false)) on error. Add test for PUT failure scenario.",
+        "approach_hint": "Wrap request.json() in try/catch in PUT handler at src/app/api/vehicles/[id]/route.ts:82. On SyntaxError, return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }). Match the POST handler pattern. Add test for malformed JSON body.",
         "do_not_repeat": []
       },
       {
-        "gap_id": "qg-fa2-9",
-        "root_cause": "implementation_bug",
+        "gap_id": "imp-decommissioned-filter",
+        "root_cause": "missing_context",
         "priority": "medium",
         "affected_screens": [
-          "/vehicles/new"
+          "S4-vehicle-list"
         ],
         "affected_journeys": [
-          "FA2-J1"
+          "FA2-J4"
         ],
-        "what_good_looks_like": "Add vehicle form uses sm:grid-cols-2 (not grid-cols-2) so fields stack vertically on mobile/small tablets and use 2-column layout on larger screens. Consistent with vehicle-detail edit form pattern.",
+        "what_good_looks_like": "GET /api/vehicles returns ALL vehicles including DECOMMISSIONED. The client-side Show decommissioned toggle in vehicle-list.tsx filters them in the UI. By default, decommissioned vehicles are hidden in the UI but can be revealed by the toggle. The AC says 'hidden from map and dashboard by default, visible via filter' — filtering happens client-side.",
         "requires_design_mode": false,
-        "approach_hint": "Change grid-cols-2 to sm:grid-cols-2 in add-vehicle-form.tsx at the 2 grid div elements (lines ~171, ~184 per PO report). This is a 2-character fix per line. Matches the existing pattern in vehicle-detail.tsx edit form.",
+        "approach_hint": "Remove the .neq('status', 'DECOMMISSIONED') filter from GET /api/vehicles route.ts. The client VehicleList already has showDecommissioned toggle that filters correctly. Alternatively, add a ?include_decommissioned=true query param if the default-exclude behavior is preferred for other consumers. Update route tests accordingly.",
+        "do_not_repeat": []
+      },
+      {
+        "gap_id": "imp-detail-toast-close",
+        "root_cause": "missing_context",
+        "priority": "low",
+        "affected_screens": [
+          "S5-vehicle-detail"
+        ],
+        "affected_journeys": [
+          "FA2-J4"
+        ],
+        "what_good_looks_like": "Success and error toasts in vehicle-detail.tsx have a close/dismiss button (X) alongside the 5s auto-dismiss timer. Consistent with vehicle-created-toast.tsx which already has a close button. Meets WCAG 2.2.1 Timing Adjustable.",
+        "requires_design_mode": false,
+        "approach_hint": "Add a close button to both success and error toast divs in vehicle-detail.tsx. Match the pattern from vehicle-created-toast.tsx (button with × character, onClick sets toast/errorToast to null). aria-label='Dismiss notification'.",
+        "do_not_repeat": []
+      },
+      {
+        "gap_id": "imp-edit-client-validation",
+        "root_cause": "missing_context",
+        "priority": "low",
+        "affected_screens": [
+          "S5-vehicle-detail"
+        ],
+        "affected_journeys": [
+          "FA2-J4"
+        ],
+        "what_good_looks_like": "Edit form in vehicle-detail.tsx validates input via Zod (updateVehicleSchema) before sending to API, displaying field-level errors inline. Consistent with add-vehicle-form.tsx which already does client-side Zod validation before submission.",
+        "requires_design_mode": false,
+        "approach_hint": "In handleSave, call updateVehicleSchema.safeParse(formData) before the fetch. If validation fails, display field-level errors from result.error.flatten().fieldErrors. Match the validation UX pattern from add-vehicle-form.tsx. The updateVehicleSchema already exists in src/lib/validators.ts.",
         "do_not_repeat": []
       }
     ],
     "escalations": [],
     "improvement_routing": {
-      "this_milestone_count": 0,
-      "this_milestone_items": [],
+      "this_milestone_count": 4,
+      "this_milestone_items": [
+        {
+          "id": "imp-put-json-trycatch",
+          "source": "evaluation_report.qa.ai_code_audit",
+          "severity": "high",
+          "validated": true,
+          "grounding": "Robustness — PUT handler should return 400 not 500 for malformed input. POST handler already handles this correctly."
+        },
+        {
+          "id": "imp-decommissioned-filter",
+          "source": "evaluation_report.po_vehicle_registry.improvement_items",
+          "severity": "medium",
+          "validated": true,
+          "grounding": "FA2 AC: 'Decommissioned vehicles hidden from map and dashboard by default, visible via filter' — the filter must actually work"
+        },
+        {
+          "id": "imp-detail-toast-close",
+          "source": "evaluation_report.po_vehicle_registry.improvement_items",
+          "severity": "low",
+          "validated": true,
+          "grounding": "WCAG 2.2.1 Timing Adjustable — vehicle-created-toast has close button, vehicle-detail toasts do not. Consistency."
+        },
+        {
+          "id": "imp-edit-client-validation",
+          "source": "evaluation_report.po_vehicle_registry.improvement_items",
+          "severity": "low",
+          "validated": true,
+          "grounding": "Consistency with add-vehicle-form pattern. updateVehicleSchema already exists in validators.ts."
+        }
+      ],
       "this_milestone_dropped": [
         {
           "id": "imp-admin-layout-test-types",
-          "reason": "Already resolved — test_integrity_report (2026-04-04T00:02:00Z) shows typescript_errors: 0. Story openfleet-loop-1-test-type-fix added missing userName prop in dashboard-features milestone."
+          "reason": "Already resolved — test_integrity_report shows typescript_errors: 0. Story openfleet-loop-1-test-type-fix added missing userName prop."
         }
       ],
       "global_persisted_count": 5,
@@ -2961,8 +2962,8 @@
       ],
       "future_dropped_count": 0,
       "convergence_guardrail_triggered": false,
-      "deepen_improvements_cycle_count": 0,
-      "note": "imp-admin-layout-test-types was the only this-milestone item but is already resolved (0 TS errors in latest test integrity). No deepen:improvements override needed. 5 global items persisted to global_improvements.json."
+      "deepen_improvements_cycle_count": 1,
+      "note": "4 validated this-milestone improvement items trigger deepen:improvements override (would otherwise promote). Global items already persisted in global_improvements.json from previous analysis run. First deepen:improvements cycle — convergence guardrail not applicable."
     }
   },
   "phase_decisions": [
@@ -3374,53 +3375,124 @@
       "timestamp": "2026-04-04T00:10:00.000Z",
       "decision": "Persisted 5 global improvement items to global_improvements.json (file recreated — was missing from branch)",
       "reasoning": "Previous analysis run 8 claimed global-001 through global-005 were already persisted, but global_improvements.json does not exist on the current branch (rouge/story-vehicle-registry-fix-add-vehicle-form-ux). File may have been lost during branch operations. Recreated with all 5 items: imp-session-secret, imp-timing-safe-apikey, imp-loading-role, imp-login-autocomplete, imp-aria-live-status. All groundings validated against product_standard and WCAG."
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T08:00:00.000Z",
+      "decision": "Override promote to deepen:improvements — 4 validated this-milestone improvement items",
+      "reasoning": "All promote conditions ARE met: PO verdict PRODUCTION_READY, adjusted confidence 0.92 >= 0.90, zero quality gaps, trend improving (3 consecutive: 0.676 → 0.87 → 0.92), no structural issues. However, 4 validated this-milestone improvement items remain from QA and PO reports: (1) imp-put-json-trycatch HIGH — PUT handler returns 500 on malformed JSON, (2) imp-decommissioned-filter MEDIUM — server-side .neq filter breaks client Show decommissioned toggle (violates FA2 AC 'visible via filter'), (3) imp-detail-toast-close LOW — WCAG 2.2.1 consistency with vehicle-created-toast, (4) imp-edit-client-validation LOW — inconsistent validation pattern. Per Step 2.7, this-milestone items override promote to deepen:improvements. This is the first deepen:improvements cycle for vehicle-registry — convergence guardrail not applicable.",
+      "alternatives_considered": [
+        "promote — mechanically correct (all 5 conditions met), but overridden per Step 2.7 because 4 this-milestone improvement items would be lost on promotion. The decommissioned filter issue (imp-decommissioned-filter) is particularly notable — it violates an explicit AC.",
+        "notify-human — not warranted: all 4 items have self-evident resolutions",
+        "deepen — not applicable: zero quality gaps, this is deepen:improvements specifically"
+      ]
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T08:00:00.000Z",
+      "decision": "Validated imp-decommissioned-filter grounding — AC explicitly requires filter functionality",
+      "reasoning": "FA2 AC states: 'Decommissioned vehicles hidden from map and dashboard by default, visible via filter'. The current implementation applies .neq('status', 'DECOMMISSIONED') server-side in GET /api/vehicles, so decommissioned vehicles are never returned to the client. The VehicleList showDecommissioned toggle exists but has no vehicles to show. Root cause classified as missing_context: the AC's 'hidden by default' was interpreted as 'never returned by API' rather than 'returned but hidden in UI by default'. This is not a quality gap (no PO gap ID) but a validated improvement item with explicit AC grounding."
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T08:00:00.000Z",
+      "decision": "Global improvement items — no new items to persist, all 5 already tracked",
+      "reasoning": "PO dashboard improvement items (imp-session-secret, imp-timing-safe-apikey, imp-loading-role, imp-login-autocomplete, imp-aria-live-status) already persisted as global-001 through global-005 in global_improvements.json. No new global-scope items in the vehicle-registry PO report. No duplicates needed."
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T08:00:00.000Z",
+      "decision": "All 9 quality gaps (qg-fa2-1 through qg-fa2-9) confirmed RESOLVED — zero remain",
+      "reasoning": "Run 3 PO evaluation confirms all gaps resolved. qg-fa2-8 (edit error feedback) resolved by openfleet-loop-2-vehicle-edit-error-feedback — error toast with role=alert, form preserved on failure. qg-fa2-9 (form responsive) resolved by openfleet-loop-2-add-vehicle-form-responsive — sm:grid-cols-2 applied. Previous 7 gaps (qg-fa2-1 through qg-fa2-7) resolved in earlier cycles. 290/290 tests pass. Vehicle-registry milestone has zero blocking quality gaps."
+    },
+    {
+      "phase": "change-spec-generation",
+      "cycle": 1,
+      "analysis_run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T09:30:00.000Z",
+      "decision": "Grouped 3 vehicle-detail improvement items into 1 spec (imp-put-json-trycatch + imp-detail-toast-close + imp-edit-client-validation); kept decommissioned filter as separate spec",
+      "reasoning": "3 improvement items affect the same screen (S5-vehicle-detail) and journey (FA2-J4): PUT handler try/catch (HIGH), toast close buttons (LOW), and client-side validation (LOW). Per phase rules, multiple gaps on same screen = single spec. The decommissioned filter (imp-decommissioned-filter, MEDIUM) affects a different screen (S4-vehicle-list) and different API route, so it remains a separate spec. Total: 2 specs, 13 acceptance criteria, 4 improvement items addressed, 0 deferred, 0 escalated."
+    },
+    {
+      "phase": "change-spec-generation",
+      "cycle": 1,
+      "analysis_run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T09:30:00.000Z",
+      "decision": "All 4 briefs validated against vision — no conflicts, no escalations",
+      "reasoning": "All 4 improvement items align with the vision: (1) PUT try/catch aligns with quality_standards.reliability.error_states_handled, (2) decommissioned filter directly supports FA2 AC 'visible via filter', (3) toast close buttons align with accessibility standards and 'Simple UX' differentiator, (4) client-side validation aligns with quality_standards.reliability. None expand scope beyond vehicle-registry. None conflict with the product direction. All are consistency fixes following established patterns in the codebase."
+    },
+    {
+      "phase": "change-spec-generation",
+      "cycle": 1,
+      "analysis_run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T09:30:00.000Z",
+      "decision": "Decommissioned filter spec flags regression risk for dashboard-map and fleet-sidebar",
+      "reasoning": "Removing .neq('status', 'DECOMMISSIONED') from GET /api/vehicles means all API consumers receive decommissioned vehicles. VehicleList already filters client-side — no change needed. But dashboard-map.tsx and fleet-sidebar.tsx also consume this endpoint. Spec requires builder to verify these components exclude DECOMMISSIONED vehicles client-side, or add filtering if missing. AC-decom-filter-5 specifically covers the dashboard-map regression check."
     }
   ],
   "change_specs_pending": [
     {
-      "spec_path": "openspec/changes/openfleet-loop-2-vehicle-edit-error-feedback.md",
+      "spec_path": "specs/changes/openfleet-loop-3-vehicle-detail-robustness.md",
       "gap_ids": [
-        "qg-fa2-8"
+        "imp-put-json-trycatch",
+        "imp-detail-toast-close",
+        "imp-edit-client-validation"
       ],
       "priority": "high",
       "requires_design_mode": false,
       "design_passes_needed": [],
-      "criteria_count": 5,
+      "criteria_count": 8,
       "root_cause": "implementation_bug",
       "affected_screens": [
-        "/vehicles/[id]"
+        "S5-vehicle-detail"
       ],
       "affected_journeys": [
         "FA2-J4"
       ],
-      "approach_summary": "Add error toast and form state preservation to handleSave catch/else path in vehicle-detail.tsx"
+      "approach_summary": "Wrap PUT request.json() in try/catch, add close buttons to toasts, add client-side Zod validation in edit form — all following existing codebase patterns"
     },
     {
-      "spec_path": "openspec/changes/openfleet-loop-2-add-vehicle-form-responsive.md",
+      "spec_path": "specs/changes/openfleet-loop-3-decommissioned-filter.md",
       "gap_ids": [
-        "qg-fa2-9"
+        "imp-decommissioned-filter"
       ],
       "priority": "medium",
       "requires_design_mode": false,
       "design_passes_needed": [],
-      "criteria_count": 3,
-      "root_cause": "implementation_bug",
+      "criteria_count": 5,
+      "root_cause": "missing_context",
       "affected_screens": [
-        "/vehicles/new"
+        "S4-vehicle-list"
       ],
       "affected_journeys": [
-        "FA2-J1"
+        "FA2-J4"
       ],
-      "approach_summary": "Change grid-cols-2 to sm:grid-cols-2 at two locations in add-vehicle-form.tsx for responsive stacking"
+      "approach_summary": "Remove .neq DECOMMISSIONED server-side filter from GET /api/vehicles — client-side toggle already handles filtering correctly"
     }
   ],
   "change_spec_generation_summary": {
     "phase": "change-spec-generation",
     "cycle": 1,
-    "timestamp": "2026-04-04T12:00:00Z",
+    "analysis_run": 10,
+    "timestamp": "2026-04-04T09:30:00.000Z",
     "total_specs_generated": 2,
-    "total_criteria_across_specs": 8,
-    "gaps_addressed": 2,
+    "total_criteria_across_specs": 13,
+    "gaps_addressed": 4,
     "gaps_deferred": [],
     "gaps_escalated": []
   },
@@ -4004,6 +4076,79 @@
           "src/app/api/vehicles/route.ts",
           "src/app/api/uploads/route.ts",
           "src/lib/validators.ts"
+        ]
+      }
+    },
+    {
+      "id": "openfleet-loop-3-vehicle-detail-robustness",
+      "name": "PUT handler try/catch, toast close buttons, and client-side Zod validation in vehicle-detail",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [],
+      "affected_entities": ["vehicle"],
+      "affected_screens": ["S5-vehicle-detail"],
+      "acceptance_criteria": [
+        "PUT /api/vehicles/[id] returns 400 with { error: 'Invalid JSON' } for malformed request bodies instead of 500",
+        "Success toast in vehicle-detail has close button (×) with aria-label='Dismiss notification'",
+        "Error toast in vehicle-detail has close button (×) with aria-label='Dismiss notification'",
+        "Edit form validates via updateVehicleSchema.safeParse before sending API request",
+        "Field-level Zod errors shown inline below invalid inputs (matching add-vehicle-form pattern)",
+        "Valid edit submissions still send PUT request normally"
+      ],
+      "source": "change-spec:openfleet-loop-3-vehicle-detail-robustness",
+      "closes_gaps": [
+        "imp-put-json-trycatch",
+        "imp-detail-toast-close",
+        "imp-edit-client-validation"
+      ],
+      "root_cause": "implementation_bug",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/app/api/vehicles/[id]/route.ts",
+          "src/app/api/vehicles/[id]/route.test.ts",
+          "src/components/vehicle-detail.tsx",
+          "src/components/vehicle-detail.test.tsx"
+        ],
+        "out_of_scope": [
+          "src/components/add-vehicle-form.tsx",
+          "src/components/vehicle-created-toast.tsx",
+          "src/app/api/vehicles/route.ts",
+          "src/lib/validators.ts"
+        ]
+      }
+    },
+    {
+      "id": "openfleet-loop-3-decommissioned-filter",
+      "name": "Remove server-side DECOMMISSIONED filter from GET /api/vehicles to enable client-side toggle",
+      "status": "pending",
+      "attempts": 0,
+      "depends_on": [],
+      "affected_entities": ["vehicle"],
+      "affected_screens": ["S4-vehicle-list"],
+      "acceptance_criteria": [
+        "GET /api/vehicles returns vehicles with all statuses including DECOMMISSIONED",
+        "Show decommissioned toggle hides decommissioned by default (unchecked)",
+        "Show decommissioned toggle reveals decommissioned vehicles when checked",
+        "Fleet health summary total updates when toggle changes",
+        "Dashboard map does NOT show markers for DECOMMISSIONED vehicles"
+      ],
+      "source": "change-spec:openfleet-loop-3-decommissioned-filter",
+      "closes_gaps": [
+        "imp-decommissioned-filter"
+      ],
+      "root_cause": "missing_context",
+      "do_not_repeat": [],
+      "scope_boundary": {
+        "in_scope": [
+          "src/app/api/vehicles/route.ts",
+          "src/app/api/vehicles/route.test.ts",
+          "src/components/dashboard-map.tsx (verify decommissioned filtering)"
+        ],
+        "out_of_scope": [
+          "src/components/vehicle-list.tsx",
+          "src/components/vehicle-detail.tsx",
+          "src/app/api/vehicles/[id]/route.ts"
         ]
       }
     }
