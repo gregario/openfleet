@@ -7,13 +7,13 @@
     "backend": true,
     "prompts": false,
     "tests": true,
-    "docs": false,
-    "config": false
+    "docs": true,
+    "config": true
   },
   "evaluation_tier": "full",
-  "cycle_type": "feature-build",
+  "cycle_type": "re-evaluation",
   "dual_voice_po_review": true,
-  "tier_rationale": "Full-tier evaluation: First evaluation of vehicle-registry milestone. Three feature stories completed (vehicle-list, add-vehicle, vehicle-detail) adding 20 files with 2221 insertions. New frontend components, API routes, and tests. All sub-phases required.",
+  "tier_rationale": "Full-tier re-evaluation: Previous vehicle-registry PO review returned NEEDS_IMPROVEMENT (confidence 0.676). Analyzing phase generated change specs for 6 quality gaps. 3 fix stories built (fix-vehicle-edit, fix-photo-and-list-polish, fix-add-vehicle-form-ux) adding edit mode, photo display, success toast, field markers, fleet health summary. 33 files changed, 7229 insertions. All sub-phases required.",
   "vision": {
     "product_name": "OpenFleet",
     "one_liner": "Open-source fleet management for small businesses — see your vehicles, track your maintenance, own your data.",
@@ -613,8 +613,8 @@
       "affects": [
         "src/components/add-vehicle-form.tsx"
       ]
-    }
-    ,{
+    },
+    {
       "decision": "Search Before Building audit for cycle 1 story openfleet-loop-1-dashboard-ux-states",
       "context": "Pre-implementation code reuse analysis",
       "alternatives_considered": [],
@@ -791,37 +791,44 @@
         "url": "https://openfleet-v2-staging.gregj64.workers.dev",
         "timestamp": "2026-04-03T20:16:01.512Z",
         "cycle": 1
+      },
+      {
+        "version": "4e6c17bd-11e2-43d0-be59-2df4cf156ec1",
+        "previous": "238a6e4d-ecb9-426c-b467-ac8b94d77102",
+        "url": "https://openfleet-v2-staging.gregj64.workers.dev",
+        "timestamp": "2026-04-03T23:57:38.341Z",
+        "cycle": 1
       }
     ]
   },
   "review_readiness_dashboard": {
     "test_integrity": {
       "passed": true,
-      "timestamp": "2026-04-03T20:20:20.042489+00:00"
+      "timestamp": "2026-04-04T00:02:50.909165+00:00"
     },
     "qa_gate": {
       "passed": true,
-      "timestamp": "2026-04-03T20:24:11.795702+00:00"
+      "timestamp": "2026-04-04T00:06:52.915088+00:00"
     },
     "ai_code_audit": {
       "passed": true,
-      "timestamp": "2026-04-03T20:24:11.815597+00:00"
+      "timestamp": "2026-04-04T00:06:52.934564+00:00"
     },
     "security_review": {
       "passed": true,
-      "timestamp": "2026-04-03T20:24:11.833849+00:00"
+      "timestamp": "2026-04-04T00:06:52.952154+00:00"
     },
     "a11y_review": {
       "passed": true,
-      "timestamp": "2026-04-03T20:24:11.851316+00:00"
+      "timestamp": "2026-04-04T00:06:52.969465+00:00"
     },
     "design_review": {
       "passed": true,
-      "timestamp": "2026-04-03T20:24:11.869918+00:00"
+      "timestamp": "2026-04-04T00:06:52.986919+00:00"
     },
     "po_review": {
       "passed": false,
-      "timestamp": "2026-04-03T20:27:52.025871+00:00"
+      "timestamp": "2026-04-04T00:16:31.881270+00:00"
     }
   },
   "qa_fix_results": {
@@ -1295,6 +1302,72 @@
         "Could route to milestone-fix but PO gaps are quality issues not bugs — they need re-specification, not patching"
       ],
       "confidence": 0.95
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:02:00.000Z",
+      "decision": "Re-evaluation after analyzing phase generated fix stories for vehicle-registry quality gaps. Classified as re-evaluation → full tier. All 7 dashboard gates reset. Previous PO confidence 0.676.",
+      "reasoning": "state.json.previous_state=milestone-check. Previous vehicle-registry evaluation returned NEEDS_IMPROVEMENT (confidence 0.676) with 6 quality gaps. Analyzing phase generated change specs. 3 fix stories built: fix-vehicle-edit (edit mode + status dropdown + PUT endpoint), fix-photo-and-list-polish (photo display + traffic light a11y + fleet health summary), fix-add-vehicle-form-ux (success toast + photo warning + field markers). 33 files changed, 7229 insertions. Full tier required — re-evaluation with new feature code.",
+      "alternatives_considered": [
+        "Could classify as qa-fix but the implemented stories include new features (edit mode), not just bug fixes"
+      ],
+      "confidence": 0.97
+    },
+    {
+      "phase": "test-integrity",
+      "cycle": 1,
+      "run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:02:00.000Z",
+      "decision": "Test Integrity PASS. 263 tests across 25 files, all passing. TypeScript compiles with zero errors. 7/7 FA2 acceptance criteria covered. All 3 fix story criteria fully covered (17/17 total). 105 vehicle-registry specific tests across 8 files.",
+      "reasoning": "All FA2 acceptance criteria have @criterion annotations and test coverage. Fix story criteria: fix-vehicle-edit 6/6 (edit button, pre-populated form, PUT endpoint, success toast, cancel, decommissioned filter), fix-photo-and-list-polish 5/5 (photo render, thumbnail, traffic light a11y, health summary, summary updates), fix-add-vehicle-form-ux 6/6 (success toast, photo warning, required markers, optional markers, legend, redirect toast). No orphaned tests, no stale annotations, no coverage gaps.",
+      "alternatives_considered": [],
+      "confidence": 0.98
+    },
+    {
+      "phase": "qa-gate",
+      "cycle": 1,
+      "run": 7,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:03:00.000Z",
+      "decision": "QA Gate PASS. Health score 90/100 (up from 82). 263/263 tests pass. TypeScript 0 errors. All 3 fix stories verified. Code audit 90/100. Security: 0 critical, 0 high. A11y: significantly improved.",
+      "reasoning": "Re-evaluation after 3 fix stories addressed previous PO quality gaps. All 7 FA2 acceptance criteria pass. Fix stories verified: (1) fix-vehicle-edit — edit button, pre-populated form, status dropdown, PUT endpoint with Zod validation, success toast, cancel. (2) fix-photo-and-list-polish — VehicleAvatar with photo/placeholder, traffic light role=status with aria-label and tooltip, fleet health summary bar with per-status counts. (3) fix-add-vehicle-form-ux — success toast on redirect with auto-dismiss, inline photo warning, required asterisk markers, optional suffix markers, legend. 2 MEDIUM non-blocking issues: edit save error feedback missing, GET API missing photo_url. No regressions from fix stories.",
+      "alternatives_considered": [
+        "Could FAIL on missing edit save error feedback — rejected because it's a UX polish gap not a functional bug, the save still works correctly when it succeeds, and the user can retry",
+        "Could FAIL on npm audit 4 HIGH — rejected because all in next.js dependency chain, pre-existing, not in project code"
+      ],
+      "confidence": 0.95
+    },
+    {
+      "phase": "po-review",
+      "cycle": 1,
+      "run": 4,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:04:00.000Z",
+      "decision": "PO Review: NEEDS_IMPROVEMENT (dual-voice consensus confidence 0.83 raw, 0.87 adjusted). Recommended action: deepen:vehicle-edit-error-and-form-mobile. All 7 previous quality gaps RESOLVED. 2 new gaps identified.",
+      "reasoning": "Dual-voice PO Review. Primary rated PRODUCTION_READY (0.91), challenge rated NOT_READY (0.68). Consensus 0.83. Primary correctly identified all 7 previous gaps as resolved (vehicle edit, photo display, success toast, photo warning, traffic light a11y, fleet health, field markers). Challenge correctly identified 2 new gaps: (1) HIGH — edit save failure silent (no error toast when PUT fails), (2) MEDIUM — add-vehicle form grid-cols-2 without sm: breakpoint (tablet layout). Both are narrow fixes. Journey scores: FA2-J1 8/10, FA2-J2 9/10, FA2-J3 8.5/10, FA2-J4 7.5/10 (dragged by error feedback gap). Confidence improved from 0.676 to 0.83 (+0.154). One more targeted fix cycle should push above 0.90.",
+      "alternatives_considered": [
+        "Could accept primary PRODUCTION_READY — rejected because challenge correctly identified silent edit error (proven by code: handleSave has no else clause at line 116)",
+        "Could accept challenge NOT_READY at 0.68 — rejected because challenge over-penalized: the mobile form issue is a one-line fix, and the edit error is a missing else clause, not architectural"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "phase": "evaluation-orchestrator",
+      "cycle": 1,
+      "run": 10,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:05:00.000Z",
+      "decision": "Evaluation complete for vehicle-registry re-evaluation. Verdict: PARTIAL PASS. Gates: test_integrity=PASS, qa_gate=PASS (health 90), ai_code_audit=PASS, security_review=PASS, a11y_review=PASS, design_review=PASS, po_review=NEEDS_IMPROVEMENT (confidence 0.83/0.87). Routing to analyzing state — quality gaps become new specs.",
+      "reasoning": "Full-tier re-evaluation after 3 fix stories addressed 7 quality gaps from previous run. Test integrity: 263/263 tests pass, TypeScript 0 errors. QA Gate: health 90 (up from 82), no critical findings. PO Review: NEEDS_IMPROVEMENT — dual-voice consensus 0.83, below 0.90 promote threshold. 7/7 previous gaps resolved. 2 new gaps: (1) edit save error feedback (HIGH), (2) form mobile layout (MEDIUM). Per orchestrator protocol: PO NEEDS_IMPROVEMENT → route to analyzing. Quality gaps are NOT bugs — they need re-specification, not patching.",
+      "alternatives_considered": [
+        "Could route to milestone-fix since edit error is arguably a bug — rejected per anti-pattern: PO quality gaps always route to analyzing, not milestone-fix",
+        "Could round up to PRODUCTION_READY since 0.87 adjusted is close to 0.90 — rejected because threshold is clear and the edit error gap is legitimate"
+      ],
+      "confidence": 0.96
     }
   ],
   "code_review_report": {
@@ -1861,20 +1934,30 @@
   },
   "evaluation_report": {
     "test_integrity_report": {
-      "timestamp": "2026-04-03T19:59:00.000Z",
+      "timestamp": "2026-04-04T00:02:00.000Z",
       "cycle": 1,
-      "run": 8,
+      "run": 10,
+      "milestone": "vehicle-registry",
       "verdict": "PASS",
-      "tests_total": 358,
-      "tests_passing": 358,
+      "tests_total": 263,
+      "tests_passing": 263,
       "tests_failing": 0,
-      "test_files": 35,
+      "test_files": 25,
+      "typescript_errors": 0,
       "criterion_annotations_verified": true,
       "coverage_gaps": [],
       "orphaned_tests": 0,
       "stale_tests": 0,
-      "notes": "All 9 FA1 acceptance criteria covered. +3 tests from previous run: hover tooltip XSS escape test (fleet-map.test.tsx:582), shared formatRelativeTime consistency test (fleet-sidebar.test.tsx:287), and XSS security regression test for .setHTML() sites. 132 criterion annotations across 20 test files. 4 regression tests verified. No orphaned or stale tests.",
-      "test_run_summary": "35 files, 358 tests, 0 failures, 6.14s"
+      "vehicle_registry_tests": 105,
+      "vehicle_registry_test_files": 8,
+      "fa2_criteria_covered": "7/7",
+      "fix_story_criteria_covered": {
+        "fix-vehicle-edit": "6/6",
+        "fix-photo-and-list-polish": "5/5",
+        "fix-add-vehicle-form-ux": "6/6"
+      },
+      "notes": "All 7 FA2 acceptance criteria covered with @criterion annotations. All 3 fix story criteria fully covered (fix-vehicle-edit 6/6, fix-photo-and-list-polish 5/5, fix-add-vehicle-form-ux 6/6). 105 vehicle-registry tests across 8 files. Full suite: 263/263 tests pass across 25 files. TypeScript compiles with zero errors. No orphaned or stale tests. No coverage gaps.",
+      "test_run_summary": "25 files, 263 tests, 0 failures, 4.49s"
     },
     "qa": {
       "timestamp": "2026-04-03T20:00:00.000Z",
@@ -2103,9 +2186,10 @@
       },
       "vehicle_registry_qa": {
         "milestone": "vehicle-registry",
-        "run": 1,
+        "run": 2,
+        "timestamp": "2026-04-04T00:03:00.000Z",
         "verdict": "PASS",
-        "health_score": 82,
+        "health_score": 90,
         "criteria_pass_rate": "7/7",
         "criteria_results": {
           "fa2-search-sort-filter": "PASS",
@@ -2116,15 +2200,20 @@
           "fa2-decommissioned-filter": "PASS",
           "fa2-mini-map": "PASS"
         },
+        "fix_story_results": {
+          "fix-vehicle-edit": "PASS — edit mode, status dropdown, PUT endpoint, success toast, cancel all implemented and tested",
+          "fix-photo-and-list-polish": "PASS — photo display in avatar, traffic light with role=status and aria-label, fleet health summary bar",
+          "fix-add-vehicle-form-ux": "PASS — success toast on redirect, photo warning on failure, required/optional field markers with legend"
+        },
         "ai_code_audit_scores": {
-          "architecture": 85,
-          "consistency": 80,
-          "robustness": 78,
-          "production_risks": 75,
-          "security": 80,
-          "dead_hallucinated_code": 90,
-          "tech_debt": 78,
-          "weighted_overall": 81
+          "architecture": 92,
+          "consistency": 90,
+          "robustness": 85,
+          "production_risks": 82,
+          "security": 88,
+          "dead_hallucinated_code": 95,
+          "tech_debt": 82,
+          "weighted_overall": 90
         },
         "security_findings": {
           "critical": 0,
@@ -2170,7 +2259,7 @@
           }
         ]
       },
-      "overall_assessment": "QA Gate PASS for vehicle-registry milestone. 223/223 tests pass across 23 files. Health score 82/100. All 7 FA2 acceptance criteria pass. Security: zero critical findings, 2 medium (local file uploads, no rate limiting on new endpoints). A11y: 3 low findings (search input label, tab arrow keys, mini-map marker). Code audit: weighted 81/100 — solid architecture and zero dead code, minor gaps in robustness (UUID validation) and production risks (local file storage). No critical or high findings."
+      "overall_assessment": "QA Gate PASS (run 2) for vehicle-registry re-evaluation. 263/263 tests pass across 25 files. Health score 90/100 (up from 82). All 7 FA2 acceptance criteria pass. All 3 fix stories verified implemented correctly. Code audit 90/100 — excellent architecture, consistency, a11y. Security: 0 critical, 0 high, 2 medium (edit save error feedback, API field gap — neither blocking). A11y significantly improved this run: traffic light role=status, avatar alt text, form field markers with aria-required. No blocking findings. Previous quality gaps all addressed."
     },
     "po_previous": {
       "timestamp": "2026-04-03T16:50:00Z",
@@ -2400,42 +2489,61 @@
       "quality_gaps": [],
       "quality_gaps_note": "All 9 previous quality gaps RESOLVED: gap-popup-dead-link, gap-static-alerts, gap-inert-alert-items, gap-no-route-error-boundary, gap-filter-empty-feedback, gap-no-hover-preview, gap-driver-select-no-label, gap-no-last-updated, gap-sidebar-static-counts. Additionally: gap-xss-hover-tooltip RESOLVED (escapeHTML applied, test added), gap-duplicate-time-format RESOLVED (consolidated to formatRelativeTime). Zero quality gaps remain."
     },
-    "po_vehicle_registry": {
+    "po_vehicle_registry_previous": {
       "timestamp": "2026-04-03T21:30:00.000Z",
       "milestone": "vehicle-registry",
       "run": 1,
+      "note": "Previous PO review — pre-fix-stories. Preserved for trend comparison. Confidence 0.676, 7 quality gaps."
+    },
+    "po_vehicle_registry": {
+      "timestamp": "2026-04-04T00:04:00.000Z",
+      "milestone": "vehicle-registry",
+      "run": 2,
       "dual_voice": true,
       "verdict": "NEEDS_IMPROVEMENT",
-      "confidence": 0.676,
-      "recommended_action": "deepen:vehicle-edit-and-photo-display",
+      "confidence": 0.83,
+      "confidence_adjusted": 0.87,
+      "recommended_action": "deepen:vehicle-edit-error-and-form-mobile",
       "journey_quality": [
         {
           "id": "FA2-J1",
           "name": "Add a vehicle",
-          "verdict": "functional",
-          "score": 7,
-          "notes": "Flow clear, domain language good (Van 1, Ford Transit, AB12 CDE). Photo preview before submit. Zod validation. Loading state on submit. Gaps: no success toast after creation (silent redirect), photo upload failure silently swallowed."
+          "verdict": "polished",
+          "score": 8,
+          "primary_score": 8.5,
+          "challenge_score": 7,
+          "notes": "Form complete with all required fields. Required/optional field markers with legend. Photo preview before submit. Zod validation. Success toast on redirect with auto-dismiss. Photo upload warning when upload fails. Gaps resolved: success toast (was silent redirect), photo warning (was swallowed), field markers (were unlabeled). Remaining: add-vehicle form uses grid-cols-2 without sm: breakpoint (tablet layout narrow), photo error doesn't show specific reason.",
+          "delta_from_run1": "+1.0 — success toast, photo warning, field markers all addressed"
         },
         {
           "id": "FA2-J2",
           "name": "View vehicle detail",
           "verdict": "polished",
-          "score": 8,
-          "notes": "Back navigation prominent, information hierarchy clear, tab switching instant with proper ARIA. Placeholder tabs honest about future features. Mini-map handles missing data gracefully. Gap: vehicle photo never displayed despite being fetched."
+          "score": 9,
+          "primary_score": 9.5,
+          "challenge_score": 8,
+          "notes": "Back navigation prominent, information hierarchy clear, tab switching instant with proper ARIA. Vehicle photo now displayed via VehicleAvatar (photo or initial-letter placeholder). Placeholder tabs honest about future features. Mini-map handles missing data gracefully. All gaps resolved.",
+          "delta_from_run1": "+1.0 — vehicle photo now displayed, avatar placeholder for missing photos"
         },
         {
           "id": "FA2-J3",
           "name": "Check vehicle health",
-          "verdict": "functional",
-          "score": 7,
-          "notes": "Traffic light visible on every row, scannable. Filter by status uses plain English. Sort by status puts RED first. Detail page shows traffic light with label. Gaps: no tooltip on list dots (color-only), no fleet health summary count."
+          "verdict": "polished",
+          "score": 8.5,
+          "primary_score": 9,
+          "challenge_score": 8,
+          "notes": "Traffic light visible on every row with role=status, aria-label, and tooltip. Filter by status uses plain English. Sort by status puts RED first. Fleet health summary bar shows total count + per-status breakdown with colored dots and text. Detail page shows traffic light with label. All gaps resolved.",
+          "delta_from_run1": "+1.5 — traffic light now accessible with labels and tooltips, fleet health summary added"
         },
         {
           "id": "FA2-J4",
           "name": "Change vehicle status",
-          "verdict": "raw",
-          "score": 3,
-          "notes": "COMPLETELY UNIMPLEMENTED. No edit vehicle UI, no status dropdown, no action menu. Status is read-only text everywhere. The decommissioned filter toggle implies vehicles can be decommissioned but there is no way to set this status."
+          "verdict": "functional",
+          "score": 7.5,
+          "primary_score": 8.5,
+          "challenge_score": 5,
+          "notes": "Edit button visible in detail header. Edit mode reveals pre-populated form with status dropdown (ACTIVE/IN_SHOP/DECOMMISSIONED). PUT endpoint with Zod validation. Success toast after save. Cancel discards changes. Decommissioned vehicles hidden by default, visible via filter toggle. CRITICAL GAP: save failure is silent — no error toast or feedback when PUT fails. Also no confirmation dialog before decommissioning.",
+          "delta_from_run1": "+4.5 — was completely unimplemented (score 3), now fully functional with edit mode, status dropdown, PUT endpoint, success toast"
         }
       ],
       "screen_quality": [
@@ -2443,296 +2551,297 @@
           "screen": "/vehicles",
           "hierarchy": 8,
           "layout": 8,
-          "consistency": 8,
-          "density": 7,
+          "consistency": 9,
+          "density": 8,
           "empty_states": 9,
-          "mobile_readiness": 7,
-          "score": 7.8,
-          "notes": "Clean table layout. Two empty states handled. Search/filter stack on mobile. No pagination."
+          "mobile_readiness": 8,
+          "score": 8.3,
+          "notes": "Clean table with fleet health summary bar. Traffic light dots with tooltips and aria-labels. Photo thumbnails via VehicleAvatar. Search/filter stack on mobile. Decommissioned toggle shows/hides correctly.",
+          "delta_from_run1": "+0.5 — fleet health summary, accessible traffic lights, photo thumbnails"
         },
         {
           "screen": "/vehicles/new",
-          "hierarchy": 7,
-          "layout": 8,
+          "hierarchy": 8,
+          "layout": 7,
           "consistency": 8,
           "density": 7,
-          "score": 7.4,
-          "notes": "Well-structured form. Max-width constraint. Required vs optional fields not visually distinguished."
+          "mobile_readiness": 6,
+          "score": 7.2,
+          "notes": "Well-structured form. Required/optional field markers with legend. Photo preview. Success toast on redirect. Gap: grid-cols-2 without responsive breakpoint — narrow on tablets.",
+          "delta_from_run1": "-0.2 — field markers improved but mobile layout issue discovered"
         },
         {
           "screen": "/vehicles/[id]",
-          "hierarchy": 8,
+          "hierarchy": 9,
           "layout": 8,
-          "consistency": 8,
-          "density": 7,
+          "consistency": 9,
+          "density": 8,
           "empty_states": 8,
-          "mobile_readiness": 7,
-          "score": 7.7,
-          "notes": "Good two-column layout. Tabs well-implemented. Vehicle photo fetched but never rendered."
+          "mobile_readiness": 8,
+          "score": 8.5,
+          "notes": "Vehicle photo now displayed in header via VehicleAvatar. Edit mode with status dropdown. Success toast on save. Tab semantics with ARIA. Mini-map with traffic-light-colored marker. Gap: edit save failure has no error feedback.",
+          "delta_from_run1": "+0.8 — photo display, edit mode, success toast"
+        }
+      ],
+      "previous_gaps_resolved": [
+        {
+          "id": "qg-fa2-1",
+          "status": "RESOLVED",
+          "fix_story": "fix-vehicle-edit"
+        },
+        {
+          "id": "qg-fa2-2",
+          "status": "RESOLVED",
+          "fix_story": "fix-photo-and-list-polish"
+        },
+        {
+          "id": "qg-fa2-3",
+          "status": "RESOLVED",
+          "fix_story": "fix-add-vehicle-form-ux"
+        },
+        {
+          "id": "qg-fa2-4",
+          "status": "RESOLVED",
+          "fix_story": "fix-add-vehicle-form-ux"
+        },
+        {
+          "id": "qg-fa2-5",
+          "status": "RESOLVED",
+          "fix_story": "fix-photo-and-list-polish"
+        },
+        {
+          "id": "qg-fa2-6",
+          "status": "RESOLVED",
+          "fix_story": "fix-photo-and-list-polish"
+        },
+        {
+          "id": "qg-fa2-7",
+          "status": "RESOLVED",
+          "fix_story": "fix-add-vehicle-form-ux"
         }
       ],
       "quality_gaps": [
         {
-          "id": "qg-fa2-1",
-          "category": "flow_restructure",
+          "id": "qg-fa2-8",
+          "category": "interaction_improvement",
           "severity": "high",
-          "description": "No UI exists to change vehicle status (FA2-J4). Users cannot mark vehicles as requiring attention, decommission them, or update any vehicle fields. The status display is read-only with no edit affordance.",
-          "what_good_looks_like": "Vehicle detail page should have an Edit button or inline-editable status field. At minimum, a status dropdown or action menu (Mark for Service, Decommission) accessible from the detail page header.",
+          "description": "Vehicle edit save failure is completely silent. When PUT /api/vehicles/[id] fails, the form clears saving state with no error message. User doesn't know if changes were saved or lost.",
+          "what_good_looks_like": "Error toast or inline alert: 'Could not save changes. Please try again.' Form remains in edit mode.",
           "affected_journeys": [
             "FA2-J4"
-          ]
+          ],
+          "file": "src/components/vehicle-detail.tsx:116",
+          "fix_scope": "Add else clause to handleSave with error toast"
         },
         {
-          "id": "qg-fa2-2",
+          "id": "qg-fa2-9",
           "category": "design_change",
-          "severity": "high",
-          "description": "Vehicle photo is uploaded during add-vehicle but never displayed on the vehicle detail page. photoUrl is fetched from DB and mapped but not rendered. Broken feature promise.",
-          "what_good_looks_like": "Vehicle detail header should show the vehicle photo (or placeholder avatar). Photo should also appear in list view as small thumbnail.",
+          "severity": "medium",
+          "description": "Add vehicle form uses grid-cols-2 without sm: breakpoint. On tablets in portrait, form fields are too narrow. Inconsistent with vehicle-detail edit form which correctly uses sm:grid-cols-2.",
+          "what_good_looks_like": "Change grid-cols-2 to sm:grid-cols-2 in add-vehicle-form.tsx (lines 171, 184).",
           "affected_journeys": [
-            "FA2-J2"
-          ]
-        },
-        {
-          "id": "qg-fa2-3",
-          "category": "interaction_improvement",
-          "severity": "medium",
-          "description": "No success feedback after adding a vehicle. Silent redirect to list.",
-          "what_good_looks_like": "Transient success toast: 'Van 1 added to your fleet.' after redirect."
-        },
-        {
-          "id": "qg-fa2-4",
-          "category": "interaction_improvement",
-          "severity": "medium",
-          "description": "Photo upload failure silently swallowed. Vehicle created without photo, no warning.",
-          "what_good_looks_like": "Inline warning: 'Photo could not be uploaded. Vehicle was saved without a photo.'"
-        },
-        {
-          "id": "qg-fa2-5",
-          "category": "design_change",
-          "severity": "medium",
-          "description": "Traffic light in vehicle list is color-only (8x8px dot) with no text label or tooltip. Insufficient for color-blind users.",
-          "what_good_looks_like": "Add tooltip or sr-only label (All clear / Requires attention / Overdue) to each dot."
-        },
-        {
-          "id": "qg-fa2-6",
-          "category": "content_change",
-          "severity": "medium",
-          "description": "No fleet health summary on the list page. Owner must scan every row to assess fleet condition.",
-          "what_good_looks_like": "Compact summary bar: '8 vehicles — 5 all clear, 2 need attention, 1 overdue'."
-        },
-        {
-          "id": "qg-fa2-7",
-          "category": "interaction_improvement",
-          "severity": "low",
-          "description": "Required vs optional fields not visually distinguished in add-vehicle form.",
-          "what_good_looks_like": "Mark required fields with asterisk or use '(optional)' suffix on optional labels."
+            "FA2-J1"
+          ],
+          "file": "src/components/add-vehicle-form.tsx:171,184",
+          "fix_scope": "One-line fix per grid div"
         }
       ],
       "design_lens": {
-        "dieter_rams": 7,
-        "don_norman": 6.5,
-        "julie_zhuo": 6.5,
-        "overall": "Read-only experience is solid and honest. Photo upload creating a broken promise (accepted but never shown) and status being read-only with no edit affordance are the two design integrity issues."
+        "dieter_rams": 8,
+        "don_norman": 8,
+        "julie_zhuo": 7.5,
+        "overall": "Massive improvement from run 1. All 7 previous quality gaps resolved. Vehicle edit mode functional with status dropdown. Photos displayed. Success toasts present. Traffic lights accessible. Fleet health summary implemented. Two remaining polish gaps: edit error feedback and form responsive layout."
       },
-      "recommended_action_rationale": "Two high-severity quality gaps block production readiness: (1) FA2-J4 completely unimplemented — no vehicle edit/status change UI, (2) vehicle photos uploaded but never displayed. These need targeted specs, not broad rework. The read-only vehicle registry (list, detail, search, filter, sort, traffic light, mini-map) is well-built."
+      "recommended_action_rationale": "Two quality gaps remain: (1) HIGH — edit save failure silent (no error toast), (2) MEDIUM — add-vehicle form layout not responsive. Both are narrow, one-line fixes. Previous 7 gaps ALL resolved. Confidence improved from 0.676 to 0.83 raw / 0.87 adjusted. One targeted fix cycle should push above 0.90."
     }
   },
   "analysis_recommendation": {
-    "action": "deepen:vehicle-edit-and-registry-polish",
-    "rationale": "Vehicle-registry milestone first evaluation: PO verdict NEEDS_IMPROVEMENT, confidence 0.676. 7 quality gaps identified — 2 HIGH (missing vehicle edit UI, photo not displayed), 3 MEDIUM (no success toast, silent upload error, color-only traffic light, no fleet summary), 1 LOW (required field markers). Primary blocker is qg-fa2-1: FA2-J4 (Change vehicle status) was never decomposed into a story — the builder correctly built the 3 stories given but the decomposition missed an entire journey. Override notify-human threshold (0.676 < 0.7) because: all gaps have self-evident resolutions, the spec clearly defines FA2-J4, no human judgment needed, precedent established in analysis_run 4 for overriding mechanical thresholds when resolutions are unambiguous."
+    "action": "deepen:vehicle-edit-error-and-form-mobile",
+    "rationale": "Vehicle-registry re-evaluation after 3 fix stories: PO verdict NEEDS_IMPROVEMENT, adjusted confidence 0.87 (up from 0.676). All 7 previous quality gaps RESOLVED. 2 new gaps remain: (1) HIGH — vehicle edit save failure is silent (no error toast when PUT fails), (2) MEDIUM — add-vehicle form grid-cols-2 without sm: breakpoint (narrow on tablets). Both are bounded implementation fixes requiring no new capabilities or design revision. One targeted fix cycle should push adjusted confidence above 0.90 for promotion."
   },
   "analysis_result": {
     "phase": "analyzing",
     "cycle": 1,
-    "analysis_run": 8,
+    "analysis_run": 9,
     "milestone": "vehicle-registry",
-    "timestamp": "2026-04-03T22:00:00.000Z",
+    "timestamp": "2026-04-04T00:10:00.000Z",
     "confidence_trend": {
-      "current": 0.676,
-      "current_raw": 0.676,
-      "previous": null,
-      "previous_raw": null,
-      "delta": null,
-      "direction": "n/a",
-      "consecutive_same_direction": 0,
+      "current": 0.87,
+      "current_raw": 0.83,
+      "previous": 0.676,
+      "previous_raw": 0.676,
+      "delta": 0.194,
+      "direction": "improving",
+      "consecutive_same_direction": 1,
       "flags": [
-        "first_evaluation"
+        "steep_improvement"
       ],
-      "note": "First evaluation of vehicle-registry milestone. No prior confidence data for this milestone. Raw confidence 0.676 is the adjusted confidence — vehicle-registry has no env_limited features (no MapLibre rendering on these screens). Cross-milestone context: dashboard-features promoted at 0.92 adjusted confidence after 7 analysis runs."
+      "note": "Steep improvement validated: all 7 previous quality gaps resolved by 3 targeted fix stories (fix-vehicle-edit, fix-photo-and-list-polish, fix-add-vehicle-form-ux). FA2-J4 went from 3/10 (unimplemented) to 7.5/10 (functional). Adjusted confidence 0.87 excludes env_limited map features. 2 new gaps discovered (edit error feedback, form responsive layout) keeping confidence below 0.90 promote threshold."
     },
-    "recommendation": "deepen:vehicle-edit-and-registry-polish",
-    "recommendation_reasoning": "Vehicle-registry PO verdict NEEDS_IMPROVEMENT with confidence 0.676. Seven quality gaps: 2 HIGH (missing vehicle edit UI covering FA2-J4, vehicle photo never displayed), 3 MEDIUM (no success toast, silent upload error, color-only traffic light in list), 1 MEDIUM (no fleet health summary), 1 LOW (required field markers). The primary blocker is qg-fa2-1: FA2-J4 (Change vehicle status) was a specified journey that was never decomposed into a story. The builder correctly built the 3 stories given (vehicle-list, add-vehicle, vehicle-detail) — the decomposition missed this journey. OVERRIDE: confidence 0.676 technically triggers notify-human (< 0.7 threshold), but overridden to deepen because: (1) all 7 gaps have self-evident resolutions requiring no human judgment, (2) FA2-J4 is explicitly defined in the spec — no ambiguity about what to build, (3) the remaining 6 gaps are bounded implementation and interaction fixes, (4) precedent from analysis_run 4 where notify-human was overridden for similar reasons (well-understood gaps with clear fixes). The read-only vehicle registry (list, detail, search, filter, sort, traffic light, mini-map) is well-built — the quality bar just needs the edit journey added and photo/UX polish applied.",
+    "recommendation": "deepen:vehicle-edit-error-and-form-mobile",
+    "recommendation_reasoning": "Vehicle-registry re-evaluation (run 2): PO verdict NEEDS_IMPROVEMENT, adjusted confidence 0.87 (up from 0.676, delta +0.194). All 7 previous quality gaps RESOLVED. 2 new gaps remain: (1) qg-fa2-8 HIGH — vehicle edit save failure is silent (handleSave has success toast but no error path), (2) qg-fa2-9 MEDIUM — add-vehicle form grid-cols-2 without sm: breakpoint (inconsistent with vehicle-detail edit form which correctly uses sm:grid-cols-2). Both are implementation_bug classification — bounded code fixes requiring no new capabilities, no design revision, no human judgment. The PO itself recommends 'deepen:vehicle-edit-error-and-form-mobile' which aligns. One targeted fix cycle should resolve both gaps and push adjusted confidence above 0.90 for promotion. Deepen conditions met: confidence 0.7-0.9, gaps concentrated in 2 specific areas, addressable, trend improving.",
     "decomposition_health": {
       "foundation_gaps": [],
       "integration_gaps": [
         "PostGIS geometry columns deferred to FA3 — positions stored as float lat/lon. Documented trade-off, not blocking vehicle-registry.",
-        "File uploads use local filesystem (src/app/api/uploads/) — incompatible with edge/serverless deployment. Will need migration to Supabase Storage or S3 for production Docker deployment. Not blocking vehicle-registry functionality."
+        "File uploads use local filesystem (src/app/api/uploads/) — incompatible with edge/serverless deployment. Works for Docker self-hosted target. Not blocking vehicle-registry functionality."
       ],
       "schema_debt": [],
       "silent_degradation": [],
-      "restructure_scope": "0% — no structural changes needed. The missing vehicle-edit story is a decomposition gap, not a foundation gap.",
+      "restructure_scope": "0% — no structural changes needed. Both remaining gaps are implementation fixes, not infrastructure issues.",
       "structural_issues_found": false
     },
     "root_cause_analysis": [
       {
-        "gap_id": "qg-fa2-1",
-        "gap_description": "No UI exists to change vehicle status (FA2-J4). Users cannot mark vehicles as requiring attention, decommission them, or update any vehicle fields. The status display is read-only with no edit affordance.",
-        "root_cause": "missing_context",
-        "classification_confidence": 0.92,
-        "evidence": "FA2-J4 is a specified journey ('Owner edits vehicle status → active, in-shop, decommissioned') but the story decomposition created only 3 stories (vehicle-list, add-vehicle, vehicle-detail) covering FA2-J1, FA2-J2, and FA2-J3. FA2-J4 was never assigned a story. The builder built all 3 stories they were given correctly. The decommissioned filter toggle (factory_decision: client-side filtering) correctly shows/hides decommissioned vehicles, but there is no way to SET a vehicle to decommissioned status. Root cause is upstream: the decomposition phase missed a journey.",
-        "related_factory_decision": "Decommissioned filtering moved from server to client in vehicle list — builder implemented the filter side but was never asked to build the status-change side",
+        "gap_id": "qg-fa2-8",
+        "gap_description": "Vehicle edit save failure is completely silent. When PUT /api/vehicles/[id] fails, the form clears saving state with no error message. User doesn't know if changes were saved or lost.",
+        "root_cause": "implementation_bug",
+        "classification_confidence": 0.85,
+        "evidence": "The builder explicitly implemented a success toast for edit saves (factory_decision: 'Inline toast in vehicle-detail.tsx'). handleSave has a success path with toast but no error path — the catch block clears saving state without user feedback. Error handling for API calls is a basic engineering practice, especially when the success path already has a toast. The vehicle-detail edit form and PUT endpoint are well-structured; the gap is a missing else clause. A different builder focused on error handling would not make this mistake.",
+        "related_factory_decision": "Inline toast in vehicle-detail.tsx — describes success toast implementation, no mention of error handling",
+        "related_factory_question": null,
+        "qa_coverage_gap": true,
+        "status": "open"
+      },
+      {
+        "gap_id": "qg-fa2-9",
+        "gap_description": "Add vehicle form uses grid-cols-2 without sm: breakpoint. On tablets in portrait, form fields are too narrow. Inconsistent with vehicle-detail edit form which correctly uses sm:grid-cols-2.",
+        "root_cause": "implementation_bug",
+        "classification_confidence": 0.82,
+        "evidence": "The vehicle-detail edit form (built by the same builder in fix-vehicle-edit story) correctly uses sm:grid-cols-2 for responsive layout. The add-vehicle form uses grid-cols-2 without the sm: prefix — inconsistency within the same product on the same type of component (form layout). The responsive pattern exists in the codebase and was not applied consistently. No spec instruction needed when the pattern is already established elsewhere.",
+        "related_factory_decision": "Search Before Building audit for fix-add-vehicle-form-ux — mentions 'same form pattern from add-vehicle-form.tsx' but does not flag responsive layout",
         "related_factory_question": null,
         "qa_coverage_gap": false,
         "status": "open"
+      },
+      {
+        "gap_id": "qg-fa2-1",
+        "gap_description": "No UI exists to change vehicle status (FA2-J4) — was the primary blocker.",
+        "root_cause": "missing_context",
+        "classification_confidence": 0.92,
+        "evidence": "RESOLVED by fix-vehicle-edit story. Edit mode with status dropdown, PUT endpoint, success toast all implemented.",
+        "related_factory_decision": null,
+        "related_factory_question": null,
+        "qa_coverage_gap": false,
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-2",
-        "gap_description": "Vehicle photo is uploaded during add-vehicle but never displayed on the vehicle detail page. photoUrl is fetched from DB and mapped but not rendered. Broken feature promise.",
+        "gap_description": "Vehicle photo uploaded but never displayed.",
         "root_cause": "implementation_bug",
         "classification_confidence": 0.88,
-        "evidence": "The add-vehicle form accepts photo upload and stores photoUrl in the database. The GET /api/vehicles/[id] route fetches photoUrl and maps it to camelCase. The VehicleDetail component receives the data but never renders the photo. The spec says 'Vehicle photo upload supported' — upload works, but display was missed. The factory_decision 'Search Before Building' audit identified photo as part of the vehicle-detail scope. No factory_question about whether to display the photo. A different builder would likely have made the same mistake only if they interpreted 'upload supported' narrowly as the upload action alone.",
-        "related_factory_decision": "Search Before Building audit — listed vehicle detail page as BUILD scope, photo was part of add-vehicle story scope",
+        "evidence": "RESOLVED by fix-photo-and-list-polish story. VehicleAvatar component displays photo in detail header and list rows.",
+        "related_factory_decision": null,
         "related_factory_question": null,
         "qa_coverage_gap": true,
-        "status": "open"
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-3",
-        "gap_description": "No success feedback after adding a vehicle. Silent redirect to list.",
+        "gap_description": "No success feedback after adding a vehicle.",
         "root_cause": "spec_ambiguity",
         "classification_confidence": 0.72,
-        "evidence": "The FA2-J1 journey says 'enters make, model, year... → saves'. The word 'saves' implies persistence but doesn't specify user feedback on success. This matches the cross-cycle pattern from dashboard-features: spec describes actions but not feedback patterns. The builder implemented router.push('/vehicles') after successful POST, which is correct behavior but lacks user confirmation. Standard UX practice includes a success toast, but the spec doesn't mention toasts anywhere in FA2.",
+        "evidence": "RESOLVED by fix-add-vehicle-form-ux story. VehicleCreatedToast shows success message on redirect via URL search param.",
         "related_factory_decision": null,
         "related_factory_question": null,
         "qa_coverage_gap": false,
-        "status": "open"
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-4",
-        "gap_description": "Photo upload failure silently swallowed. Vehicle created without photo, no warning.",
+        "gap_description": "Photo upload failure silently swallowed.",
         "root_cause": "implementation_bug",
         "classification_confidence": 0.82,
-        "evidence": "The add-vehicle form catches upload errors but doesn't surface them to the user — the vehicle is saved without a photo and the user is redirected to the list with no indication the upload failed. Error handling for partial failures is a basic engineering practice that doesn't need spec-level instructions. The vehicle should either retry the upload, show a warning, or at minimum surface a notification that the photo wasn't saved.",
+        "evidence": "RESOLVED by fix-add-vehicle-form-ux story. Amber warning banner shown when photo upload fails but vehicle saves.",
         "related_factory_decision": null,
         "related_factory_question": null,
         "qa_coverage_gap": true,
-        "status": "open"
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-5",
-        "gap_description": "Traffic light in vehicle list is color-only (8x8px dot) with no text label or tooltip. Insufficient for color-blind users.",
+        "gap_description": "Traffic light in vehicle list was color-only.",
         "root_cause": "design_choice",
         "classification_confidence": 0.72,
-        "evidence": "The dashboard already has an accessible TrafficLight component (role=status, descriptive aria-labels) from the dashboard-features milestone. The factory_decision 'Search Before Building' explicitly identified 'REUSE (TrafficLight component)' as available. The builder chose a minimal 8x8px dot representation for the list view instead of reusing or adapting the existing TrafficLight component. This is a design judgment call — compact list views often use minimal indicators — but it breaks the accessibility contract established by the dashboard's traffic light implementation.",
-        "related_factory_decision": "Search Before Building audit — listed TrafficLight component as REUSE candidate",
+        "evidence": "RESOLVED by fix-photo-and-list-polish story. TrafficLight component with role=status and aria-label now used in list rows.",
+        "related_factory_decision": null,
         "related_factory_question": null,
         "qa_coverage_gap": false,
-        "status": "open"
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-6",
-        "gap_description": "No fleet health summary on the list page. Owner must scan every row to assess fleet condition.",
+        "gap_description": "No fleet health summary on the list page.",
         "root_cause": "spec_ambiguity",
         "classification_confidence": 0.75,
-        "evidence": "The FA2 spec says 'Vehicle list supports search, sort, filter' and 'shows traffic light indicator per row' — no mention of a summary bar or aggregate health view. The dashboard (FA1-J3) has a 4-column vehicle count grid (Total/OK/Attention/Overdue), but FA2 has no equivalent journey for fleet-wide summary on the list page. The PO correctly identifies this as a gap — a plumber with 8 vans wants to glance at fleet health without scanning rows — but the spec didn't call it out.",
+        "evidence": "RESOLVED by fix-photo-and-list-polish story. Fleet health summary bar shows total count + per-status breakdown with colored dots.",
         "related_factory_decision": null,
         "related_factory_question": null,
         "qa_coverage_gap": false,
-        "status": "open"
+        "status": "resolved"
       },
       {
         "gap_id": "qg-fa2-7",
-        "gap_description": "Required vs optional fields not visually distinguished in add-vehicle form.",
+        "gap_description": "Required vs optional fields not visually distinguished.",
         "root_cause": "implementation_bug",
         "classification_confidence": 0.8,
-        "evidence": "Distinguishing required from optional form fields is a standard UX pattern (WAI-ARIA form guidance recommends asterisk or '(optional)' suffix). The Zod validation schema defines which fields are required, so the data model supports the distinction. The builder simply didn't add visual indicators. No spec instruction needed for this — it's a basic form design pattern.",
+        "evidence": "RESOLVED by fix-add-vehicle-form-ux story. Required/optional field markers with legend added.",
         "related_factory_decision": null,
         "related_factory_question": null,
         "qa_coverage_gap": false,
-        "status": "open"
+        "status": "resolved"
       }
     ],
     "cross_cycle_patterns": [
       {
-        "pattern": "Spec under-specifies interaction behavior for dashboard elements",
-        "frequency": 2,
-        "systemic_cause": "Both FA1 and FA2 specs define journeys as linear flows but omit secondary interaction behaviors. FA1 missed: refresh strategy, hover states, click targets. FA2 missed: success feedback, error surfacing.",
-        "recommended_action": "PARTIALLY ADDRESSED for FA1 (analysis runs 4-5). Recurring for FA2 with qg-fa2-3 (no success toast) and qg-fa2-4 (silent upload error). For future milestones, story decomposition should include interaction behaviors: success/error feedback, confirmation patterns, inline validation. Add 'feedback patterns' as a checklist item alongside the existing 'refresh strategy, click targets, hover states' recommendation."
+        "pattern": "Interaction feedback gaps recurring — error paths missed when success paths implemented",
+        "frequency": 3,
+        "systemic_cause": "Specs and change spec briefs describe happy-path behavior but omit error/failure feedback. Builders implement success paths (toasts, redirects) and miss error paths because specs don't mention them. FA1 runs 4-5: missing refresh, hover, click feedback. FA2 run 8: no success toast, silent upload error. FA2 run 9: silent edit save error — builder added success toast but no error toast.",
+        "recommended_action": "Future change spec briefs should include 'error feedback' as a required element alongside 'what_good_looks_like'. When an approach_hint describes a success action (toast, redirect), explicitly add 'and error feedback when the action fails.' This prevents the success-path-only implementation pattern."
+      },
+      {
+        "pattern": "Both remaining gaps are implementation_bug (100% concentration, n=2)",
+        "frequency": 1,
+        "systemic_cause": "Small sample (2 gaps) — both follow the same pattern: builder implemented happy path correctly, missed edge/error case. Not systemic QA gate failure.",
+        "recommended_action": "Observation only. If implementation_bug concentration persists at n>=4 in next cycle, flag QA test coverage for error paths specifically."
+      },
+      {
+        "pattern": "Deepen cycles effectively resolve quality gaps when scoped to specific areas",
+        "frequency": 3,
+        "systemic_cause": "Dashboard-features: 7 analysis runs, all deepen cycles resolved gaps. Vehicle-registry run 8→9: confidence jumped +0.194 from one deepen cycle resolving all 7 gaps.",
+        "recommended_action": "Positive signal — continue using this pattern. The 2 remaining vehicle-registry gaps are the narrowest yet (1 error toast, 1 CSS breakpoint). Should resolve in a single pass."
       },
       {
         "pattern": "Story decomposition misses specified journeys",
         "frequency": 1,
-        "systemic_cause": "The vehicle-registry decomposition created 3 stories mapping to FA2-J1/J2/J3 but omitted FA2-J4 (Change vehicle status). The decomposition phase may not be cross-referencing all user_journeys against generated stories.",
-        "recommended_action": "NEW PATTERN. The decomposition phase should verify: every journey in the spec has at least one story covering it. A simple count check (journeys.length <= stories covering them) would catch this. FA2-J4 is a core CRUD operation (edit/update) — the decomposition created list, add, and view but missed edit. This is a fundamental CRUD gap."
+        "systemic_cause": "RESOLVED — FA2-J4 was missed in original decomposition but fully implemented via fix-vehicle-edit story.",
+        "recommended_action": "Pattern addressed. The decomposition phase should still verify journey coverage for future milestones."
       },
       {
         "pattern": "Accessible components exist but aren't reused in new contexts",
         "frequency": 1,
-        "systemic_cause": "TrafficLight component with proper ARIA was built for the dashboard but not reused in the vehicle list. The builder chose a simpler representation despite the 'Search Before Building' audit identifying TrafficLight as a REUSE candidate.",
-        "recommended_action": "NEW PATTERN. When the 'Search Before Building' audit identifies a component as REUSE, the story ACs should explicitly reference it: 'Use TrafficLight component (or equivalent accessible indicator) for status display.' This prevents builders from reinventing simpler but less accessible alternatives."
-      },
-      {
-        "pattern": "Product standard UX requirements not decomposed into story ACs",
-        "frequency": 2,
-        "systemic_cause": "Story decomposition does not cross-reference product_standard.quality_standards.reliability against each story's affected_screens",
-        "recommended_action": "FULLY RESOLVED for FA1 (loading/error/empty states). Vehicle-registry stories DID include proper error handling and empty states. Pattern not recurring for FA2."
-      },
-      {
-        "pattern": "Deepen cycles effectively resolve quality gaps when scoped to specific areas",
-        "frequency": 2,
-        "systemic_cause": "Dashboard-features deepen cycles resolved all gaps efficiently. Expecting same pattern for vehicle-registry.",
-        "recommended_action": "Positive signal — continue using this pattern. Vehicle-registry gaps are concentrated on 3 screens (S4-vehicle-list, S5-vehicle-detail, /vehicles/new) and should resolve in 1-2 deepen passes."
+        "systemic_cause": "RESOLVED — TrafficLight component now used consistently in vehicle list (fix-photo-and-list-polish story).",
+        "recommended_action": "Pattern addressed for vehicle-registry. Keep 'Search Before Building REUSE → explicit AC reference' recommendation for future milestones."
       }
     ],
     "change_spec_briefs": [
       {
-        "gap_id": "qg-fa2-1",
-        "root_cause": "missing_context",
-        "priority": "critical",
+        "gap_id": "qg-fa2-8",
+        "root_cause": "implementation_bug",
+        "priority": "high",
         "affected_screens": [
           "S5-vehicle-detail"
         ],
         "affected_journeys": [
           "FA2-J4"
         ],
-        "what_good_looks_like": "Vehicle detail page has an Edit button or action menu. Owner can change vehicle status (active, in-shop, decommissioned) via a dropdown or modal. Owner can edit core fields (make, model, year, VIN, license plate, color, odometer, photo). Changes persist immediately with success feedback. Decommissioned vehicles hidden from map/dashboard (already works via existing filter).",
+        "what_good_looks_like": "When PUT /api/vehicles/[id] fails, an error toast appears: 'Could not save changes. Please try again.' Form remains in edit mode with user's changes preserved. Error toast uses role=alert for screen reader announcement. Toast auto-dismisses after 5 seconds or dismissible manually.",
         "requires_design_mode": false,
-        "approach_hint": "Add a vehicle-edit story: (1) Edit button on vehicle detail header opens edit form (reuse add-vehicle form layout with pre-populated fields), (2) Status dropdown in detail header for quick status changes (active/in-shop/decommissioned), (3) PUT /api/vehicles/[id] endpoint for updates, (4) Success toast after save. The decommissioned filter already works client-side — just needs the ability to SET the status.",
+        "approach_hint": "Add else/catch clause to handleSave in vehicle-detail.tsx. Reuse the existing inline toast pattern (same as success toast but with red/amber styling and error message). Set role=alert instead of role=status for error severity. Keep form in edit mode (don't call setIsEditing(false)) on error. Add test for PUT failure scenario.",
         "do_not_repeat": []
       },
       {
-        "gap_id": "qg-fa2-2",
-        "root_cause": "implementation_bug",
-        "priority": "high",
-        "affected_screens": [
-          "S5-vehicle-detail",
-          "S4-vehicle-list"
-        ],
-        "affected_journeys": [
-          "FA2-J2"
-        ],
-        "what_good_looks_like": "Vehicle detail header shows the vehicle photo (or a placeholder with vehicle initial/icon if no photo). Vehicle list shows a small thumbnail in each row. Photo uses Next.js Image for optimization. Placeholder is visually consistent with the design system.",
-        "requires_design_mode": false,
-        "approach_hint": "VehicleDetail component already receives photoUrl from the API. Add an <img> or Next.js <Image> in the detail header. For the list, add a small avatar/thumbnail column. Handle null photoUrl with a styled placeholder (vehicle initial in a colored circle, matching traffic light color).",
-        "do_not_repeat": []
-      },
-      {
-        "gap_id": "qg-fa2-3",
-        "root_cause": "spec_ambiguity",
-        "priority": "medium",
-        "affected_screens": [
-          "S4-vehicle-list"
-        ],
-        "affected_journeys": [
-          "FA2-J1"
-        ],
-        "what_good_looks_like": "After successful vehicle creation, a transient success toast appears: 'Van 1 added to your fleet.' Toast auto-dismisses after 5 seconds. Works on redirect to list page.",
-        "requires_design_mode": false,
-        "approach_hint": "Add a lightweight toast/notification system (can be as simple as a URL search param ?created=Van+1 that the list page reads and displays as a temporary banner). Or use a React context-based toast. Keep it minimal — no external toast library needed for a single use case.",
-        "do_not_repeat": []
-      },
-      {
-        "gap_id": "qg-fa2-4",
+        "gap_id": "qg-fa2-9",
         "root_cause": "implementation_bug",
         "priority": "medium",
         "affected_screens": [
@@ -2741,54 +2850,9 @@
         "affected_journeys": [
           "FA2-J1"
         ],
-        "what_good_looks_like": "If photo upload fails but vehicle creation succeeds, show inline warning: 'Vehicle saved, but photo could not be uploaded. You can add a photo later from the vehicle detail page.' Warning is non-blocking — vehicle is saved.",
+        "what_good_looks_like": "Add vehicle form uses sm:grid-cols-2 (not grid-cols-2) so fields stack vertically on mobile/small tablets and use 2-column layout on larger screens. Consistent with vehicle-detail edit form pattern.",
         "requires_design_mode": false,
-        "approach_hint": "The add-vehicle form already catches upload errors. Surface the error as an inline alert (yellow warning banner) on the list page after redirect, or show it before redirect with a 'Continue without photo' option.",
-        "do_not_repeat": []
-      },
-      {
-        "gap_id": "qg-fa2-5",
-        "root_cause": "design_choice",
-        "priority": "medium",
-        "affected_screens": [
-          "S4-vehicle-list"
-        ],
-        "affected_journeys": [
-          "FA2-J3"
-        ],
-        "what_good_looks_like": "Traffic light indicator in vehicle list has text alternative: either a tooltip on hover ('All clear' / 'Requires attention' / 'Overdue') or an sr-only label. Ideally reuses or adapts the existing TrafficLight component from the dashboard.",
-        "requires_design_mode": false,
-        "approach_hint": "Simplest fix: add a title attribute to the dot element, or replace the dot with the existing TrafficLight component sized down for table rows. The TrafficLight component already has aria-labels — reusing it is the most consistent approach.",
-        "do_not_repeat": []
-      },
-      {
-        "gap_id": "qg-fa2-6",
-        "root_cause": "spec_ambiguity",
-        "priority": "medium",
-        "affected_screens": [
-          "S4-vehicle-list"
-        ],
-        "affected_journeys": [
-          "FA2-J3"
-        ],
-        "what_good_looks_like": "Compact summary bar above the vehicle table: '8 vehicles — 5 all clear, 2 need attention, 1 overdue'. Updates when filters change. Mirrors the dashboard's vehicle count grid but in a more compact horizontal format appropriate for the list page.",
-        "requires_design_mode": false,
-        "approach_hint": "The vehicle data is already available client-side (all vehicles fetched for client-side filtering). Count by trafficLight status and render a summary bar. Reuse the dashboard's color scheme (green/amber/red) for the counts. Place above the search/filter bar.",
-        "do_not_repeat": []
-      },
-      {
-        "gap_id": "qg-fa2-7",
-        "root_cause": "implementation_bug",
-        "priority": "low",
-        "affected_screens": [
-          "/vehicles/new"
-        ],
-        "affected_journeys": [
-          "FA2-J1"
-        ],
-        "what_good_looks_like": "Required fields marked with asterisk (*) and a legend '* Required' at the top of the form. Optional fields (photo, color, notes) have '(optional)' suffix on their labels.",
-        "requires_design_mode": false,
-        "approach_hint": "Add asterisk to required field labels (make, model, year, VIN, license plate, odometer). Add '(optional)' to optional field labels. The Zod schema already defines required vs optional — derive from that if possible.",
+        "approach_hint": "Change grid-cols-2 to sm:grid-cols-2 in add-vehicle-form.tsx at the 2 grid div elements (lines ~171, ~184 per PO report). This is a 2-character fix per line. Matches the existing pattern in vehicle-detail.tsx edit form.",
         "do_not_repeat": []
       }
     ],
@@ -2796,8 +2860,14 @@
     "improvement_routing": {
       "this_milestone_count": 0,
       "this_milestone_items": [],
-      "global_persisted_count": 0,
-      "global_already_persisted": [
+      "this_milestone_dropped": [
+        {
+          "id": "imp-admin-layout-test-types",
+          "reason": "Already resolved — test_integrity_report (2026-04-04T00:02:00Z) shows typescript_errors: 0. Story openfleet-loop-1-test-type-fix added missing userName prop in dashboard-features milestone."
+        }
+      ],
+      "global_persisted_count": 5,
+      "global_items_persisted": [
         "global-001 (imp-session-secret)",
         "global-002 (imp-timing-safe-apikey)",
         "global-003 (imp-loading-role)",
@@ -2807,7 +2877,7 @@
       "future_dropped_count": 0,
       "convergence_guardrail_triggered": false,
       "deepen_improvements_cycle_count": 0,
-      "note": "po_vehicle_registry has no improvement_items field — only quality_gaps. All improvement routing is from quality gaps, processed as change_spec_briefs above."
+      "note": "imp-admin-layout-test-types was the only this-milestone item but is already resolved (0 TS errors in latest test integrity). No deepen:improvements override needed. 5 global items persisted to global_improvements.json."
     }
   },
   "phase_decisions": [
@@ -3178,6 +3248,47 @@
       "timestamp": "2026-04-03T22:15:00.000Z",
       "decision": "Bundled LOW-priority qg-fa2-7 (required field markers) with MEDIUM-priority form UX spec",
       "reasoning": "qg-fa2-7 affects the same screen (/vehicles/new) and same journey (FA2-J1) as qg-fa2-3 and qg-fa2-4. The fix is trivial (add asterisks to labels, add '(optional)' suffix) and can be done in the same pass as the toast and upload warning. Deferring it would mean a separate pass on the same form for a 5-minute fix."
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 9,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:10:00.000Z",
+      "decision": "Recommend deepen:vehicle-edit-error-and-form-mobile — 2 narrow gaps remain after successful fix cycle",
+      "reasoning": "All 7 previous quality gaps RESOLVED by 3 fix stories. Adjusted confidence improved from 0.676 to 0.87 (+0.194 delta, steep improvement validated). 2 new gaps discovered: (1) qg-fa2-8 HIGH — edit save error is silent (success toast exists but no error toast), (2) qg-fa2-9 MEDIUM — add-vehicle form grid-cols-2 missing sm: breakpoint. Both are implementation_bug — bounded code fixes. Deepen conditions met: confidence 0.7-0.9, gaps concentrated, addressable, trend improving. PO recommendation aligns. One more pass should push above 0.90 for promotion.",
+      "alternatives_considered": [
+        "promote — rejected: PO verdict NEEDS_IMPROVEMENT, adjusted confidence 0.87 < 0.90, 1 HIGH quality gap remains",
+        "notify-human — not warranted: both gaps are self-evident implementation fixes requiring no human judgment",
+        "broaden — rejected: no missing capabilities, gaps are error handling and CSS consistency"
+      ]
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 9,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:10:00.000Z",
+      "decision": "Dropped imp-admin-layout-test-types as already resolved — no deepen:improvements override",
+      "reasoning": "The sole this-milestone improvement item (imp-admin-layout-test-types: 7 TypeScript errors in admin-layout.test.tsx) was already resolved by story openfleet-loop-1-test-type-fix in the dashboard-features milestone. The test_integrity_report (2026-04-04T00:02:00Z) confirms typescript_errors: 0. The older general QA report still references 7 errors because it predates the fix on this branch. No deepen:improvements override needed."
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 9,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:10:00.000Z",
+      "decision": "Flagged cross-cycle pattern: error paths missed when success paths implemented (frequency 3)",
+      "reasoning": "qg-fa2-8 (silent edit save error) is the third instance of this pattern. FA1 runs 4-5: missing interaction feedback on live elements. FA2 run 8: no success toast, silent upload error. FA2 run 9: success toast exists but error toast omitted. The change spec briefs for run 8 included approach_hints for success feedback but did not explicitly call out error feedback. Recommendation: future change spec approach_hints should include 'and error feedback when the action fails' whenever they describe success actions."
+    },
+    {
+      "phase": "analyzing",
+      "cycle": 1,
+      "analysis_run": 9,
+      "milestone": "vehicle-registry",
+      "timestamp": "2026-04-04T00:10:00.000Z",
+      "decision": "Persisted 5 global improvement items to global_improvements.json (file recreated — was missing from branch)",
+      "reasoning": "Previous analysis run 8 claimed global-001 through global-005 were already persisted, but global_improvements.json does not exist on the current branch (rouge/story-vehicle-registry-fix-add-vehicle-form-ux). File may have been lost during branch operations. Recreated with all 5 items: imp-session-secret, imp-timing-safe-apikey, imp-loading-role, imp-login-autocomplete, imp-aria-live-status. All groundings validated against product_standard and WCAG."
     }
   ],
   "change_specs_pending": [
@@ -4466,5 +4577,41 @@
     "anomalies_total": 8
   },
   "_current_milestone": "vehicle-registry",
-  "_current_story": "openfleet-loop-1-dashboard-ux-states"
+  "_current_story": "fix-add-vehicle-form-ux",
+  "change_specs_pending": [
+    {
+      "spec_path": "openspec/changes/openfleet-loop-2-vehicle-edit-error-feedback.md",
+      "gap_ids": ["qg-fa2-8"],
+      "priority": "high",
+      "requires_design_mode": false,
+      "design_passes_needed": [],
+      "criteria_count": 5,
+      "root_cause": "implementation_bug",
+      "affected_screens": ["/vehicles/[id]"],
+      "affected_journeys": ["FA2-J4"],
+      "approach_summary": "Add error toast and form state preservation to handleSave catch/else path in vehicle-detail.tsx"
+    },
+    {
+      "spec_path": "openspec/changes/openfleet-loop-2-add-vehicle-form-responsive.md",
+      "gap_ids": ["qg-fa2-9"],
+      "priority": "medium",
+      "requires_design_mode": false,
+      "design_passes_needed": [],
+      "criteria_count": 3,
+      "root_cause": "implementation_bug",
+      "affected_screens": ["/vehicles/new"],
+      "affected_journeys": ["FA2-J1"],
+      "approach_summary": "Change grid-cols-2 to sm:grid-cols-2 at two locations in add-vehicle-form.tsx for responsive stacking"
+    }
+  ],
+  "change_spec_generation_summary": {
+    "phase": "change-spec-generation",
+    "cycle": 1,
+    "timestamp": "2026-04-04T12:00:00Z",
+    "total_specs_generated": 2,
+    "total_criteria_across_specs": 8,
+    "gaps_addressed": 2,
+    "gaps_deferred": [],
+    "gaps_escalated": []
+  }
 }
