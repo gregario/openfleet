@@ -16,7 +16,7 @@ export interface VehicleListItem {
   odometer: number;
   trafficLight: 'GREEN' | 'ORANGE' | 'RED';
   photoUrl: string | null;
-  nextService: string | null;
+  nextService?: string | null;
 }
 
 type SortField = 'name' | 'trafficLight' | 'odometer' | 'nextService';
@@ -101,8 +101,8 @@ export function VehicleList({ vehicles }: VehicleListProps) {
           cmp = a.odometer - b.odometer;
           break;
         case 'nextService': {
-          const aDate = a.nextService ?? '';
-          const bDate = b.nextService ?? '';
+          const aDate = a.nextService || '';
+          const bDate = b.nextService || '';
           if (!aDate && !bDate) cmp = 0;
           else if (!aDate) cmp = 1;
           else if (!bDate) cmp = -1;
