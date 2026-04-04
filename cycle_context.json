@@ -673,11 +673,34 @@
         "src/components/add-vehicle-form.tsx",
         "src/components/add-vehicle-form.test.tsx"
       ]
+    },
+    {
+      "decision": "Search Before Building audit for openfleet-loop-1-vehicle-route-consolidation",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 0 BUILD, 1 EXTEND, 0 REUSE, 0 REFACTOR-THEN-BUILD tasks. Route consolidation already complete — no [vehicleId] directories exist in any branch. Only [id] directories present in both API (src/app/api/vehicles/[id]) and frontend (src/app/(admin)/vehicles/[id]). EXTEND: PUT handler at [id]/route.ts needs ADMIN role check added — currently only checks authentication, not authorization.",
+      "confidence": "high",
+      "affects": [
+        "src/app/api/vehicles/[id]/route.ts",
+        "src/app/api/vehicles/[id]/route.test.ts"
+      ]
     }
   ],
   "factory_questions": [],
   "deployment_url": "https://openfleet-v2-staging.gregj64.workers.dev",
   "implemented": [
+    {
+      "task": "openfleet-loop-1-vehicle-route-consolidation",
+      "acceptance_criteria": [
+        "AC-route-consolidation-1: PUT /api/vehicles/[id] returns 403 Forbidden for DRIVER role"
+      ],
+      "files_changed": [
+        "src/app/api/vehicles/[id]/route.ts",
+        "src/app/api/vehicles/[id]/route.test.ts"
+      ],
+      "tests_added": 1,
+      "tests_passing": 271
+    },
     {
       "task": "fix-vehicle-edit",
       "acceptance_criteria": [
@@ -1984,14 +2007,14 @@
     ]
   },
   "story_result": {
-    "story_id": "openfleet-loop-2-add-vehicle-form-responsive",
+    "story_id": "openfleet-loop-1-vehicle-route-consolidation",
     "outcome": "pass",
     "files_changed": [
-      "src/components/add-vehicle-form.tsx",
-      "src/components/add-vehicle-form.test.tsx"
+      "src/app/api/vehicles/[id]/route.ts",
+      "src/app/api/vehicles/[id]/route.test.ts"
     ],
     "tests_added": 1,
-    "tests_passing": 1,
+    "tests_passing": 271,
     "env_limitations": []
   },
   "evaluation_report": {
