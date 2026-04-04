@@ -16,9 +16,10 @@ export interface VehicleListItem {
   odometer: number;
   trafficLight: 'GREEN' | 'ORANGE' | 'RED';
   photoUrl: string | null;
+  nextService: string | null;
 }
 
-type SortField = 'name' | 'trafficLight' | 'odometer';
+type SortField = 'name' | 'trafficLight' | 'odometer' | 'nextService';
 type SortDirection = 'ascending' | 'descending';
 
 const TRAFFIC_LIGHT_PRIORITY: Record<string, number> = {
@@ -93,6 +94,15 @@ export function VehicleList({ vehicles }: VehicleListProps) {
         case 'odometer':
           cmp = a.odometer - b.odometer;
           break;
+        case 'nextService': {
+          const aDate = a.nextService ?? '';
+          const bDate = b.nextService ?? '';
+          if (!aDate && !bDate) cmp = 0;
+          else if (!aDate) cmp = 1;
+          else if (!bDate) cmp = -1;
+          else cmp = aDate.localeCompare(bDate);
+          break;
+        }
       }
       return sortDirection === 'ascending' ? cmp : -cmp;
     });
@@ -227,6 +237,16 @@ export function VehicleList({ vehicles }: VehicleListProps) {
                 >
                   Mileage {sortField === 'odometer' && (sortDirection === 'ascending' ? '↑' : '↓')}
                 </th>
+                <th
+                  role="columnheader"
+                  tabIndex={0}
+                  aria-sort={getSortAriaSort('nextService')}
+                  onClick={() => handleSort('nextService')}
+                  onKeyDown={e => e.key === 'Enter' && handleSort('nextService')}
+                  className="cursor-pointer select-none px-4 py-3 font-medium text-slate-700 hover:bg-slate-100"
+                >
+                  Next Service {sortField === 'nextService' && (sortDirection === 'ascending' ? '↑' : '↓')}
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -252,6 +272,11 @@ export function VehicleList({ vehicles }: VehicleListProps) {
                   </td>
                   <td className="px-4 py-3 text-slate-600 tabular-nums">
                     {vehicle.odometer.toLocaleString('en-US')}
+                  </td>
+                  <td className="px-4 py-3 text-slate-600">
+                    {vehicle.nextService
+                      ? new Date(vehicle.nextService).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                      : '—'}
                   </td>
                 </tr>
               ))}

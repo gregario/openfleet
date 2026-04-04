@@ -26,6 +26,7 @@ const mockVehicles: VehicleListItem[] = [
     odometer: 45000,
     trafficLight: 'GREEN',
     photoUrl: '/uploads/van-01.jpg',
+    nextService: '2026-05-01',
   },
   {
     id: 'v2',
@@ -38,6 +39,7 @@ const mockVehicles: VehicleListItem[] = [
     odometer: 72000,
     trafficLight: 'RED',
     photoUrl: null,
+    nextService: '2026-04-15',
   },
   {
     id: 'v3',
@@ -50,6 +52,7 @@ const mockVehicles: VehicleListItem[] = [
     odometer: 15000,
     trafficLight: 'ORANGE',
     photoUrl: null,
+    nextService: null,
   },
 ];
 
@@ -165,6 +168,17 @@ describe('VehicleList', () => {
       expect(rows[3].textContent).toContain('Van 02');
     });
 
+    it('AC-1: sorts by next service date', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      const nextServiceHeader = screen.getByRole('columnheader', { name: /next service/i });
+      fireEvent.click(nextServiceHeader);
+      const rows = screen.getAllByRole('row');
+      // Ascending: 2026-04-15 (Van 02), 2026-05-01 (Van 01), null (Truck 01)
+      expect(rows[1].textContent).toContain('Van 02');
+      expect(rows[2].textContent).toContain('Van 01');
+      expect(rows[3].textContent).toContain('Truck 01');
+    });
+
     it('sorts by status (traffic light) — most urgent first', () => {
       render(<VehicleList vehicles={mockVehicles} />);
       const statusHeader = screen.getByRole('columnheader', { name: /status/i });
@@ -240,6 +254,7 @@ describe('VehicleList', () => {
         odometer: 150000,
         trafficLight: 'RED',
         photoUrl: null,
+        nextService: null,
       },
     ];
 
@@ -303,6 +318,7 @@ describe('VehicleList', () => {
         odometer: 150000,
         trafficLight: 'RED',
         photoUrl: null,
+        nextService: null,
       },
     ];
 
@@ -358,6 +374,26 @@ describe('VehicleList', () => {
       // Van 02 has no photo — should show "V" placeholder
       const placeholders = screen.getAllByLabelText(/avatar/i);
       expect(placeholders.length).toBeGreaterThanOrEqual(2); // Van 02 and Truck 01
+    });
+  });
+
+  // REGRESSION: fix-next-service-sort — next service column and sorting
+  describe('REGRESSION: fix-next-service-sort', () => {
+    it('REGRESSION: fix-next-service-sort — null nextService values sort to end', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      const header = screen.getByRole('columnheader', { name: /next service/i });
+      fireEvent.click(header);
+      const rows = screen.getAllByRole('row');
+      // Null sorts last in ascending
+      expect(rows[3].textContent).toContain('Truck 01');
+    });
+
+    it('REGRESSION: fix-next-service-sort — displays formatted date or dash', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      // Van 01 has nextService: '2026-05-01'
+      expect(screen.getByText('1 May 2026')).toBeTruthy();
+      // Truck 01 has null nextService
+      expect(screen.getByText('—')).toBeTruthy();
     });
   });
 
