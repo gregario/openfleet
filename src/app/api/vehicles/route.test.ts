@@ -162,6 +162,27 @@ describe("POST /api/vehicles", () => {
     expect(response.status).toBe(401);
   });
 
+  it("AC-fix-post-vehicles-auth: returns 403 when non-ADMIN user creates vehicle", async () => {
+    const { getSession } = await import("@/lib/session");
+    vi.mocked(getSession).mockResolvedValueOnce({
+      userId: "driver-1",
+      role: "DRIVER",
+      name: "Driver",
+      save: vi.fn(),
+      destroy: vi.fn(),
+      updateConfig: vi.fn(),
+    } as never);
+
+    const request = new Request("http://localhost/api/vehicles", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(validBody),
+    });
+
+    const response = await POST(request);
+    expect(response.status).toBe(403);
+  });
+
   it("returns 500 when database insert fails", async () => {
     setupInsert(null, { message: "DB error" });
 
