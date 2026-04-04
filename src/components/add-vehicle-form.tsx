@@ -168,7 +168,7 @@ export function AddVehicleForm() {
         {errors.name && <p className={errorClass}>{errors.name}</p>}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="make" className={labelClass}>Make <span className="text-red-500">*</span></label>
           <input id="make" type="text" value={make} onChange={e => setMake(e.target.value)} className={inputClass} placeholder="e.g. Ford" />
@@ -181,7 +181,7 @@ export function AddVehicleForm() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="year" className={labelClass}>Year <span className="text-red-500">*</span></label>
           <input id="year" type="number" value={year} onChange={e => setYear(e.target.value)} className={inputClass} min={1900} max={new Date().getFullYear() + 2} />

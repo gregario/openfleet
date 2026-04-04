@@ -246,6 +246,31 @@ describe("AddVehicleForm", () => {
     });
   });
 
+  // @criterion: AC-form-responsive-1, AC-form-responsive-2, AC-form-responsive-3
+  describe("responsive grid layout", () => {
+    it("uses sm:grid-cols-2 (not grid-cols-2) on Make/Model and Year/Color grids", () => {
+      const { container } = render(<AddVehicleForm />);
+
+      // Find grid containers that hold paired fields
+      const grids = container.querySelectorAll('[class*="grid"]');
+      const pairedGrids = Array.from(grids).filter(
+        (el) => el.className.includes("grid-cols-2") || el.className.includes("sm:grid-cols-2")
+      );
+
+      expect(pairedGrids.length).toBe(2);
+
+      for (const grid of pairedGrids) {
+        // Must have sm:grid-cols-2 (responsive)
+        expect(grid.className).toContain("sm:grid-cols-2");
+        // Must NOT have bare grid-cols-2 (non-responsive)
+        // sm:grid-cols-2 contains "grid-cols-2" as substring, so check no bare occurrence
+        const classes = grid.className.split(/\s+/);
+        const bareGridCols = classes.filter((c) => c === "grid-cols-2");
+        expect(bareGridCols.length).toBe(0);
+      }
+    });
+  });
+
   // @criterion: AC-fix-add-vehicle-form-ux-1 — Success toast on redirect
   describe("success redirect", () => {
     it("redirects to vehicles page with created vehicle name in URL", async () => {
