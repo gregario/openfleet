@@ -164,28 +164,28 @@ export function AddVehicleForm() {
 
       <div>
         <label htmlFor="name" className={labelClass}>Vehicle Name <span className="text-red-500">*</span></label>
-        <input id="name" type="text" value={name} onChange={e => setName(e.target.value)} className={inputClass} placeholder="e.g. Van 1" />
-        {errors.name && <p className={errorClass}>{errors.name}</p>}
+        <input id="name" type="text" value={name} onChange={e => setName(e.target.value)} className={inputClass} placeholder="e.g. Van 1" aria-required="true" aria-describedby={errors.name ? 'error-name' : undefined} />
+        {errors.name && <p id="error-name" className={errorClass}>{errors.name}</p>}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="make" className={labelClass}>Make <span className="text-red-500">*</span></label>
-          <input id="make" type="text" value={make} onChange={e => setMake(e.target.value)} className={inputClass} placeholder="e.g. Ford" />
-          {errors.make && <p className={errorClass}>{errors.make}</p>}
+          <input id="make" type="text" value={make} onChange={e => setMake(e.target.value)} className={inputClass} placeholder="e.g. Ford" aria-required="true" aria-describedby={errors.make ? 'error-make' : undefined} />
+          {errors.make && <p id="error-make" className={errorClass}>{errors.make}</p>}
         </div>
         <div>
           <label htmlFor="model" className={labelClass}>Model <span className="text-red-500">*</span></label>
-          <input id="model" type="text" value={model} onChange={e => setModel(e.target.value)} className={inputClass} placeholder="e.g. Transit" />
-          {errors.model && <p className={errorClass}>{errors.model}</p>}
+          <input id="model" type="text" value={model} onChange={e => setModel(e.target.value)} className={inputClass} placeholder="e.g. Transit" aria-required="true" aria-describedby={errors.model ? 'error-model' : undefined} />
+          {errors.model && <p id="error-model" className={errorClass}>{errors.model}</p>}
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="year" className={labelClass}>Year <span className="text-red-500">*</span></label>
-          <input id="year" type="number" value={year} onChange={e => setYear(e.target.value)} className={inputClass} min={1900} max={new Date().getFullYear() + 2} />
-          {errors.year && <p className={errorClass}>{errors.year}</p>}
+          <input id="year" type="number" value={year} onChange={e => setYear(e.target.value)} className={inputClass} min={1900} max={new Date().getFullYear() + 2} aria-required="true" aria-describedby={errors.year ? 'error-year' : undefined} />
+          {errors.year && <p id="error-year" className={errorClass}>{errors.year}</p>}
         </div>
         <div>
           <label htmlFor="color" className={labelClass}>Color <span className="text-slate-400">(optional)</span></label>
@@ -195,20 +195,20 @@ export function AddVehicleForm() {
 
       <div>
         <label htmlFor="licensePlate" className={labelClass}>License Plate <span className="text-red-500">*</span></label>
-        <input id="licensePlate" type="text" value={licensePlate} onChange={e => setLicensePlate(e.target.value)} className={inputClass} placeholder="e.g. AB12 CDE" />
-        {errors.licensePlate && <p className={errorClass}>{errors.licensePlate}</p>}
+        <input id="licensePlate" type="text" value={licensePlate} onChange={e => setLicensePlate(e.target.value)} className={inputClass} placeholder="e.g. AB12 CDE" aria-required="true" aria-describedby={errors.licensePlate ? 'error-licensePlate' : undefined} />
+        {errors.licensePlate && <p id="error-licensePlate" className={errorClass}>{errors.licensePlate}</p>}
       </div>
 
       <div>
         <label htmlFor="vin" className={labelClass}>VIN <span className="text-slate-400">(optional)</span></label>
-        <input id="vin" type="text" value={vin} onChange={e => setVin(e.target.value)} className={inputClass} placeholder="17-character VIN" maxLength={17} />
-        {errors.vin && <p className={errorClass}>{errors.vin}</p>}
+        <input id="vin" type="text" value={vin} onChange={e => setVin(e.target.value)} className={inputClass} placeholder="17-character VIN" maxLength={17} aria-describedby={errors.vin ? 'error-vin' : undefined} />
+        {errors.vin && <p id="error-vin" className={errorClass}>{errors.vin}</p>}
       </div>
 
       <div>
         <label htmlFor="odometer" className={labelClass}>Odometer (km) <span className="text-red-500">*</span></label>
-        <input id="odometer" type="number" value={odometer} onChange={e => setOdometer(e.target.value)} className={inputClass} min={0} />
-        {errors.odometer && <p className={errorClass}>{errors.odometer}</p>}
+        <input id="odometer" type="number" value={odometer} onChange={e => setOdometer(e.target.value)} className={inputClass} min={0} aria-required="true" aria-describedby={errors.odometer ? 'error-odometer' : undefined} />
+        {errors.odometer && <p id="error-odometer" className={errorClass}>{errors.odometer}</p>}
       </div>
 
       <div>

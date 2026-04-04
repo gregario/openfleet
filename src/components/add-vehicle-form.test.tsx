@@ -48,6 +48,36 @@ describe("AddVehicleForm", () => {
     expect(screen.getByLabelText(/odometer/i)).toBeTruthy();
   });
 
+  it("AC-fix-form-a11y: required fields have aria-required attribute", () => {
+    render(<AddVehicleForm />);
+
+    expect(screen.getByLabelText(/vehicle name/i).getAttribute("aria-required")).toBe("true");
+    expect(screen.getByLabelText(/make/i).getAttribute("aria-required")).toBe("true");
+    expect(screen.getByLabelText(/model/i).getAttribute("aria-required")).toBe("true");
+    expect(screen.getByLabelText(/year/i).getAttribute("aria-required")).toBe("true");
+    expect(screen.getByLabelText(/license plate/i).getAttribute("aria-required")).toBe("true");
+    expect(screen.getByLabelText(/odometer/i).getAttribute("aria-required")).toBe("true");
+  });
+
+  it("AC-fix-form-a11y: error messages are linked via aria-describedby", async () => {
+    render(<AddVehicleForm />);
+
+    // Clear name field and submit to trigger validation errors
+    fireEvent.change(screen.getByLabelText(/vehicle name/i), { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: /add vehicle/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/vehicle name is required/i)).toBeTruthy();
+    });
+
+    const nameInput = screen.getByLabelText(/vehicle name/i);
+    const describedById = nameInput.getAttribute("aria-describedby");
+    expect(describedById).toBeTruthy();
+    const errorEl = document.getElementById(describedById!);
+    expect(errorEl).toBeTruthy();
+    expect(errorEl!.textContent).toMatch(/vehicle name is required/i);
+  });
+
   it("renders optional fields (VIN, color, photo)", () => {
     render(<AddVehicleForm />);
 
