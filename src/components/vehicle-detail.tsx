@@ -380,7 +380,7 @@ function OverviewTab({ vehicle }: { vehicle: VehicleDetailData }) {
         <dl className="space-y-2 text-sm">
           <div className="flex justify-between">
             <dt className="text-slate-500">Status</dt>
-            <dd className="font-medium text-slate-900">{vehicle.status}</dd>
+            <dd className="font-medium text-slate-900">{formatStatus(vehicle.status)}</dd>
           </div>
           <div className="flex justify-between">
             <dt className="text-slate-500">Odometer</dt>
@@ -434,6 +434,11 @@ function PlaceholderTab({ title, description }: { title: string; description: st
       <p className="mt-1 text-sm text-slate-500">{description}</p>
     </div>
   );
+}
+
+function formatStatus(status: string): string {
+  const label = STATUS_OPTIONS.find(o => o.value === status);
+  return label ? label.label : status;
 }
 
 function formatMotionState(state: string): string {

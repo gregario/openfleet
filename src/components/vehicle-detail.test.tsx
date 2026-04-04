@@ -106,6 +106,19 @@ describe("VehicleDetail", () => {
     expect(backLink.getAttribute("href")).toBe("/vehicles");
   });
 
+  it("AC-fix-status-display: shows human-readable status (not raw enum)", () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    // Should show "Active" not "ACTIVE"
+    const statusDD = screen.getByText("Active");
+    expect(statusDD).toBeDefined();
+    expect(screen.queryByText("ACTIVE")).toBeNull();
+  });
+
+  it("AC-fix-status-display: shows In Shop for IN_SHOP status", () => {
+    render(<VehicleDetail vehicle={{ ...baseVehicle, status: "IN_SHOP" }} />);
+    expect(screen.getByText("In Shop")).toBeDefined();
+  });
+
   it("shows odometer formatted with locale", () => {
     render(<VehicleDetail vehicle={baseVehicle} />);
     expect(screen.getByText("45,000 km")).toBeDefined();
