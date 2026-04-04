@@ -143,7 +143,8 @@ export function VehicleList({ vehicles }: VehicleListProps) {
       {/* Search and filter controls */}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <input
-          type="text"
+          type="search"
+          aria-label="Search vehicles"
           placeholder="Search vehicles..."
           value={search}
           onChange={e => setSearch(e.target.value)}

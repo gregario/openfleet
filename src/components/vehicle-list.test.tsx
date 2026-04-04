@@ -411,6 +411,11 @@ describe('VehicleList', () => {
 
   // Accessibility
   describe('accessibility', () => {
+    it('AC-1: fix-search-a11y — search input has accessible name via aria-label', () => {
+      render(<VehicleList vehicles={mockVehicles} />);
+      expect(screen.getByRole('searchbox', { name: /search vehicles/i })).toBeTruthy();
+    });
+
     it('uses a table with proper semantic structure', () => {
       render(<VehicleList vehicles={mockVehicles} />);
       expect(screen.getByRole('table')).toBeTruthy();
