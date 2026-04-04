@@ -375,6 +375,188 @@ describe("VehicleDetail save error handling", () => {
   });
 });
 
+// AC-vd-robustness-3: Success toast has close button
+describe("VehicleDetail toast close buttons", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
+
+  // AC-vd-robustness-3: Success toast close button
+  it("dismisses success toast when close button is clicked", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ vehicle: { ...baseVehicle, name: "Van Beta" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "Van Beta" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/saved/i)).toBeDefined();
+    });
+
+    // Find the dismiss button for the success toast
+    const closeBtn = screen.getByRole("button", { name: /dismiss notification/i });
+    fireEvent.click(closeBtn);
+
+    expect(screen.queryByText(/saved/i)).toBeNull();
+  });
+
+  // AC-vd-robustness-4: Error toast close button
+  it("dismisses error toast when close button is clicked", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response("Error", { status: 500 }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toBeDefined();
+    });
+
+    const alertEl = screen.getByRole("alert");
+    const closeBtn = within(alertEl).getByRole("button", { name: /dismiss notification/i });
+    fireEvent.click(closeBtn);
+
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  // AC-vd-robustness-5: Toast close button has correct aria-label
+  it("success toast close button has aria-label 'Dismiss notification'", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ vehicle: { ...baseVehicle, name: "Van Beta" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "Van Beta" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/saved/i)).toBeDefined();
+    });
+
+    const closeBtn = screen.getByRole("button", { name: "Dismiss notification" });
+    expect(closeBtn).toBeDefined();
+    expect(closeBtn.getAttribute("aria-label")).toBe("Dismiss notification");
+  });
+});
+
+// AC-vd-robustness-6/7/8: Client-side Zod validation in edit form
+describe("VehicleDetail client-side validation", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
+
+  // AC-vd-robustness-6: Clearing required field shows error, no API call
+  it("shows field error and does not call API when name is cleared", async () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    // Clear the name field (required)
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    // Should show validation error
+    await waitFor(() => {
+      expect(screen.getByText(/name is required/i)).toBeDefined();
+    });
+
+    // Fetch should NOT have been called
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  // AC-vd-robustness-7: Zod validation error appears as red text
+  it("shows red validation error text for invalid year", async () => {
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    // Set invalid year
+    fireEvent.change(screen.getByLabelText(/year/i), { target: { value: "1800" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      const errorEl = screen.getByText(/valid year/i);
+      expect(errorEl).toBeDefined();
+      expect(errorEl.className).toContain("text-red-");
+    });
+
+    expect(global.fetch).not.toHaveBeenCalled();
+  });
+
+  // AC-vd-robustness-8: Valid form still submits to API
+  it("submits to API when all fields are valid", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ vehicle: { ...baseVehicle, name: "Van Beta" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "Van Beta" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalledWith(
+        `/api/vehicles/${baseVehicle.id}`,
+        expect.objectContaining({ method: "PUT" }),
+      );
+    });
+  });
+
+  // Regression: clearing errors on successful revalidation
+  it("clears validation errors when user fixes field and saves again", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ vehicle: { ...baseVehicle, name: "Fixed" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    // Clear name to trigger error
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/name is required/i)).toBeDefined();
+    });
+
+    // Fix the name and save again
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "Fixed" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.queryByText(/name is required/i)).toBeNull();
+    });
+  });
+});
+
 // AC-edit-error-4: Error toast auto-dismisses (isolated to avoid fake timer contamination)
 describe("VehicleDetail error toast auto-dismiss", () => {
   beforeEach(() => {

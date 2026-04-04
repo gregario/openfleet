@@ -256,6 +256,33 @@ describe("PUT /api/vehicles/[id]", () => {
     expect(body.error).toBe("Forbidden");
   });
 
+  // AC-vd-robustness-1: PUT handler returns 400 for malformed JSON
+  it("returns 400 for malformed JSON body", async () => {
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: "{invalid",
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).toBe(400);
+
+    const body = await response.json();
+    expect(body.error).toBe("Invalid JSON");
+  });
+
+  // AC-vd-robustness-2: PUT handler does not return 500 for malformed input
+  it("does not return 500 for malformed JSON body", async () => {
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: "not json at all",
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).not.toBe(500);
+  });
+
   it("rejects invalid status values", async () => {
     const request = new Request("http://localhost/api/vehicles/v-1", {
       method: "PUT",

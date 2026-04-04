@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { TrafficLight } from './traffic-light';
 import { VehicleAvatar } from './vehicle-avatar';
 import { VehicleMiniMap } from './vehicle-mini-map';
+import { createVehicleSchema } from '@/lib/validators';
 
 export interface VehicleDetailData {
   id: string;
@@ -43,6 +44,16 @@ interface EditFormData {
   status: string;
 }
 
+interface EditFormErrors {
+  name?: string;
+  make?: string;
+  model?: string;
+  year?: string;
+  vin?: string;
+  licensePlate?: string;
+  odometer?: string;
+}
+
 const TABS = [
   { id: 'overview', label: 'Overview' },
   { id: 'trips', label: 'Trips' },
@@ -77,6 +88,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
   const [toast, setToast] = useState<string | null>(null);
   const [errorToast, setErrorToast] = useState<string | null>(null);
   const [formData, setFormData] = useState<EditFormData>(vehicleToFormData(vehicle));
+  const [fieldErrors, setFieldErrors] = useState<EditFormErrors>({});
 
   useEffect(() => {
     if (!toast) return;
@@ -92,6 +104,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
 
   function handleEdit() {
     setFormData(vehicleToFormData(vehicle));
+    setFieldErrors({});
     setEditing(true);
   }
 
@@ -99,7 +112,39 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
     setEditing(false);
   }
 
+  function validateForm(): boolean {
+    const result = createVehicleSchema.safeParse({
+      name: formData.name.trim(),
+      make: formData.make.trim(),
+      model: formData.model.trim(),
+      year: parseInt(formData.year, 10) || 0,
+      vin: formData.vin.trim(),
+      licensePlate: formData.licensePlate.trim(),
+      color: formData.color.trim(),
+      odometer: parseInt(formData.odometer, 10) || 0,
+    });
+
+    if (result.success) {
+      setFieldErrors({});
+      return true;
+    }
+
+    const fe = result.error.flatten().fieldErrors;
+    setFieldErrors({
+      name: fe.name?.[0] ? 'Vehicle name is required' : undefined,
+      make: fe.make?.[0] ? 'Make is required' : undefined,
+      model: fe.model?.[0] ? 'Model is required' : undefined,
+      year: fe.year?.[0] ? 'Valid year is required' : undefined,
+      vin: fe.vin?.[0] ? 'VIN must be 17 characters (A-Z, 0-9, no I/O/Q)' : undefined,
+      licensePlate: fe.licensePlate?.[0] ? 'License plate is required' : undefined,
+      odometer: fe.odometer?.[0] ? 'Odometer must be 0 or more' : undefined,
+    });
+    return false;
+  }
+
   async function handleSave() {
+    if (!validateForm()) return;
+
     setSaving(true);
     try {
       const payload: Record<string, unknown> = {
@@ -145,9 +190,19 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
       {toast && (
         <div
           role="status"
-          className="fixed right-4 top-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg"
+          className="fixed right-4 top-4 z-50 flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg"
         >
-          {toast}
+          <span>{toast}</span>
+          <button
+            type="button"
+            aria-label="Dismiss notification"
+            onClick={() => setToast(null)}
+            className="ml-1 rounded p-0.5 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-white"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       )}
 
@@ -155,9 +210,19 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
       {errorToast && (
         <div
           role="alert"
-          className="fixed right-4 top-4 z-50 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 shadow-lg"
+          className="fixed right-4 top-4 z-50 flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 shadow-lg"
         >
-          {errorToast}
+          <span>{errorToast}</span>
+          <button
+            type="button"
+            aria-label="Dismiss notification"
+            onClick={() => setErrorToast(null)}
+            className="ml-1 rounded p-0.5 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       )}
 
@@ -210,6 +275,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 onChange={(e) => handleFieldChange('name', e.target.value)}
                 className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               />
+              {fieldErrors.name && <p className="mt-1 text-xs text-red-600">{fieldErrors.name}</p>}
             </div>
             <div>
               <label htmlFor="edit-make" className="block text-sm font-medium text-slate-700">Make</label>
@@ -220,6 +286,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 onChange={(e) => handleFieldChange('make', e.target.value)}
                 className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               />
+              {fieldErrors.make && <p className="mt-1 text-xs text-red-600">{fieldErrors.make}</p>}
             </div>
             <div>
               <label htmlFor="edit-model" className="block text-sm font-medium text-slate-700">Model</label>
@@ -230,6 +297,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 onChange={(e) => handleFieldChange('model', e.target.value)}
                 className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               />
+              {fieldErrors.model && <p className="mt-1 text-xs text-red-600">{fieldErrors.model}</p>}
             </div>
             <div>
               <label htmlFor="edit-year" className="block text-sm font-medium text-slate-700">Year</label>
@@ -240,6 +308,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 onChange={(e) => handleFieldChange('year', e.target.value)}
                 className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               />
+              {fieldErrors.year && <p className="mt-1 text-xs text-red-600">{fieldErrors.year}</p>}
             </div>
             <div>
               <label htmlFor="edit-license-plate" className="block text-sm font-medium text-slate-700">License Plate</label>
@@ -250,6 +319,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 onChange={(e) => handleFieldChange('licensePlate', e.target.value)}
                 className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               />
+              {fieldErrors.licensePlate && <p className="mt-1 text-xs text-red-600">{fieldErrors.licensePlate}</p>}
             </div>
             <div>
               <label htmlFor="edit-vin" className="block text-sm font-medium text-slate-700">VIN</label>
@@ -260,6 +330,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 onChange={(e) => handleFieldChange('vin', e.target.value)}
                 className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               />
+              {fieldErrors.vin && <p className="mt-1 text-xs text-red-600">{fieldErrors.vin}</p>}
             </div>
             <div>
               <label htmlFor="edit-color" className="block text-sm font-medium text-slate-700">Color</label>
@@ -280,6 +351,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
                 onChange={(e) => handleFieldChange('odometer', e.target.value)}
                 className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2 text-sm"
               />
+              {fieldErrors.odometer && <p className="mt-1 text-xs text-red-600">{fieldErrors.odometer}</p>}
             </div>
             <div>
               <label htmlFor="edit-status" className="block text-sm font-medium text-slate-700">Status</label>
