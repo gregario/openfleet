@@ -84,6 +84,18 @@ describe('VehicleList', () => {
       expect(labels).toContain('Requires attention');
     });
 
+    it('AC-2: fix-traffic-light-labels — shows color+text label in each row', () => {
+      const { container } = render(<VehicleList vehicles={mockVehicles} />);
+      const table = container.querySelector('table')!;
+      // TrafficLight should render visible label text spans inside table rows (not just colored dot)
+      const statusCells = table.querySelectorAll('tbody td');
+      const cellTexts = Array.from(statusCells).map(td => td.textContent);
+      const allCellText = cellTexts.join(' ');
+      expect(allCellText).toContain('All clear');
+      expect(allCellText).toContain('Overdue');
+      expect(allCellText).toContain('Requires attention');
+    });
+
     it('renders green, orange, and red indicators matching vehicle statuses', () => {
       render(<VehicleList vehicles={mockVehicles} />);
       // Each table row should have a traffic light with role=status

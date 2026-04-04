@@ -22,6 +22,12 @@ export interface VehicleListItem {
 type SortField = 'name' | 'trafficLight' | 'odometer' | 'nextService';
 type SortDirection = 'ascending' | 'descending';
 
+const TRAFFIC_LIGHT_LABELS: Record<string, string> = {
+  GREEN: 'All clear',
+  ORANGE: 'Requires attention',
+  RED: 'Overdue',
+};
+
 const TRAFFIC_LIGHT_PRIORITY: Record<string, number> = {
   RED: 0,
   ORANGE: 1,
@@ -268,7 +274,7 @@ export function VehicleList({ vehicles }: VehicleListProps) {
                   </td>
                   <td className="px-4 py-3 text-slate-600">{vehicle.licensePlate}</td>
                   <td className="px-4 py-3">
-                    <TrafficLight status={vehicle.trafficLight} size="sm" />
+                    <TrafficLight status={vehicle.trafficLight} size="sm" label={TRAFFIC_LIGHT_LABELS[vehicle.trafficLight]} />
                   </td>
                   <td className="px-4 py-3 text-slate-600 tabular-nums">
                     {vehicle.odometer.toLocaleString('en-US')}
