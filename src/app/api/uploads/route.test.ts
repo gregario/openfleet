@@ -43,6 +43,10 @@ vi.mock("node:fs/promises", () => ({
 
 import { POST } from "./route";
 
+// Magic byte prefixes for valid image types
+const JPEG_MAGIC = new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10]);
+const PNG_MAGIC = new Uint8Array([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A]);
+
 // jsdom's File doesn't support arrayBuffer()/text(). Create a mock file
 // that behaves like a real File for our route handler.
 function createMockFile(content: string, name: string, type: string) {
@@ -54,6 +58,18 @@ function createMockFile(content: string, name: string, type: string) {
     size: data.byteLength,
     arrayBuffer: () => Promise.resolve(data.buffer),
     text: () => Promise.resolve(content),
+    stream: () => new ReadableStream(),
+    slice: () => new Blob(),
+  };
+}
+
+function createMockImageFile(name: string, type: string, magicBytes: Uint8Array = JPEG_MAGIC) {
+  return {
+    name,
+    type,
+    size: magicBytes.byteLength,
+    arrayBuffer: () => Promise.resolve(magicBytes.buffer.slice(magicBytes.byteOffset, magicBytes.byteOffset + magicBytes.byteLength)),
+    text: () => Promise.resolve(""),
     stream: () => new ReadableStream(),
     slice: () => new Blob(),
   };
@@ -78,7 +94,7 @@ describe("POST /api/uploads", () => {
   });
 
   it("uploads a valid image and returns the URL", async () => {
-    const file = createMockFile("fake-image-data", "van-photo.jpg", "image/jpeg");
+    const file = createMockImageFile("van-photo.jpg", "image/jpeg");
     const request = makeUploadRequest(file);
 
     const response = await POST(request);
@@ -89,7 +105,7 @@ describe("POST /api/uploads", () => {
   });
 
   it("writes file to disk", async () => {
-    const file = createMockFile("fake-image-data", "van.png", "image/png");
+    const file = createMockImageFile("van.png", "image/png", PNG_MAGIC);
     const request = makeUploadRequest(file);
 
     await POST(request);
@@ -130,15 +146,49 @@ describe("POST /api/uploads", () => {
       updateConfig: vi.fn(),
     } as never);
 
-    const file = createMockFile("fake", "photo.jpg", "image/jpeg");
+    const file = createMockImageFile("photo.jpg", "image/jpeg");
     const request = makeUploadRequest(file);
 
     const response = await POST(request);
     expect(response.status).toBe(401);
   });
 
+  it("AC-fix-upload-security: rejects file with spoofed MIME type (magic bytes don't match)", async () => {
+    // Send a text file with image/jpeg MIME type — magic bytes won't match JPEG
+    const file = createMockFile("this is not a jpeg", "fake.jpg", "image/jpeg");
+    const request = makeUploadRequest(file);
+
+    const response = await POST(request);
+    expect(response.status).toBe(400);
+
+    const body = await response.json();
+    expect(body.error).toMatch(/image/i);
+  });
+
+  it("AC-fix-upload-security: derives extension from validated MIME type, not filename", async () => {
+    // Send a valid JPEG with a .exe filename extension
+    const jpegBytes = new Uint8Array([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10]);
+    const file = {
+      name: "malware.exe",
+      type: "image/jpeg",
+      size: jpegBytes.byteLength,
+      arrayBuffer: () => Promise.resolve(jpegBytes.buffer),
+      text: () => Promise.resolve(""),
+      stream: () => new ReadableStream(),
+      slice: () => new Blob(),
+    };
+    const request = makeUploadRequest(file);
+
+    const response = await POST(request);
+    expect(response.status).toBe(201);
+
+    const body = await response.json();
+    // Extension should be .jpg (from validated type), not .exe (from filename)
+    expect(body.url).toMatch(/\.jpg$/);
+  });
+
   it("generates a unique filename to prevent collisions", async () => {
-    const file = createMockFile("data", "photo.jpg", "image/jpeg");
+    const file = createMockImageFile("photo.jpg", "image/jpeg");
 
     const res1 = await POST(makeUploadRequest(file));
     const res2 = await POST(makeUploadRequest(file));
