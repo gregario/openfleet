@@ -231,6 +231,31 @@ describe("PUT /api/vehicles/[id]", () => {
     }
   });
 
+  // @criterion: AC-vehicle-route-consolidation — ADMIN role check on PUT
+  it("returns 403 when authenticated as DRIVER (non-admin)", async () => {
+    const { getSession } = await import("@/lib/session");
+    vi.mocked(getSession).mockResolvedValueOnce({
+      userId: "driver-1",
+      role: "DRIVER",
+      name: "Driver Dave",
+      save: vi.fn(),
+      destroy: vi.fn(),
+      updateConfig: vi.fn(),
+    } as never);
+
+    const request = new Request("http://localhost/api/vehicles/v-1", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "Van Beta" }),
+    });
+
+    const response = await PUT(request, { params: Promise.resolve({ id: "v-1" }) });
+    expect(response.status).toBe(403);
+
+    const body = await response.json();
+    expect(body.error).toBe("Forbidden");
+  });
+
   it("rejects invalid status values", async () => {
     const request = new Request("http://localhost/api/vehicles/v-1", {
       method: "PUT",
