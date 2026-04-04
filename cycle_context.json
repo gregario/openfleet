@@ -662,6 +662,17 @@
       "affects": [
         "src/components/vehicle-detail.tsx"
       ]
+    },
+    {
+      "decision": "Search Before Building audit for cycle 2 story openfleet-loop-2-add-vehicle-form-responsive",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 0 BUILD, 1 EXTEND (add-vehicle-form.tsx lines 171 and 184 — change grid-cols-2 to sm:grid-cols-2), 1 REUSE (responsive pattern from vehicle-detail.tsx line 182). CSS-only fix: two class changes, one test added verifying sm:grid-cols-2 presence and absence of bare grid-cols-2.",
+      "confidence": "high",
+      "affects": [
+        "src/components/add-vehicle-form.tsx",
+        "src/components/add-vehicle-form.test.tsx"
+      ]
     }
   ],
   "factory_questions": [],
@@ -764,6 +775,20 @@
       ],
       "tests_added": 6,
       "tests_passing": 6
+    },
+    {
+      "task": "openfleet-loop-2-add-vehicle-form-responsive",
+      "acceptance_criteria": [
+        "AC-form-responsive-1: Fields stack on mobile viewport (<640px) — Make/Model and Year/Color grids use sm:grid-cols-2",
+        "AC-form-responsive-2: Fields side-by-side on desktop (≥640px) — 2-column layout preserved at sm breakpoint",
+        "AC-form-responsive-3: Consistent with vehicle-detail edit form pattern — no bare grid-cols-2 in add-vehicle-form.tsx"
+      ],
+      "files_changed": [
+        "src/components/add-vehicle-form.tsx",
+        "src/components/add-vehicle-form.test.tsx"
+      ],
+      "tests_added": 1,
+      "tests_passing": 1
     }
   ],
   "skipped": [],
@@ -1959,14 +1984,14 @@
     ]
   },
   "story_result": {
-    "story_id": "openfleet-loop-2-vehicle-edit-error-feedback",
+    "story_id": "openfleet-loop-2-add-vehicle-form-responsive",
     "outcome": "pass",
     "files_changed": [
-      "src/components/vehicle-detail.tsx",
-      "src/components/vehicle-detail.test.tsx"
+      "src/components/add-vehicle-form.tsx",
+      "src/components/add-vehicle-form.test.tsx"
     ],
-    "tests_added": 6,
-    "tests_passing": 6,
+    "tests_added": 1,
+    "tests_passing": 1,
     "env_limitations": []
   },
   "evaluation_report": {
@@ -4356,5 +4381,5 @@
     "anomalies_total": 8
   },
   "_current_milestone": "vehicle-registry",
-  "_current_story": "openfleet-loop-2-vehicle-edit-error-feedback"
+  "_current_story": "openfleet-loop-2-add-vehicle-form-responsive"
 }
