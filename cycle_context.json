@@ -638,6 +638,30 @@
       "affects": [
         "src/components/dashboard-map.tsx"
       ]
+    },
+    {
+      "decision": "Search Before Building audit for cycle 2 story openfleet-loop-2-vehicle-edit-error-feedback",
+      "context": "Pre-implementation code reuse analysis",
+      "alternatives_considered": [],
+      "rationale": "Found: 0 BUILD, 1 EXTEND (handleSave in vehicle-detail.tsx — add else/catch to existing try/finally), 1 REUSE (existing toast pattern with useEffect auto-dismiss timer from success toast). Key reuse: same toast state + 5s useEffect dismiss pattern, same fixed-position rendering pattern. Only color/role attributes differ (green role=status for success, red role=alert for error).",
+      "confidence": "high",
+      "affects": [
+        "src/components/vehicle-detail.tsx",
+        "src/components/vehicle-detail.test.tsx"
+      ]
+    },
+    {
+      "decision": "Separate errorToast state instead of reusing toast state with a type flag",
+      "context": "Error toast needs role=alert and red styling; success toast uses role=status and green styling",
+      "alternatives_considered": [
+        "Single toast state with type discriminator — adds conditional complexity to rendering",
+        "Toast object { message, type } — more flexible but over-engineered for two toast types"
+      ],
+      "rationale": "Two separate state variables (toast for success, errorToast for error) keep the rendering simple with no conditionals. Each has its own useEffect dismiss timer. The existing success toast pattern remains completely unchanged — zero regression risk. If a third toast type appears, refactor to a discriminated union then.",
+      "confidence": "high",
+      "affects": [
+        "src/components/vehicle-detail.tsx"
+      ]
     }
   ],
   "factory_questions": [],
@@ -724,6 +748,22 @@
       ],
       "tests_added": 13,
       "tests_passing": 13
+    },
+    {
+      "task": "openfleet-loop-2-vehicle-edit-error-feedback",
+      "acceptance_criteria": [
+        "AC-edit-error-1: Error toast on save failure (HTTP 4xx/5xx)",
+        "AC-edit-error-2: Form remains in edit mode with user's values preserved on failure",
+        "AC-edit-error-3: Save button re-enables after failure",
+        "AC-edit-error-4: Error toast auto-dismisses after 5 seconds",
+        "AC-edit-error-5: Network error (fetch throws) handled with same error toast"
+      ],
+      "files_changed": [
+        "src/components/vehicle-detail.tsx",
+        "src/components/vehicle-detail.test.tsx"
+      ],
+      "tests_added": 6,
+      "tests_passing": 6
     }
   ],
   "skipped": [],
@@ -1919,17 +1959,14 @@
     ]
   },
   "story_result": {
-    "story_id": "fix-add-vehicle-form-ux",
+    "story_id": "openfleet-loop-2-vehicle-edit-error-feedback",
     "outcome": "pass",
     "files_changed": [
-      "src/components/add-vehicle-form.tsx",
-      "src/components/add-vehicle-form.test.tsx",
-      "src/components/vehicle-created-toast.tsx",
-      "src/components/vehicle-created-toast.test.tsx",
-      "src/app/(admin)/vehicles/page.tsx"
+      "src/components/vehicle-detail.tsx",
+      "src/components/vehicle-detail.test.tsx"
     ],
-    "tests_added": 7,
-    "tests_passing": 7,
+    "tests_added": 6,
+    "tests_passing": 6,
     "env_limitations": []
   },
   "evaluation_report": {
