@@ -3293,309 +3293,51 @@
   ],
   "change_specs_pending": [
     {
-      "spec_path": "specs/changes/openfleet-loop-1-dashboard-ux-states.md",
+      "spec_path": "openspec/changes/openfleet-loop-2-vehicle-edit-error-feedback.md",
       "gap_ids": [
-        "gap-loading-skeleton",
-        "gap-error-boundary",
-        "gap-empty-state"
-      ],
-      "priority": "medium",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 7,
-      "root_cause": "missing_context",
-      "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [
-        "FA1-J1"
-      ],
-      "approach_summary": "Add loading skeleton, error boundary, and empty state to DashboardMap using existing foundation components",
-      "status": "done"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-branch-integration.md",
-      "gap_ids": [
-        "gap-branch-fragmentation"
-      ],
-      "priority": "critical",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 6,
-      "root_cause": "missing_context",
-      "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [
-        "FA1-J1",
-        "FA1-J2",
-        "FA1-J3",
-        "FA1-J4"
-      ],
-      "approach_summary": "Merge 4 story branches (fleet-sidebar, dashboard-responsive, session-navigation) into current branch, resolve conflicts, verify full test suite",
-      "status": "done"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-focus-trap.md",
-      "gap_ids": [
-        "imp-focus-trap"
-      ],
-      "priority": "medium",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 5,
-      "root_cause": "missing_context",
-      "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [
-        "FA1-J1"
-      ],
-      "approach_summary": "Add focus trap, Escape dismiss, and focus restore to mobile sidebar overlay in AdminLayout",
-      "status": "done"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-sidebar-reactivity.md",
-      "gap_ids": [
-        "gap-static-alerts",
-        "gap-inert-alert-items",
-        "gap-sidebar-static-counts"
+        "qg-fa2-8"
       ],
       "priority": "high",
       "requires_design_mode": false,
       "design_passes_needed": [],
-      "criteria_count": 7,
-      "root_cause": "spec_ambiguity",
+      "criteria_count": 5,
+      "root_cause": "implementation_bug",
       "affected_screens": [
-        "S3-fleet-dashboard"
+        "/vehicles/[id]"
       ],
       "affected_journeys": [
-        "FA1-J3"
+        "FA2-J4"
       ],
-      "approach_summary": "Add alert polling (30s), clickable alerts that flyTo vehicle on map, and live sidebar counts derived from realtime vehicle data"
+      "approach_summary": "Add error toast and form state preservation to handleSave catch/else path in vehicle-detail.tsx"
     },
     {
-      "spec_path": "specs/changes/openfleet-loop-1-route-completeness.md",
+      "spec_path": "openspec/changes/openfleet-loop-2-add-vehicle-form-responsive.md",
       "gap_ids": [
-        "gap-popup-dead-link",
-        "gap-no-route-error-boundary"
-      ],
-      "priority": "high",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 6,
-      "root_cause": "missing_context",
-      "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [
-        "FA1-J1",
-        "FA1-J2"
-      ],
-      "approach_summary": "Fix popup dead link to /vehicles, add /vehicles/[id] catch-all redirect, create dashboard and admin error.tsx boundaries"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-filter-ux.md",
-      "gap_ids": [
-        "gap-filter-empty-feedback",
-        "gap-driver-select-no-label"
+        "qg-fa2-9"
       ],
       "priority": "medium",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 6,
-      "root_cause": "implementation_bug",
-      "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [
-        "FA1-J4"
-      ],
-      "approach_summary": "Add filter-specific empty state with clear filters action, add aria-labels to all filter controls"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-map-polish.md",
-      "gap_ids": [
-        "gap-no-hover-preview",
-        "gap-no-last-updated"
-      ],
-      "priority": "low",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 5,
-      "root_cause": "spec_ambiguity",
-      "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [
-        "FA1-J1",
-        "FA1-J2"
-      ],
-      "approach_summary": "Add hover tooltip on vehicle markers showing vehicle name, add last-updated relative timestamp next to connection status"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-xss-and-cleanup.md",
-      "gap_ids": [
-        "gap-xss-hover-tooltip",
-        "gap-duplicate-time-format"
-      ],
-      "priority": "critical",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 7,
-      "root_cause": "implementation_bug",
-      "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [
-        "FA1-J1",
-        "FA1-J2",
-        "FA1-J3"
-      ],
-      "approach_summary": "Export escapeHTML from map-utils.ts, fix XSS in hover tooltip, add security comments at .setHTML() sites, consolidate duplicate time formatting to single formatRelativeTime"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-test-type-fix.md",
-      "gap_ids": [
-        "imp-admin-layout-test-types"
-      ],
-      "priority": "low",
       "requires_design_mode": false,
       "design_passes_needed": [],
       "criteria_count": 3,
       "root_cause": "implementation_bug",
       "affected_screens": [
-        "S3-fleet-dashboard"
-      ],
-      "affected_journeys": [],
-      "approach_summary": "Add userName='Test User' prop to 7 AdminLayout renders in admin-layout.test.tsx to fix TypeScript TS2741 errors"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-vehicle-edit.md",
-      "gap_ids": [
-        "qg-fa2-1"
-      ],
-      "priority": "critical",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 6,
-      "root_cause": "missing_context",
-      "affected_screens": [
-        "S5-vehicle-detail"
-      ],
-      "affected_journeys": [
-        "FA2-J4"
-      ],
-      "approach_summary": "Add vehicle edit mode to detail page: Edit button, pre-populated form, status dropdown, PUT /api/vehicles/[id] endpoint, success toast, cancel discard"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-photo-and-list-polish.md",
-      "gap_ids": [
-        "qg-fa2-2",
-        "qg-fa2-5",
-        "qg-fa2-6"
-      ],
-      "priority": "high",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 7,
-      "root_cause": "implementation_bug",
-      "affected_screens": [
-        "S4-vehicle-list",
-        "S5-vehicle-detail"
-      ],
-      "affected_journeys": [
-        "FA2-J2",
-        "FA2-J3"
-      ],
-      "approach_summary": "Display vehicle photo on detail header and list thumbnails with placeholder fallback, replace color-only dots with accessible TrafficLight, add fleet health summary bar above table"
-    },
-    {
-      "spec_path": "specs/changes/openfleet-loop-1-add-vehicle-form-ux.md",
-      "gap_ids": [
-        "qg-fa2-3",
-        "qg-fa2-4",
-        "qg-fa2-7"
-      ],
-      "priority": "medium",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 7,
-      "root_cause": "spec_ambiguity",
-      "affected_screens": [
-        "/vehicles/new",
-        "S4-vehicle-list"
+        "/vehicles/new"
       ],
       "affected_journeys": [
         "FA2-J1"
       ],
-      "approach_summary": "Add success toast on redirect after vehicle creation, surface photo upload failure as inline warning, mark required fields with asterisk and optional fields with suffix"
+      "approach_summary": "Change grid-cols-2 to sm:grid-cols-2 at two locations in add-vehicle-form.tsx for responsive stacking"
     }
   ],
   "change_spec_generation_summary": {
     "phase": "change-spec-generation",
     "cycle": 1,
-    "analysis_run": 5,
-    "timestamp": "2026-04-03T19:45:00.000Z",
-    "total_specs_generated": 8,
-    "total_criteria_across_specs": 49,
-    "gaps_addressed": 16,
-    "gaps_deferred": [
-      {
-        "gap_id": "gap-sse-reconnect-ui",
-        "reason": "Low priority. Requires live SSE connection and staging environment for testing. EventSource provides native auto-reconnect. Deferred to future cycle when browser QA infrastructure is available."
-      },
-      {
-        "gap_id": "gap-perf-benchmark",
-        "reason": "Low priority. Infrastructure gap — requires staging deployment and browser-based performance testing tools. Cannot be addressed without environment changes."
-      }
-    ],
-    "gaps_escalated": [],
-    "run_4_additions": {
-      "specs_generated_this_run": 4,
-      "criteria_generated_this_run": 24,
-      "gaps_addressed_this_run": 9,
-      "specs": [
-        "openfleet-loop-1-sidebar-reactivity (HIGH, 7 criteria, 3 gaps)",
-        "openfleet-loop-1-route-completeness (HIGH, 6 criteria, 2 gaps)",
-        "openfleet-loop-1-filter-ux (MEDIUM, 6 criteria, 2 gaps)",
-        "openfleet-loop-1-map-polish (LOW, 5 criteria, 2 gaps)"
-      ],
-      "fix_stories_generated": [
-        "fix-sidebar-reactivity",
-        "fix-route-completeness",
-        "fix-filter-ux",
-        "fix-map-polish"
-      ]
-    },
-    "run_5_additions": {
-      "specs_generated_this_run": 1,
-      "criteria_generated_this_run": 7,
-      "gaps_addressed_this_run": 2,
-      "specs": [
-        "openfleet-loop-1-xss-and-cleanup (CRITICAL, 7 criteria, 2 gaps: gap-xss-hover-tooltip + gap-duplicate-time-format)"
-      ],
-      "fix_stories_generated": [
-        "fix-xss-hover-tooltip",
-        "fix-duplicate-time-format"
-      ]
-    },
-    "run_8_additions": {
-      "milestone": "vehicle-registry",
-      "specs_generated_this_run": 3,
-      "criteria_generated_this_run": 20,
-      "gaps_addressed_this_run": 7,
-      "specs": [
-        "openfleet-loop-1-vehicle-edit (CRITICAL, 6 criteria, 1 gap: qg-fa2-1)",
-        "openfleet-loop-1-photo-and-list-polish (HIGH, 7 criteria, 3 gaps: qg-fa2-2 + qg-fa2-5 + qg-fa2-6)",
-        "openfleet-loop-1-add-vehicle-form-ux (MEDIUM, 7 criteria, 3 gaps: qg-fa2-3 + qg-fa2-4 + qg-fa2-7)"
-      ],
-      "fix_stories_generated": [
-        "fix-vehicle-edit",
-        "fix-photo-and-list-polish",
-        "fix-add-vehicle-form-ux"
-      ]
-    }
+    "timestamp": "2026-04-04T12:00:00Z",
+    "total_specs_generated": 2,
+    "total_criteria_across_specs": 8,
+    "gaps_addressed": 2,
+    "gaps_deferred": [],
+    "gaps_escalated": []
   },
   "fix_stories": [
     {
@@ -4577,41 +4319,5 @@
     "anomalies_total": 8
   },
   "_current_milestone": "vehicle-registry",
-  "_current_story": "fix-add-vehicle-form-ux",
-  "change_specs_pending": [
-    {
-      "spec_path": "openspec/changes/openfleet-loop-2-vehicle-edit-error-feedback.md",
-      "gap_ids": ["qg-fa2-8"],
-      "priority": "high",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 5,
-      "root_cause": "implementation_bug",
-      "affected_screens": ["/vehicles/[id]"],
-      "affected_journeys": ["FA2-J4"],
-      "approach_summary": "Add error toast and form state preservation to handleSave catch/else path in vehicle-detail.tsx"
-    },
-    {
-      "spec_path": "openspec/changes/openfleet-loop-2-add-vehicle-form-responsive.md",
-      "gap_ids": ["qg-fa2-9"],
-      "priority": "medium",
-      "requires_design_mode": false,
-      "design_passes_needed": [],
-      "criteria_count": 3,
-      "root_cause": "implementation_bug",
-      "affected_screens": ["/vehicles/new"],
-      "affected_journeys": ["FA2-J1"],
-      "approach_summary": "Change grid-cols-2 to sm:grid-cols-2 at two locations in add-vehicle-form.tsx for responsive stacking"
-    }
-  ],
-  "change_spec_generation_summary": {
-    "phase": "change-spec-generation",
-    "cycle": 1,
-    "timestamp": "2026-04-04T12:00:00Z",
-    "total_specs_generated": 2,
-    "total_criteria_across_specs": 8,
-    "gaps_addressed": 2,
-    "gaps_deferred": [],
-    "gaps_escalated": []
-  }
+  "_current_story": "openfleet-loop-2-vehicle-edit-error-feedback"
 }

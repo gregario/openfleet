@@ -1,9 +1,9 @@
 {
   "project": "openfleet-v2",
   "status": "shipping",
-  "current_state": "generating-change-spec",
+  "current_state": "story-building",
   "current_milestone": "vehicle-registry",
-  "current_story": "vehicle-detail",
+  "current_story": "openfleet-loop-2-vehicle-edit-error-feedback",
   "milestones": [
     {
       "name": "foundation",
@@ -828,7 +828,7 @@
         {
           "id": "fix-vehicle-edit",
           "name": "Add vehicle edit mode with status dropdown, PUT endpoint, and success feedback",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "vehicle-detail"
@@ -846,12 +846,20 @@
             "Success toast shown after save, view returns to read-only mode",
             "Cancel discards changes and returns to read-only view",
             "Decommissioned vehicles hidden from default map/dashboard views"
-          ]
+          ],
+          "completed_at": "2026-04-03T23:49:22.816Z",
+          "files_changed": [
+            "src/components/vehicle-detail.tsx",
+            "src/components/vehicle-detail.test.tsx",
+            "src/app/api/vehicles/route.test.ts",
+            "src/lib/dashboard-data.test.ts"
+          ],
+          "env_limitations": []
         },
         {
           "id": "fix-photo-and-list-polish",
           "name": "Display vehicle photos, accessible traffic light, and fleet health summary",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "vehicle-detail",
@@ -870,12 +878,25 @@
             "Traffic light indicators in list have role=status, aria-label, and tooltip on hover",
             "Fleet health summary bar above table showing total and per-status breakdown",
             "Summary bar updates when decommissioned filter is toggled"
-          ]
+          ],
+          "completed_at": "2026-04-03T23:52:18.296Z",
+          "files_changed": [
+            "src/components/vehicle-avatar.tsx",
+            "src/components/vehicle-avatar.test.tsx",
+            "src/components/vehicle-detail.tsx",
+            "src/components/vehicle-detail.test.tsx",
+            "src/components/vehicle-list.tsx",
+            "src/components/vehicle-list.test.tsx",
+            "src/components/traffic-light.tsx",
+            "src/components/traffic-light.test.tsx",
+            "src/app/(admin)/vehicles/page.tsx"
+          ],
+          "env_limitations": []
         },
         {
           "id": "fix-add-vehicle-form-ux",
           "name": "Add success toast, photo upload warning, and required/optional field markers",
-          "status": "pending",
+          "status": "done",
           "attempts": 0,
           "depends_on": [
             "add-vehicle"
@@ -892,7 +913,40 @@
             "Inline warning shown when photo upload fails but vehicle creation succeeds",
             "Required fields marked with asterisk (*), optional fields with '(optional)' suffix",
             "Legend '* Required' visible at top of form"
-          ]
+          ],
+          "completed_at": "2026-04-03T23:56:16.944Z",
+          "files_changed": [
+            "src/components/add-vehicle-form.tsx",
+            "src/components/add-vehicle-form.test.tsx",
+            "src/components/vehicle-created-toast.tsx",
+            "src/components/vehicle-created-toast.test.tsx",
+            "src/app/(admin)/vehicles/page.tsx"
+          ],
+          "env_limitations": []
+        },
+        {
+          "id": "openfleet-loop-2-vehicle-edit-error-feedback",
+          "name": "Add error toast and form state preservation to handleSave catch/else path in vehicle-detail.tsx",
+          "status": "in-progress",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "/vehicles/[id]"
+          ],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-2-add-vehicle-form-responsive",
+          "name": "Change grid-cols-2 to sm:grid-cols-2 at two locations in add-vehicle-form.tsx for responsive stacking",
+          "status": "pending",
+          "attempts": 0,
+          "depends_on": [],
+          "affected_entities": [],
+          "affected_screens": [
+            "/vehicles/new"
+          ],
+          "acceptance_criteria": []
         }
       ]
     },
@@ -1212,7 +1266,7 @@
   "seeded_at": "2026-04-01T10:00:00Z",
   "seeded_by": "manual-v2-transform",
   "human_approved": true,
-  "timestamp": "2026-04-03T20:42:58.829Z",
+  "timestamp": "2026-04-04T00:39:08.017Z",
   "last_build_delta": 6,
   "previous_state": "milestone-check",
   "fix_tasks": [

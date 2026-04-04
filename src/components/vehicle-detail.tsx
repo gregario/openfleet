@@ -75,6 +75,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [errorToast, setErrorToast] = useState<string | null>(null);
   const [formData, setFormData] = useState<EditFormData>(vehicleToFormData(vehicle));
 
   useEffect(() => {
@@ -82,6 +83,12 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
     const timer = setTimeout(() => setToast(null), 5000);
     return () => clearTimeout(timer);
   }, [toast]);
+
+  useEffect(() => {
+    if (!errorToast) return;
+    const timer = setTimeout(() => setErrorToast(null), 5000);
+    return () => clearTimeout(timer);
+  }, [errorToast]);
 
   function handleEdit() {
     setFormData(vehicleToFormData(vehicle));
@@ -118,7 +125,11 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
         setVehicle({ ...vehicle, ...updated });
         setEditing(false);
         setToast(`${updated.name || vehicle.name} saved`);
+      } else {
+        setErrorToast('Could not save changes. Please try again.');
       }
+    } catch {
+      setErrorToast('Could not save changes. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -130,13 +141,23 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
 
   return (
     <div className="space-y-4">
-      {/* Toast */}
+      {/* Success Toast */}
       {toast && (
         <div
           role="status"
           className="fixed right-4 top-4 z-50 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg"
         >
           {toast}
+        </div>
+      )}
+
+      {/* Error Toast */}
+      {errorToast && (
+        <div
+          role="alert"
+          className="fixed right-4 top-4 z-50 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 shadow-lg"
+        >
+          {errorToast}
         </div>
       )}
 

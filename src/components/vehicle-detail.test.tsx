@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
-import { render, screen, fireEvent, within, cleanup, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, within, cleanup, waitFor, act } from "@testing-library/react";
 import { VehicleDetail, type VehicleDetailData } from "./vehicle-detail";
 
 // Mock the mini-map to avoid WebGL dependency
@@ -241,4 +241,161 @@ describe("VehicleDetail edit mode", () => {
     expect(screen.getByText("Van Alpha")).toBeDefined();
     expect(screen.getByRole("button", { name: /edit/i })).toBeDefined();
   });
+});
+
+// @criterion: AC-edit-error — Save error handling
+describe("VehicleDetail save error handling", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
+
+  // AC-edit-error-1: Error toast on save failure (HTTP error)
+  it("shows error toast when PUT returns non-2xx status", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ error: "Validation failed" }), {
+        status: 422,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toBeDefined();
+      expect(screen.getByText("Could not save changes. Please try again.")).toBeDefined();
+    });
+  });
+
+  // AC-edit-error-2: Form remains in edit mode on failure
+  it("preserves form state and stays in edit mode on save failure", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response("Internal Server Error", { status: 500 }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+
+    // Modify a field
+    const nameInput = screen.getByLabelText(/name/i);
+    fireEvent.change(nameInput, { target: { value: "Modified Van" } });
+
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toBeDefined();
+    });
+
+    // Form should still be visible with modified values
+    expect(screen.getByLabelText(/name/i)).toHaveProperty("value", "Modified Van");
+    // Edit button should NOT be visible (still in edit mode)
+    expect(screen.queryByRole("button", { name: /^edit$/i })).toBeNull();
+  });
+
+  // AC-edit-error-3: Save button re-enables after failure
+  it("re-enables Save button after failed save", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response("Server Error", { status: 500 }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toBeDefined();
+    });
+
+    const saveButton = screen.getByRole("button", { name: /save/i });
+    expect(saveButton).not.toHaveProperty("disabled", true);
+  });
+
+  // AC-edit-error-5: Network error handled
+  it("shows error toast on network error (fetch throws)", async () => {
+    vi.mocked(global.fetch).mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toBeDefined();
+      expect(screen.getByText("Could not save changes. Please try again.")).toBeDefined();
+    });
+
+    // Form should still be in edit mode
+    expect(screen.getByLabelText(/name/i)).toBeDefined();
+  });
+
+  // Regression: success path still works after adding error handling
+  it("success path still shows success toast and exits edit mode", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response(JSON.stringify({ vehicle: { ...baseVehicle, name: "Van Beta" } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.change(screen.getByLabelText(/name/i), { target: { value: "Van Beta" } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/saved/i)).toBeDefined();
+    });
+
+    // Should be back in read-only mode
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /edit/i })).toBeDefined();
+    });
+
+    // No error alert should be present
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+});
+
+// AC-edit-error-4: Error toast auto-dismisses (isolated to avoid fake timer contamination)
+describe("VehicleDetail error toast auto-dismiss", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    global.fetch = vi.fn();
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it("auto-dismisses error toast after 5 seconds", async () => {
+    vi.mocked(global.fetch).mockResolvedValueOnce(
+      new Response("Error", { status: 500 }),
+    );
+
+    render(<VehicleDetail vehicle={baseVehicle} />);
+    fireEvent.click(screen.getByRole("button", { name: /edit/i }));
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    // Flush microtasks to let the fetch resolve and state update
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(100);
+    });
+
+    expect(screen.getByRole("alert")).toBeDefined();
+
+    // Advance past the 5s dismiss timer and flush React updates
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(5000);
+    });
+
+    expect(screen.queryByRole("alert")).toBeNull();
+  }, 10000);
 });
