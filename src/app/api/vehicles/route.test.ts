@@ -31,7 +31,7 @@ vi.mock("@/lib/db", () => ({
   supabase: { from: mockFrom },
 }));
 
-import { POST } from "./route";
+import { GET, POST } from "./route";
 
 function setupInsert(data: Record<string, unknown> | null, error: Record<string, unknown> | null = null) {
   const mockSelect = vi.fn().mockReturnValue({
@@ -41,6 +41,63 @@ function setupInsert(data: Record<string, unknown> | null, error: Record<string,
   mockFrom.mockReturnValue({ insert: mockInsert });
   return { mockInsert, mockSelect };
 }
+
+function setupSelect(data: Record<string, unknown>[] | null, error: Record<string, unknown> | null = null) {
+  const mockOrder = vi.fn().mockResolvedValue({ data, error });
+  const mockSelect = vi.fn().mockReturnValue({ order: mockOrder });
+  mockFrom.mockReturnValue({ select: mockSelect });
+  return { mockSelect, mockOrder };
+}
+
+// @criterion: fa2-decommissioned-filter
+describe("GET /api/vehicles", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns all vehicles including DECOMMISSIONED", async () => {
+    const vehicles = [
+      { id: "v1", name: "Van 1", make: "Ford", model: "Transit", year: 2022, license_plate: "AB12 CDE", color: "White", status: "ACTIVE", odometer: 45000, motion_state: "PARKED", traffic_light: "GREEN", latest_latitude: 51.5, latest_longitude: -0.1 },
+      { id: "v2", name: "Van 2", make: "Toyota", model: "HiAce", year: 2020, license_plate: "XY99 ZZZ", color: "Blue", status: "DECOMMISSIONED", odometer: 120000, motion_state: "PARKED", traffic_light: "RED", latest_latitude: null, latest_longitude: null },
+    ];
+    setupSelect(vehicles);
+
+    const response = await GET();
+    expect(response.status).toBe(200);
+
+    const body = await response.json();
+    expect(body.vehicles).toHaveLength(2);
+    expect(body.vehicles[1].status).toBe("DECOMMISSIONED");
+  });
+
+  it("does not apply server-side .neq filter on status", async () => {
+    const vehicles = [
+      { id: "v1", name: "Retired Van", make: "Ford", model: "Transit", year: 2018, license_plate: "OLD 001", color: "Grey", status: "DECOMMISSIONED", odometer: 200000, motion_state: "PARKED", traffic_light: "RED", latest_latitude: null, latest_longitude: null },
+    ];
+    const { mockSelect } = setupSelect(vehicles);
+
+    await GET();
+
+    // The select chain should NOT include a .neq call — only .select().order()
+    expect(mockSelect).toHaveBeenCalled();
+    // Verify we get the decommissioned vehicle back
+    const response = await GET();
+    const body = await response.json();
+    expect(body.vehicles.some((v: { status: string }) => v.status === "DECOMMISSIONED")).toBe(true);
+  });
+
+  it("returns 401 when not authenticated", async () => {
+    const { getSession } = await import("@/lib/session");
+    vi.mocked(getSession).mockResolvedValueOnce({
+      save: vi.fn(),
+      destroy: vi.fn(),
+      updateConfig: vi.fn(),
+    } as never);
+
+    const response = await GET();
+    expect(response.status).toBe(401);
+  });
+});
 
 // @criterion: fa2-add-vehicle
 describe("POST /api/vehicles", () => {

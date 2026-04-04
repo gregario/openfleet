@@ -13,7 +13,6 @@ export async function GET() {
   const { data: vehicles, error: vehiclesError } = await supabase
     .from("vehicles")
     .select("id, name, make, model, year, license_plate, color, status, odometer, motion_state, traffic_light, latest_latitude, latest_longitude")
-    .neq("status", "DECOMMISSIONED")
     .order("name", { ascending: true });
 
   if (vehiclesError) {
