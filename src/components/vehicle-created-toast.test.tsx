@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, act } from "@testing-library/react";
+import { render, screen, cleanup, act, fireEvent } from "@testing-library/react";
 
 const mockGet = vi.fn();
 const mockReplace = vi.fn();
@@ -40,6 +40,21 @@ describe("VehicleCreatedToast", () => {
     mockGet.mockReturnValue(null);
 
     render(<VehicleCreatedToast />);
+
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("AC-fix-toast-dismiss: has a close button that dismisses the toast", () => {
+    mockGet.mockReturnValue("Ford Transit");
+
+    render(<VehicleCreatedToast />);
+
+    expect(screen.getByRole("status")).toBeTruthy();
+
+    const closeButton = screen.getByRole("button", { name: /close/i });
+    expect(closeButton).toBeTruthy();
+
+    fireEvent.click(closeButton);
 
     expect(screen.queryByRole("status")).toBeNull();
   });
