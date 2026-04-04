@@ -2007,11 +2007,11 @@
     ]
   },
   "story_result": {
-    "story_id": "openfleet-loop-1-vehicle-route-consolidation",
+    "story_id": "openfleet-loop-2-add-vehicle-form-responsive",
     "outcome": "pass",
     "files_changed": [
-      "src/app/api/vehicles/[id]/route.ts",
-      "src/app/api/vehicles/[id]/route.test.ts"
+      "src/components/add-vehicle-form.tsx",
+      "src/components/add-vehicle-form.test.tsx"
     ],
     "tests_added": 1,
     "tests_passing": 271,
