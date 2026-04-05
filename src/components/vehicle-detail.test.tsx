@@ -76,7 +76,8 @@ describe("VehicleDetail", () => {
 
     expect(tripsTab.getAttribute("aria-selected")).toBe("true");
     expect(within(tablist).getByRole("tab", { name: "Overview" }).getAttribute("aria-selected")).toBe("false");
-    expect(screen.getByRole("heading", { name: "Trip history" })).toBeDefined();
+    // TripsTab renders a loading message initially (fetch runs in useEffect)
+    expect(screen.getByText(/Loading trips/i)).toBeDefined();
   });
 
   it("shows traffic light indicator with correct label for GREEN", () => {
