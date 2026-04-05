@@ -33,6 +33,13 @@ model User {
   licenseNumber String?   @map("license_number")
   licenseExpiry DateTime? @map("license_expiry")
 
+  // Privacy & tracking (drivers)
+  trackingEnabled        Boolean   @default(true) @map("tracking_enabled")
+  onShift                Boolean   @default(false) @map("on_shift")
+  shiftEndedAt           DateTime? @map("shift_ended_at")
+  trackingScheduleStart  String?   @map("tracking_schedule_start") // e.g. "08:00"
+  trackingScheduleEnd    String?   @map("tracking_schedule_end")   // e.g. "18:00"
+
   // Relations
   driverAssignments DriverAssignment[]
   inspections       Inspection[]
@@ -85,6 +92,7 @@ model Vehicle {
   licensePlate String        @map("license_plate")
   color        String?
   photoUrl     String?       @map("photo_url")
+  vehicleType  String?       @map("vehicle_type") // e.g. "truck", "van", "car"
   status       VehicleStatus @default(ACTIVE)
   odometer     Int           @default(0) // in kilometers
   motionState       MotionState   @default(PARKED) @map("motion_state")
@@ -244,16 +252,19 @@ model MaintenanceRecord {
 // ─── Inspections ─────────────────────────────────────────────────
 
 model InspectionTemplate {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(cuid())
+  name          String
+  description   String?
+  vehicleType   String?  @map("vehicle_type")   // null = applies to all vehicle types
+  frequencyDays Int?     @map("frequency_days")  // how often inspection required (null = every trip / ad-hoc)
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   items       InspectionTemplateItem[]
   inspections Inspection[]
 
+  @@index([vehicleType])
   @@map("inspection_templates")
 }
 
