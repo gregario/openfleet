@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/db';
 import { DashboardMap } from '@/components/dashboard-map';
+import { AlertsWidget } from '@/components/alerts-widget';
 
 export default async function DashboardPage() {
   // Fetch vehicles with latest position (stored on vehicle row during ingestion)
@@ -66,11 +67,9 @@ export default async function DashboardPage() {
       </div>
 
       {/* Status sidebar — ~30% width */}
-      <div className="flex-[3] rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="text-lg font-semibold text-slate-900">Fleet Status</h2>
-        <p className="mt-2 text-sm text-slate-500">
-          Vehicle statuses and alerts will appear here.
-        </p>
+      <div className="flex-[3] overflow-y-auto rounded-lg border border-slate-200 bg-white p-4">
+        <h2 className="text-lg font-semibold text-slate-900">Alerts</h2>
+        <AlertsWidget />
       </div>
     </div>
   );
