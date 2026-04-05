@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { LogoutButton } from './logout-button';
 
 interface DriverNavProps {
   activePath: string;
@@ -103,6 +104,11 @@ export function DriverNav({ activePath }: DriverNavProps) {
         >
           {toggling ? '…' : onShift ? 'End Shift' : 'Start Shift'}
         </button>
+
+        <LogoutButton
+          label="Sign out"
+          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+        />
       </div>
     </header>
   );

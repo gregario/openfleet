@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { LogoutButton } from './logout-button';
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: '⊞' },
@@ -43,8 +44,9 @@ export function Sidebar({ activePath }: SidebarProps) {
         })}
       </nav>
 
-      <div className="border-t border-slate-700 p-4">
-        <p className="text-xs text-slate-400">OpenFleet v0.1</p>
+      <div className="border-t border-slate-700 p-3 space-y-2">
+        <LogoutButton />
+        <p className="px-3 text-xs text-slate-400">OpenFleet v0.1</p>
       </div>
     </aside>
   );
