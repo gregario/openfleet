@@ -1,0 +1,11 @@
+name = "openfleet-v2-simulator"
+main = "src/index.ts"
+compatibility_date = "2025-12-01"
+
+# Fire every 1 minute. Each run posts one tick of positions per vehicle.
+[triggers]
+crons = ["*/1 * * * *"]
+
+[vars]
+APP_URL = "https://openfleet-v2-staging.gregj64.workers.dev"
+# POSITION_API_KEY is set via: wrangler secret put POSITION_API_KEY

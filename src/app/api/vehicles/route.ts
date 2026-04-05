@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/db";
-import { getApiSession } from "@/lib/auth";
+import { getApiSession, isValidApiKey } from "@/lib/auth";
 import { createVehicleSchema } from "@/lib/validators";
 
-export async function GET() {
+export async function GET(request: Request) {
   const session = await getApiSession();
-  if (!session) {
+  if (!session && !isValidApiKey(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

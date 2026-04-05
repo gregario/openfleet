@@ -1,0 +1,14 @@
+{
+  "name": "openfleet-v2-simulator",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "tail": "wrangler tail"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20251101.0",
+    "wrangler": "^4.65.0"
+  }
+}

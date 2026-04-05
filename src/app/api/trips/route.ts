@@ -16,19 +16,24 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const vehicleId = url.searchParams.get("vehicleId");
+  const includeSimulated = url.searchParams.get("includeSimulated") === "true";
   const limitParam = url.searchParams.get("limit");
   const limit = Math.min(Math.max(parseInt(limitParam ?? "50", 10) || 50, 1), 200);
 
   let query = supabase
     .from("trips")
     .select(
-      "id,vehicle_id,start_time,end_time,distance_km,duration_minutes,start_latitude,start_longitude,end_latitude,end_longitude,is_active,created_at",
+      "id,vehicle_id,start_time,end_time,distance_km,duration_minutes,start_latitude,start_longitude,end_latitude,end_longitude,is_active,simulated,created_at",
     )
     .order("start_time", { ascending: false })
     .limit(limit);
 
   if (vehicleId) {
     query = query.eq("vehicle_id", vehicleId);
+  }
+
+  if (!includeSimulated) {
+    query = query.eq("simulated", false);
   }
 
   // Drivers only see trips for their assigned vehicles

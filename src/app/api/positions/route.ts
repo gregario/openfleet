@@ -123,9 +123,10 @@ export async function POST(request: Request) {
   emitPositionUpdates(updates);
 
   // Trip detection — open/close trips based on new positions for each vehicle
+  const simulated = request.headers.get("X-Simulated") === "true";
   await Promise.all(
     Array.from(latestByVehicle.keys()).map((vehicleId) =>
-      processPositionForTrips(supabase, vehicleId).catch((err) => {
+      processPositionForTrips(supabase, vehicleId, simulated).catch((err) => {
         console.error(`Trip detection failed for vehicle ${vehicleId}:`, err);
       }),
     ),

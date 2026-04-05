@@ -12,6 +12,7 @@ export interface TripRow {
   distance_km: number | null;
   duration_minutes: number | null;
   is_active: boolean;
+  simulated: boolean;
 }
 
 interface TripsTabProps {
@@ -46,12 +47,16 @@ function formatDistance(km: number | null): string {
 export function TripsTab({ vehicleId }: TripsTabProps) {
   const [trips, setTrips] = useState<TripRow[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [includeSimulated, setIncludeSimulated] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
-        const res = await fetch(`/api/trips?vehicleId=${encodeURIComponent(vehicleId)}&limit=50`);
+        const url = `/api/trips?vehicleId=${encodeURIComponent(vehicleId)}&limit=50${
+          includeSimulated ? '&includeSimulated=true' : ''
+        }`;
+        const res = await fetch(url);
         if (!res.ok) {
           setError('Failed to load trips');
           return;
@@ -66,7 +71,7 @@ export function TripsTab({ vehicleId }: TripsTabProps) {
     return () => {
       cancelled = true;
     };
-  }, [vehicleId]);
+  }, [vehicleId, includeSimulated]);
 
   if (error) {
     return (
@@ -80,17 +85,29 @@ export function TripsTab({ vehicleId }: TripsTabProps) {
     return <div className="text-sm text-slate-500">Loading trips…</div>;
   }
 
-  if (trips.length === 0) {
-    return (
-      <EmptyState
-        title="No trips yet"
-        description="Completed trips will appear here once GPS data has been received."
-      />
-    );
-  }
-
   return (
-    <div className="overflow-x-auto rounded-md border border-slate-200">
+    <div className="space-y-3">
+      <label className="inline-flex items-center gap-2 text-xs text-slate-600">
+        <input
+          type="checkbox"
+          checked={includeSimulated}
+          onChange={(e) => setIncludeSimulated(e.target.checked)}
+          className="h-3.5 w-3.5 rounded border-slate-300"
+        />
+        Include simulated trips
+      </label>
+
+      {trips.length === 0 ? (
+        <EmptyState
+          title="No trips yet"
+          description={
+            includeSimulated
+              ? 'No trips on record for this vehicle.'
+              : 'No completed trips yet. Tick "Include simulated trips" above to see simulator-generated trips.'
+          }
+        />
+      ) : (
+      <div className="overflow-x-auto rounded-md border border-slate-200">
       <table className="min-w-full divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
           <tr>
@@ -124,6 +141,11 @@ export function TripsTab({ vehicleId }: TripsTabProps) {
                     Completed
                   </span>
                 )}
+                {trip.simulated && (
+                  <span className="ml-1 inline-flex rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
+                    Sim
+                  </span>
+                )}
               </td>
               <td className="whitespace-nowrap px-4 py-2">
                 <Link
@@ -137,6 +159,8 @@ export function TripsTab({ vehicleId }: TripsTabProps) {
           ))}
         </tbody>
       </table>
+    </div>
+      )}
     </div>
   );
 }

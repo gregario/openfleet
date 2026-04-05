@@ -132,6 +132,7 @@ interface PositionRow {
 export async function processPositionForTrips(
   supabase: SupabaseClient,
   vehicleId: string,
+  simulated: boolean = false,
 ): Promise<TripAction> {
   // 1. Active trip lookup
   const { data: activeTripData } = await supabase
@@ -185,7 +186,7 @@ export async function processPositionForTrips(
       TRIP_START_WINDOW_SECONDS,
     )
   ) {
-    return await startTrip(supabase, vehicleId, startWindow);
+    return await startTrip(supabase, vehicleId, startWindow, simulated);
   }
 
   return "none";
@@ -195,6 +196,7 @@ async function startTrip(
   supabase: SupabaseClient,
   vehicleId: string,
   recentMovingPoints: PositionRow[],
+  simulated: boolean = false,
 ): Promise<TripAction> {
   if (recentMovingPoints.length === 0) return "none";
   const first = recentMovingPoints[0];
@@ -207,6 +209,7 @@ async function startTrip(
       start_latitude: first.latitude,
       start_longitude: first.longitude,
       is_active: true,
+      simulated,
     })
     .select("id")
     .single();

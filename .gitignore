@@ -41,3 +41,19 @@ docker-compose.override.yml
 
 # uploaded files
 /public/uploads/
+.gstack/
+
+# cloudflare workers build output
+.open-next/
+.wrangler/
+
+# rouge workspace state (not tracked)
+.claude/
+.snapshots/
+/screenshots/
+/report/
+/checkpoints.jsonl
+/fix_story_context.json
+/global_improvements.json
+/story_context.json
+/milestone_context.json
