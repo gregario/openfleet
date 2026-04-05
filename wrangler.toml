@@ -11,6 +11,8 @@ name = "openfleet-v2-staging"
 
 [vars]
 ENVIRONMENT = "production"
+NEXT_PUBLIC_SUPABASE_URL = "https://***REMOVED***.supabase.co"
 
 [env.staging.vars]
 ENVIRONMENT = "staging"
+NEXT_PUBLIC_SUPABASE_URL = "https://***REMOVED***.supabase.co"
