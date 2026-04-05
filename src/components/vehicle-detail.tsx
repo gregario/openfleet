@@ -6,6 +6,7 @@ import { TrafficLight } from './traffic-light';
 import { VehicleAvatar } from './vehicle-avatar';
 import { VehicleMiniMap } from './vehicle-mini-map';
 import { TripsTab } from './trips-tab';
+import { MaintenanceTab } from './maintenance-tab';
 import { createVehicleSchema } from '@/lib/validators';
 
 export interface VehicleDetailData {
@@ -422,7 +423,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
       >
         {activeTab === 'overview' && <OverviewTab vehicle={vehicle} />}
         {activeTab === 'trips' && <TripsTab vehicleId={vehicle.id} />}
-        {activeTab === 'maintenance' && <PlaceholderTab title="Maintenance records" description="Service history and upcoming maintenance will appear here." />}
+        {activeTab === 'maintenance' && <MaintenanceTab vehicleId={vehicle.id} currentOdometer={vehicle.odometer} />}
         {activeTab === 'inspections' && <PlaceholderTab title="Inspections" description="Pre-trip and post-trip inspection records will appear here." />}
         {activeTab === 'documents' && <PlaceholderTab title="Documents" description="Vehicle documents (registration, insurance, certificates) will appear here." />}
       </div>

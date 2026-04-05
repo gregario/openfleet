@@ -140,11 +140,20 @@ describe("VehicleDetail", () => {
     expect(screen.getByText("No position data available")).toBeDefined();
   });
 
-  it("switches to maintenance tab and shows placeholder", () => {
+  it("switches to maintenance tab and renders schedule list", () => {
+    // MaintenanceTab fetches on mount — provide a resolving stub
+    const originalFetch = global.fetch;
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ schedules: [], serviceTypes: [] }),
+    }) as unknown as typeof fetch;
+
     render(<VehicleDetail vehicle={baseVehicle} />);
     const tablist = screen.getByRole("tablist");
     fireEvent.click(within(tablist).getByRole("tab", { name: "Maintenance" }));
-    expect(screen.getByRole("heading", { name: "Maintenance records" })).toBeDefined();
+    // Renders the "Service schedules" label while it's loading or empty
+    expect(screen.getByText(/Loading schedules|Service schedules/i)).toBeDefined();
+    global.fetch = originalFetch;
   });
 
   // AC-fix-photo-and-list-polish-1: Vehicle photo in detail header
