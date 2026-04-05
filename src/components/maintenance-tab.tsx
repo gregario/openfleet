@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { EmptyState } from './empty-state';
+import { ServiceHistory } from './service-history';
+import { LogServiceDialog } from './log-service-dialog';
 
 interface Schedule {
   id: string;
@@ -82,6 +84,8 @@ export function MaintenanceTab({ vehicleId, currentOdometer }: MaintenanceTabPro
   const [formWarningKm, setFormWarningKm] = useState('');
   const [formWarningDays, setFormWarningDays] = useState('');
   const [formLastKm, setFormLastKm] = useState('');
+  const [loggingSchedule, setLoggingSchedule] = useState<Schedule | null>(null);
+  const [historyKey, setHistoryKey] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -243,6 +247,25 @@ export function MaintenanceTab({ vehicleId, currentOdometer }: MaintenanceTabPro
         </form>
       )}
 
+      {loggingSchedule && (
+        <LogServiceDialog
+          vehicleId={vehicleId}
+          serviceTypeId={loggingSchedule.service_type_id}
+          serviceTypeName={loggingSchedule.service_type_name ?? 'Service'}
+          currentOdometer={currentOdometer}
+          onClose={() => setLoggingSchedule(null)}
+          onLogged={async () => {
+            setHistoryKey((k) => k + 1);
+            // Refresh schedule list to pick up the new next-due values
+            const reload = await fetch(`/api/service-schedules?vehicleId=${encodeURIComponent(vehicleId)}`);
+            if (reload.ok) {
+              const body = await reload.json();
+              setSchedules(body.schedules ?? []);
+            }
+          }}
+        />
+      )}
+
       {schedules.length === 0 ? (
         <EmptyState title="No service schedules" description="Add a schedule to track upcoming maintenance for this vehicle." />
       ) : (
@@ -281,6 +304,13 @@ export function MaintenanceTab({ vehicleId, currentOdometer }: MaintenanceTabPro
                     <td className="whitespace-nowrap px-4 py-2 text-right">
                       <button
                         type="button"
+                        onClick={() => setLoggingSchedule(s)}
+                        className="mr-3 text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline"
+                      >
+                        Log service
+                      </button>
+                      <button
+                        type="button"
                         onClick={() => handleDelete(s.id)}
                         className="text-xs text-red-600 hover:text-red-800 hover:underline"
                       >
@@ -294,6 +324,8 @@ export function MaintenanceTab({ vehicleId, currentOdometer }: MaintenanceTabPro
           </table>
         </div>
       )}
+
+      <ServiceHistory vehicleId={vehicleId} refreshKey={historyKey} />
     </div>
   );
 }
