@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   classifyScheduleAlert,
+  classifyLicenseAlert,
   deriveAlertsFromSchedules,
   type ScheduleForAlert,
   type VehicleForAlert,
@@ -104,5 +105,23 @@ describe("deriveAlertsFromSchedules", () => {
       vehicles,
     );
     expect(alerts).toHaveLength(0);
+  });
+});
+
+describe("classifyLicenseAlert", () => {
+  it("returns null when no expiry on file", () => {
+    expect(classifyLicenseAlert(null, now)).toBeNull();
+  });
+
+  it("returns null when licence expires outside warning window", () => {
+    expect(classifyLicenseAlert(daysFromNow(90), now, 30)).toBeNull();
+  });
+
+  it("returns WARNING when expiring within warning window", () => {
+    expect(classifyLicenseAlert(daysFromNow(15), now, 30)?.severity).toBe("WARNING");
+  });
+
+  it("returns CRITICAL when already expired", () => {
+    expect(classifyLicenseAlert(daysFromNow(-3), now, 30)?.severity).toBe("CRITICAL");
   });
 });

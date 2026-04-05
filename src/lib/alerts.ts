@@ -123,6 +123,23 @@ export function deriveAlertsFromSchedules(
 }
 
 /**
+ * Classify a driver's license expiry against warning thresholds.
+ * Returns null when the license is fine (or not on file).
+ */
+export function classifyLicenseAlert(
+  expiryIso: string | null,
+  now: Date = new Date(),
+  warningDays: number = 30,
+): { severity: AlertSeverity; reason: string } | null {
+  if (!expiryIso) return null;
+  const expiry = new Date(expiryIso);
+  const days = Math.ceil((expiry.getTime() - now.getTime()) / 86400_000);
+  if (days < 0) return { severity: "CRITICAL", reason: `expired ${-days} days ago` };
+  if (days <= warningDays) return { severity: "WARNING", reason: `expires in ${days} days` };
+  return null;
+}
+
+/**
  * Scan schedules + vehicles and write new alerts for any that need attention.
  * Dedupes via a stable key encoded in the alert title/message so repeated
  * sweeps don't create duplicate rows.
@@ -186,6 +203,48 @@ export async function generateServiceAlerts(
       severity: alert.severity,
       title: alert.title,
       message: alert.message,
+      is_dismissed: false,
+    });
+    if (!error) created++;
+  }
+
+  // Driver licence expiry alerts
+  const { data: driversData } = await supabase
+    .from("users")
+    .select("id,name,license_expiry")
+    .eq("role", "DRIVER");
+  const drivers = (driversData ?? []) as Array<{
+    id: string;
+    name: string;
+    license_expiry: string | null;
+  }>;
+
+  const { data: existingLicenseAlerts } = await supabase
+    .from("alerts")
+    .select("message,severity")
+    .eq("type", "license_expiring")
+    .eq("is_dismissed", false);
+  const existingLicenseKeys = new Set(
+    ((existingLicenseAlerts ?? []) as Array<{ severity: string; message: string }>).map(
+      (a) => `${a.severity}:${a.message}`,
+    ),
+  );
+
+  for (const driver of drivers) {
+    const result = classifyLicenseAlert(driver.license_expiry);
+    if (!result) continue;
+    const message = `${driver.name}: licence ${result.reason}`;
+    const key = `${result.severity}:${message}`;
+    if (existingLicenseKeys.has(key)) {
+      skipped++;
+      continue;
+    }
+    const { error } = await supabase.from("alerts").insert({
+      vehicle_id: null,
+      type: "license_expiring",
+      severity: result.severity,
+      title: `Driver licence ${result.severity === "CRITICAL" ? "expired" : "expiring soon"}`,
+      message,
       is_dismissed: false,
     });
     if (!error) created++;
