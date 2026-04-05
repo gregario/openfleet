@@ -68,6 +68,12 @@ export function calculateTripDistanceKm(points: PositionPoint[]): number {
  * True when recent positions show continuous movement above `speedKmh` for
  * at least `windowSeconds`. Positions must be in ascending time order.
  */
+// Tolerance for clock skew + network lag between client and server when
+// comparing span against threshold windows. Without this, the cutoff
+// filter (Date.now() - windowSeconds) bounds the effective span to
+// slightly under windowSeconds, making the check impossible to satisfy.
+const THRESHOLD_TOLERANCE_SECONDS = 5;
+
 export function isMovingForThreshold(
   points: PositionPoint[],
   speedKmh: number,
@@ -76,7 +82,7 @@ export function isMovingForThreshold(
   if (points.length < 2) return false;
   const first = new Date(points[0].timestamp).getTime();
   const last = new Date(points[points.length - 1].timestamp).getTime();
-  if ((last - first) / 1000 < windowSeconds) return false;
+  if ((last - first) / 1000 < windowSeconds - THRESHOLD_TOLERANCE_SECONDS) return false;
   return points.every((p) => (p.speed ?? 0) > speedKmh);
 }
 
@@ -93,7 +99,7 @@ export function isStationaryForThreshold(
   if (points.length < 2) return false;
   const first = new Date(points[0].timestamp).getTime();
   const last = new Date(points[points.length - 1].timestamp).getTime();
-  if ((last - first) / 1000 < windowSeconds) return false;
+  if ((last - first) / 1000 < windowSeconds - THRESHOLD_TOLERANCE_SECONDS) return false;
   return points.every((p) => (p.speed ?? 0) <= maxSpeedKmh);
 }
 

@@ -7,5 +7,14 @@ compatibility_date = "2025-12-01"
 crons = ["*/1 * * * *"]
 
 [vars]
+# Kept for debug/inspection only — actual requests go via the APP service
+# binding below (required for same-account Worker-to-Worker calls).
 APP_URL = "https://openfleet-v2-staging.gregj64.workers.dev"
+
+# Service binding: lets this Worker invoke the main app Worker directly
+# without hitting the public internet or tripping CF error 1042.
+[[services]]
+binding = "APP"
+service = "openfleet-v2-staging"
+
 # POSITION_API_KEY is set via: wrangler secret put POSITION_API_KEY
