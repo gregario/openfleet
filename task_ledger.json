@@ -1,0 +1,538 @@
+{
+  "milestones": [
+    {
+      "name": "foundation",
+      "stories": []
+    },
+    {
+      "name": "map-core",
+      "stories": [
+        {
+          "id": "map-render",
+          "name": "Live map renders with vehicle markers",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Map loads in <2s with 50 vehicle markers",
+            "Vehicle markers color-coded by traffic light status",
+            "Map clusters markers at low zoom levels"
+          ]
+        },
+        {
+          "id": "map-realtime",
+          "name": "Real-time position updates",
+          "status": "done",
+          "depends_on": [
+            "map-render"
+          ],
+          "acceptance_criteria": [
+            "Vehicle positions update in real-time via WebSocket (<5s latency)",
+            "Vehicle markers show direction of travel when moving"
+          ]
+        },
+        {
+          "id": "map-popup",
+          "name": "Vehicle marker popup with stats",
+          "status": "done",
+          "depends_on": [
+            "map-render"
+          ],
+          "acceptance_criteria": [
+            "Clicking vehicle marker opens popup with key stats and link to detail"
+          ]
+        },
+        {
+          "id": "map-persistence",
+          "name": "Map remembers zoom and center",
+          "status": "done",
+          "depends_on": [
+            "map-render"
+          ],
+          "acceptance_criteria": [
+            "Map remembers zoom level and center between sessions"
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-dashboard-ux-states",
+          "name": "Add loading skeleton, error boundary, and empty state to DashboardMap using existing foundation components",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        }
+      ]
+    },
+    {
+      "name": "dashboard-features",
+      "stories": [
+        {
+          "id": "fleet-sidebar",
+          "name": "Fleet status sidebar with alerts",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Sidebar shows top-priority alerts sorted by urgency"
+          ]
+        },
+        {
+          "id": "map-filters",
+          "name": "Map filter by status, driver, motion",
+          "status": "done",
+          "depends_on": [
+            "fleet-sidebar"
+          ],
+          "acceptance_criteria": [
+            "Filter map by traffic light status, by driver, by motion state"
+          ]
+        },
+        {
+          "id": "dashboard-responsive",
+          "name": "Responsive layout — tablet with sidebar collapse",
+          "status": "done",
+          "depends_on": [
+            "fleet-sidebar"
+          ],
+          "acceptance_criteria": [
+            "Responsive: usable on tablet with sidebar collapsing to bottom sheet"
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-map-reliability",
+          "name": "Add free OSM raster tile fallback when MapTiler key is absent; lazy-load MapLibre via next/dynamic",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-realtime-feedback",
+          "name": "SSE reconnection with exponential backoff, live/stale/disconnected indicator, sidebar refresh button, filter result count",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-session-navigation",
+          "name": "User identity + logout in sidebar, Coming Soon pages for unbuilt routes, custom 404 page",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-responsive-a11y",
+          "name": "Fix bottom sheet tap target/z-index, matchMedia resize listener, 375px stacking, TrafficLight aria-labels, map container ARIA, semantic alert list",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-dashboard-ux-states",
+          "name": "Add loading skeleton, error boundary, and empty state to DashboardMap using existing foundation components",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-branch-integration",
+          "name": "Merge 4 story branches (fleet-sidebar, dashboard-responsive, session-navigation) into current branch, resolve conflicts, verify full test suite",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-focus-trap",
+          "name": "Add focus trap, Escape dismiss, and focus restore to mobile sidebar overlay in AdminLayout",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "fix-sidebar-reactivity",
+          "name": "Add alert polling, clickable alerts with map flyTo, and live sidebar vehicle counts",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Alerts refresh every 30s via client-side polling of /api/alerts",
+            "Updated Xs ago indicator visible below Active Alerts heading",
+            "Clicking alert with vehicleId pans/zooms map to vehicle position",
+            "Alert hover state and pointer cursor on alerts with vehicleId",
+            "Fleet-wide alerts (vehicleId null) are not clickable",
+            "Sidebar vehicle counts derived from realtime vehicle data"
+          ]
+        },
+        {
+          "id": "fix-route-completeness",
+          "name": "Fix popup dead link, add /vehicles/[id] redirect, create dashboard and admin error.tsx",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Popup detail link href is /vehicles, text is 'View in vehicles list'",
+            "/vehicles/[id] catch-all route redirects to /vehicles",
+            "Dashboard error.tsx catches server failures with friendly message and retry",
+            "Admin root error.tsx catches unhandled errors on any admin route",
+            "Try again button calls Next.js reset()"
+          ]
+        },
+        {
+          "id": "fix-filter-ux",
+          "name": "Add filter-empty state with clear action, add aria-labels to all filter controls",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Filter-specific empty state shown when filters exclude all vehicles",
+            "Clear all filters button resets filters and shows vehicles",
+            "No-vehicles empty state unchanged when zero vehicles exist",
+            "Driver select has aria-label='Filter by driver'",
+            "All status and motion toggle buttons have aria-labels"
+          ]
+        },
+        {
+          "id": "fix-map-polish",
+          "name": "Add hover tooltip on vehicle markers, add last-updated relative timestamp",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Hovering over vehicle marker shows tooltip with vehicle name",
+            "Tooltip dismissed on mouseleave, no tooltip on clusters",
+            "Relative timestamp shown next to connection status when live or stale",
+            "Timestamp updates every 10 seconds"
+          ]
+        },
+        {
+          "id": "openfleet-loop-1-sidebar-reactivity",
+          "name": "Add alert polling (30s), clickable alerts that flyTo vehicle on map, and live sidebar counts derived from realtime vehicle data",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-route-completeness",
+          "name": "Fix popup dead link to /vehicles, add /vehicles/[id] catch-all redirect, create dashboard and admin error.tsx boundaries",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-filter-ux",
+          "name": "Add filter-specific empty state with clear filters action, add aria-labels to all filter controls",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-map-polish",
+          "name": "Add hover tooltip on vehicle markers showing vehicle name, add last-updated relative timestamp next to connection status",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-xss-and-cleanup",
+          "name": "Export escapeHTML from map-utils.ts, fix XSS in hover tooltip, add security comments at .setHTML() sites, consolidate duplicate time formatting to single formatRelativeTime",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-1-test-type-fix",
+          "name": "Add userName='Test User' prop to 7 AdminLayout renders in admin-layout.test.tsx to fix TypeScript TS2741 errors",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        }
+      ]
+    },
+    {
+      "name": "vehicle-registry",
+      "stories": [
+        {
+          "id": "vehicle-list",
+          "name": "Vehicle list with search, sort, filter",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Vehicle list supports search, sort (name, status, mileage, next service), and filter",
+            "Vehicle list shows traffic light indicator per row"
+          ]
+        },
+        {
+          "id": "add-vehicle",
+          "name": "Add vehicle form with persistence",
+          "status": "done",
+          "depends_on": [
+            "vehicle-list"
+          ],
+          "acceptance_criteria": [
+            "Vehicle photo upload supported"
+          ]
+        },
+        {
+          "id": "vehicle-detail",
+          "name": "Vehicle detail tabbed view",
+          "status": "done",
+          "depends_on": [
+            "vehicle-list"
+          ],
+          "acceptance_criteria": [
+            "Vehicle detail loads all tabs without page refresh",
+            "Traffic light: green = all clear, orange = requires attention, red = overdue",
+            "Decommissioned vehicles hidden from map and dashboard by default, visible via filter",
+            "Vehicle detail overview shows mini-map with current position"
+          ]
+        },
+        {
+          "id": "fix-vehicle-edit",
+          "name": "Add vehicle edit mode with status dropdown, PUT endpoint, and success feedback",
+          "status": "done",
+          "depends_on": [
+            "vehicle-detail"
+          ],
+          "acceptance_criteria": [
+            "Edit button visible on vehicle detail page header",
+            "Edit mode shows pre-populated form with all editable fields including status dropdown",
+            "PUT /api/vehicles/[id] persists updates with Zod validation",
+            "Success toast shown after save, view returns to read-only mode",
+            "Cancel discards changes and returns to read-only view",
+            "Decommissioned vehicles hidden from default map/dashboard views"
+          ]
+        },
+        {
+          "id": "fix-photo-and-list-polish",
+          "name": "Display vehicle photos, accessible traffic light, and fleet health summary",
+          "status": "done",
+          "depends_on": [
+            "vehicle-detail",
+            "vehicle-list"
+          ],
+          "acceptance_criteria": [
+            "Vehicle photo rendered in detail header (or initial-letter placeholder if no photo)",
+            "Vehicle thumbnail shown in each list row (photo or placeholder)",
+            "Traffic light indicators in list have role=status, aria-label, and tooltip on hover",
+            "Fleet health summary bar above table showing total and per-status breakdown",
+            "Summary bar updates when decommissioned filter is toggled"
+          ]
+        },
+        {
+          "id": "fix-add-vehicle-form-ux",
+          "name": "Add success toast, photo upload warning, and required/optional field markers",
+          "status": "done",
+          "depends_on": [
+            "add-vehicle"
+          ],
+          "acceptance_criteria": [
+            "Success toast visible on vehicle list after creation redirect, auto-dismisses after 5s",
+            "Inline warning shown when photo upload fails but vehicle creation succeeds",
+            "Required fields marked with asterisk (*), optional fields with '(optional)' suffix",
+            "Legend '* Required' visible at top of form"
+          ]
+        },
+        {
+          "id": "openfleet-loop-2-vehicle-edit-error-feedback",
+          "name": "Add error toast and form state preservation to handleSave catch/else path in vehicle-detail.tsx",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-2-add-vehicle-form-responsive",
+          "name": "Change grid-cols-2 to sm:grid-cols-2 at two locations in add-vehicle-form.tsx for responsive stacking",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-3-vehicle-detail-robustness",
+          "name": "Wrap PUT request.json() in try/catch, add close buttons to toasts, add client-side Zod validation in edit form — all following existing codebase patterns",
+          "status": "in-progress",
+          "depends_on": [],
+          "acceptance_criteria": []
+        },
+        {
+          "id": "openfleet-loop-3-decommissioned-filter",
+          "name": "Remove .neq DECOMMISSIONED server-side filter from GET /api/vehicles — client-side toggle already handles filtering correctly",
+          "status": "pending",
+          "depends_on": [],
+          "acceptance_criteria": []
+        }
+      ]
+    },
+    {
+      "name": "gps-trips",
+      "stories": [
+        {
+          "id": "gps-api",
+          "name": "GPS ingestion REST API",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "GPS ingestion API: POST endpoint accepting lat, lon, speed, heading, timestamp, vehicle_id",
+            "Positions stored with PostGIS geometry type"
+          ]
+        },
+        {
+          "id": "trip-detection",
+          "name": "Trip start/end detection",
+          "status": "done",
+          "depends_on": [
+            "gps-api"
+          ],
+          "acceptance_criteria": [
+            "Trip detection runs as background process, <30s from trip end to record creation",
+            "Trip start threshold: speed >5km/h for >30s",
+            "Trip end threshold: stationary for >3min",
+            "Minimum trip distance: 200m to filter GPS drift",
+            "Trip distance calculated from actual GPS points along route"
+          ]
+        },
+        {
+          "id": "trip-display",
+          "name": "Trip route on map + trip history",
+          "status": "done",
+          "depends_on": [
+            "trip-detection"
+          ],
+          "acceptance_criteria": [
+            "Trip route rendered as polyline on map with start/end markers"
+          ]
+        },
+        {
+          "id": "simulator",
+          "name": "GPS simulator service",
+          "status": "done",
+          "depends_on": [
+            "gps-api"
+          ],
+          "acceptance_criteria": [
+            "Simulator configurable: number of vehicles, speed profiles, trip patterns",
+            "Simulator generates routes that follow roads",
+            "Simulator runs as a Docker Compose service alongside app and db"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "maintenance",
+      "stories": [
+        {
+          "id": "service-schedules",
+          "name": "Create and manage service schedules",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Service schedules support mileage-based, time-based, or dual triggers",
+            "Common service types pre-populated",
+            "Custom service types supported",
+            "Completed service resets the schedule countdown automatically"
+          ]
+        },
+        {
+          "id": "service-alerts",
+          "name": "Service alerts and notifications",
+          "status": "done",
+          "depends_on": [
+            "service-schedules"
+          ],
+          "acceptance_criteria": [
+            "Alerts fire at configurable warning thresholds"
+          ]
+        },
+        {
+          "id": "maintenance-history",
+          "name": "Log service with cost tracking",
+          "status": "done",
+          "depends_on": [
+            "service-schedules"
+          ],
+          "acceptance_criteria": [
+            "Maintenance cost tracking with per-vehicle and fleet-wide totals",
+            "Receipt photo upload on service records"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "driver-auth",
+      "stories": [
+        {
+          "id": "auth-system",
+          "name": "Admin and driver auth with roles",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Two roles: admin and driver",
+            "Driver sees only their assigned vehicle(s)",
+            "Driver login works on mobile browser"
+          ]
+        },
+        {
+          "id": "driver-management",
+          "name": "Driver profiles and vehicle assignment",
+          "status": "done",
+          "depends_on": [
+            "auth-system"
+          ],
+          "acceptance_criteria": [
+            "Assignment history tracked with timestamps",
+            "License expiry alerts surface on dashboard",
+            "Pool mode: driver selects from available vehicles",
+            "Assigned mode: driver sees their primary vehicle on login"
+          ]
+        },
+        {
+          "id": "privacy-controls",
+          "name": "Driver privacy and GDPR compliance",
+          "status": "done",
+          "depends_on": [
+            "auth-system"
+          ],
+          "acceptance_criteria": [
+            "First-login privacy notice shown and must be acknowledged",
+            "Tracking-active indicator visible at all times",
+            "End-shift toggle available to driver",
+            "Tracking schedule configurable by admin",
+            "Per-driver data export (JSON/CSV)",
+            "Per-driver data hard delete"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "inspections",
+      "stories": [
+        {
+          "id": "inspection-templates",
+          "name": "Custom inspection checklist templates",
+          "status": "done",
+          "depends_on": [],
+          "acceptance_criteria": [
+            "Customizable checklist templates with different templates per vehicle type",
+            "Inspection frequency alerts configurable"
+          ]
+        },
+        {
+          "id": "driver-inspection",
+          "name": "Driver completes pre-trip inspection",
+          "status": "done",
+          "depends_on": [
+            "inspection-templates"
+          ],
+          "acceptance_criteria": [
+            "Photo attachment on failed inspection items",
+            "Inspection submissions timestamped and immutable"
+          ]
+        },
+        {
+          "id": "compliance-tracking",
+          "name": "Admin compliance view and audit trail",
+          "status": "done",
+          "depends_on": [
+            "driver-inspection"
+          ],
+          "acceptance_criteria": [
+            "Inspection history per vehicle with pass/fail summary",
+            "Compliance view: current vs overdue",
+            "Disclaimer: not a tachograph, ELD, or DVIR-compliant system"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import { supabase } from "@/lib/db";
 
 export async function GET() {
   try {
-    await prisma.$queryRaw`SELECT 1`;
+    // Lightweight connectivity probe — supabase head count on a small table
+    const { error } = await supabase
+      .from("settings")
+      .select("key", { count: "exact", head: true });
+
+    if (error) throw error;
 
     return NextResponse.json({
       status: "ok",

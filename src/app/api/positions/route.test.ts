@@ -34,7 +34,6 @@ const { mockFrom } = vi.hoisted(() => {
 
 vi.mock("@/lib/db", () => ({
   supabase: { from: mockFrom },
-  prisma: {},
 }));
 
 import { POST } from "./route";
