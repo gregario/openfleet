@@ -1,0 +1,53 @@
+name: Cron sweeps
+
+# External cron for trip sweep + alert generation. Inert until the repo
+# has OPENFLEET_URL + POSITION_API_KEY secrets set.
+#
+# Requires:
+#   secrets.OPENFLEET_URL        — e.g. https://openfleet.example.com
+#   secrets.POSITION_API_KEY     — same value as the Worker secret
+#
+# GitHub Actions' minimum cron granularity is 5 minutes and runs may be
+# delayed during high-load periods. Keep this in mind for trip-end
+# latency — spec target is <30s but external cron can't hit that.
+# For sub-minute closure, deploy a dedicated cron worker instead.
+
+on:
+  schedule:
+    # Every 5 minutes — trip sweep (closes stale active trips)
+    - cron: "*/5 * * * *"
+    # Every 15 minutes — regenerate service/licence alerts
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Guard — require secrets
+        run: |
+          if [ -z "${{ secrets.OPENFLEET_URL }}" ] || [ -z "${{ secrets.POSITION_API_KEY }}" ]; then
+            echo "::notice::Skipping — OPENFLEET_URL or POSITION_API_KEY not configured"
+            exit 0
+          fi
+
+      - name: Trip sweep
+        if: github.event.schedule == '*/5 * * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -sS -X POST "${{ secrets.OPENFLEET_URL }}/api/trips/sweep" \
+            -H "X-API-Key: ${{ secrets.POSITION_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 30 \
+            -w "\n[trip-sweep] status=%{http_code} time=%{time_total}s\n"
+
+      - name: Generate alerts
+        if: github.event.schedule == '*/15 * * * *' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -sS -X POST "${{ secrets.OPENFLEET_URL }}/api/alerts/generate" \
+            -H "X-API-Key: ${{ secrets.POSITION_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            --max-time 30 \
+            -w "\n[alerts-generate] status=%{http_code} time=%{time_total}s\n"
