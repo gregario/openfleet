@@ -8,6 +8,7 @@ import { VehicleMiniMap } from './vehicle-mini-map';
 import { TripsTab } from './trips-tab';
 import { MaintenanceTab } from './maintenance-tab';
 import { InspectionsTab } from './inspections-tab';
+import { DocumentsTab } from './documents-tab';
 import { createVehicleSchema } from '@/lib/validators';
 
 export interface VehicleDetailData {
@@ -426,7 +427,7 @@ export function VehicleDetail({ vehicle: initialVehicle }: VehicleDetailProps) {
         {activeTab === 'trips' && <TripsTab vehicleId={vehicle.id} />}
         {activeTab === 'maintenance' && <MaintenanceTab vehicleId={vehicle.id} currentOdometer={vehicle.odometer} />}
         {activeTab === 'inspections' && <InspectionsTab vehicleId={vehicle.id} vehicleType={null} />}
-        {activeTab === 'documents' && <PlaceholderTab title="Documents" description="Vehicle documents (registration, insurance, certificates) will appear here." />}
+        {activeTab === 'documents' && <DocumentsTab vehicleId={vehicle.id} />}
       </div>
     </div>
   );
