@@ -30,6 +30,7 @@ services:
       DATABASE_URL: "postgresql://openfleet:openfleet@db:5432/openfleet?schema=public"
       SESSION_SECRET: "${SESSION_SECRET:-dev-session-secret-replace-in-production-with-64-char-random}"
       NEXT_PUBLIC_APP_URL: "${NEXT_PUBLIC_APP_URL:-http://localhost:3000}"
+      POSITION_API_KEY: "${POSITION_API_KEY:-dev-simulator-key}"
     depends_on:
       db:
         condition: service_healthy
@@ -49,6 +50,7 @@ services:
       API_URL: "http://app:3000"
       VEHICLE_COUNT: "${VEHICLE_COUNT:-5}"
       INTERVAL_MS: "${INTERVAL_MS:-10000}"
+      POSITION_API_KEY: "${POSITION_API_KEY:-dev-simulator-key}"
     depends_on:
       app:
         condition: service_healthy

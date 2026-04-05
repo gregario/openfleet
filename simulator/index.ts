@@ -5,14 +5,16 @@
  * Runs as a Docker Compose service alongside the app and db.
  *
  * Configuration via environment variables:
- *   API_URL       — base URL of the OpenFleet app (default: http://localhost:3000)
- *   VEHICLE_COUNT — number of vehicles to simulate (default: 5)
- *   INTERVAL_MS   — milliseconds between position updates (default: 10000)
+ *   API_URL           — base URL of the OpenFleet app (default: http://localhost:3000)
+ *   VEHICLE_COUNT     — number of vehicles to simulate (default: 5)
+ *   INTERVAL_MS       — milliseconds between position updates (default: 10000)
+ *   POSITION_API_KEY  — API key for auth against POST /api/positions
  */
 
 const API_URL = process.env.API_URL || "http://localhost:3000";
 const VEHICLE_COUNT = parseInt(process.env.VEHICLE_COUNT || "5", 10);
 const INTERVAL_MS = parseInt(process.env.INTERVAL_MS || "10000", 10);
+const API_KEY = process.env.POSITION_API_KEY || "";
 
 // Bristol, UK center coordinates — realistic for a plumbing business
 const BRISTOL_CENTER = { lat: 51.4545, lng: -2.5879 };
@@ -141,9 +143,12 @@ async function postPositions(vehicles: SimulatedVehicle[]): Promise<void> {
   }));
 
   try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (API_KEY) headers["X-API-Key"] = API_KEY;
+
     const res = await fetch(`${API_URL}/api/positions`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(payload),
     });
 
@@ -166,6 +171,7 @@ async function main() {
   console.log(`  API_URL:       ${API_URL}`);
   console.log(`  VEHICLE_COUNT: ${VEHICLE_COUNT}`);
   console.log(`  INTERVAL_MS:   ${INTERVAL_MS}`);
+  console.log(`  API_KEY:       ${API_KEY ? "(set)" : "(not set — requires admin session)"}`);
   console.log("");
 
   let vehicles = initVehicles(VEHICLE_COUNT);
