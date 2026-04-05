@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { supabase } from '@/lib/db';
 import { DriverAssignmentControls } from '@/components/driver-assignment-controls';
+import { DriverPrivacyActions } from '@/components/driver-privacy-actions';
 
 interface DriverRow {
   id: string;
@@ -11,6 +12,9 @@ interface DriverRow {
   license_number: string | null;
   license_expiry: string | null;
   created_at: string;
+  tracking_enabled: boolean | null;
+  tracking_schedule_start: string | null;
+  tracking_schedule_end: string | null;
 }
 
 interface AssignmentRow {
@@ -39,7 +43,7 @@ export default async function DriverDetailPage({ params }: { params: Promise<{ i
 
   const { data: driverData } = await supabase
     .from('users')
-    .select('id,name,email,phone,license_number,license_expiry,created_at')
+    .select('id,name,email,phone,license_number,license_expiry,created_at,tracking_enabled,tracking_schedule_start,tracking_schedule_end')
     .eq('id', id)
     .eq('role', 'DRIVER')
     .maybeSingle();
@@ -93,6 +97,14 @@ export default async function DriverDetailPage({ params }: { params: Promise<{ i
         vehicleNames={Object.fromEntries(
           Array.from(vehicleMap.entries()).map(([id, v]) => [id, `${v.name} · ${v.license_plate}`]),
         )}
+      />
+
+      <DriverPrivacyActions
+        driverId={driver.id}
+        driverName={driver.name}
+        trackingEnabled={driver.tracking_enabled !== false}
+        trackingScheduleStart={driver.tracking_schedule_start}
+        trackingScheduleEnd={driver.tracking_schedule_end}
       />
 
       <div>

@@ -1,11 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface DriverNavProps {
   activePath: string;
-  trackingActive?: boolean;
 }
 
 const navItems = [
@@ -13,8 +12,46 @@ const navItems = [
   { label: 'Inspection', href: '/driver/inspection' },
 ];
 
-export function DriverNav({ activePath, trackingActive = false }: DriverNavProps) {
-  const [shiftActive, setShiftActive] = useState(true);
+interface PrivacyStatus {
+  onShift: boolean;
+  trackingActive: boolean;
+  trackingEnabled: boolean;
+}
+
+export function DriverNav({ activePath }: DriverNavProps) {
+  const [status, setStatus] = useState<PrivacyStatus | null>(null);
+  const [toggling, setToggling] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      const res = await fetch('/api/privacy/status');
+      if (res.ok) setStatus(await res.json());
+    }
+    load();
+  }, []);
+
+  async function toggleShift() {
+    if (!status) return;
+    const next = !status.onShift;
+    setToggling(true);
+    try {
+      const res = await fetch('/api/privacy/shift', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ onShift: next }),
+      });
+      if (res.ok) {
+        // Re-fetch to get accurate trackingActive
+        const s = await fetch('/api/privacy/status');
+        if (s.ok) setStatus(await s.json());
+      }
+    } finally {
+      setToggling(false);
+    }
+  }
+
+  const trackingActive = status?.trackingActive ?? false;
+  const onShift = status?.onShift ?? false;
 
   return (
     <header className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3">
@@ -42,24 +79,29 @@ export function DriverNav({ activePath, trackingActive = false }: DriverNavProps
       </div>
 
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 text-sm text-slate-600">
+        <div
+          className="flex items-center gap-2 text-sm text-slate-600"
+          aria-label={trackingActive ? 'Tracking active' : 'Tracking inactive'}
+        >
           <span
             className={`inline-block h-2.5 w-2.5 rounded-full ${
-              trackingActive ? 'bg-fleet-green' : 'bg-slate-300'
+              trackingActive ? 'bg-fleet-green animate-pulse' : 'bg-slate-300'
             }`}
           />
           {trackingActive ? 'Tracking' : 'Not tracking'}
         </div>
 
         <button
-          onClick={() => setShiftActive((prev) => !prev)}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-            shiftActive
+          type="button"
+          onClick={toggleShift}
+          disabled={toggling || !status}
+          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50 ${
+            onShift
               ? 'bg-fleet-red text-white hover:bg-red-600'
               : 'bg-fleet-green text-white hover:bg-green-600'
           }`}
         >
-          {shiftActive ? 'End Shift' : 'Start Shift'}
+          {toggling ? '…' : onShift ? 'End Shift' : 'Start Shift'}
         </button>
       </div>
     </header>
