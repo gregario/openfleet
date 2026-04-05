@@ -64,13 +64,28 @@ function setupPositionInsert(
   const vehicleIn = vi.fn().mockReturnValue({ eq: vehicleEq });
   const vehicleSelect = vi.fn().mockReturnValue({ in: vehicleIn });
 
+  // Trip detection queries against "trips" and "positions" tables —
+  // return empty results so processPositionForTrips no-ops.
+  const tripMaybeSingle = vi.fn().mockResolvedValue({ data: null, error: null });
+  const tripActiveEq = vi.fn().mockReturnValue({ maybeSingle: tripMaybeSingle });
+  const tripVehicleEq = vi.fn().mockReturnValue({ eq: tripActiveEq });
+  const tripSelect = vi.fn().mockReturnValue({ eq: tripVehicleEq });
+
+  const positionOrder = vi.fn().mockResolvedValue({ data: [], error: null });
+  const positionGte = vi.fn().mockReturnValue({ order: positionOrder });
+  const positionEq = vi.fn().mockReturnValue({ gte: positionGte });
+  const positionSelect = vi.fn().mockReturnValue({ eq: positionEq });
+
   mockFrom.mockImplementation((table: string) => {
     if (table === "vehicles") {
-      // First call returns select chain, subsequent calls return update chain
       return { select: vehicleSelect, update: updateFn };
     }
     if (table === "positions") {
-      return { insert: insertFn };
+      // insert path used by POST, select/eq/gte/order path used by trip detection
+      return { insert: insertFn, select: positionSelect };
+    }
+    if (table === "trips") {
+      return { select: tripSelect };
     }
     throw new Error(`Unexpected table: ${table}`);
   });

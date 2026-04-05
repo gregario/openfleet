@@ -4,6 +4,7 @@ import { positionBatchSchema } from "@/lib/validators";
 import { emitPositionUpdates, type PositionUpdate } from "@/lib/position-events";
 import { getApiSession, isValidApiKey } from "@/lib/auth";
 import { rateLimit, getClientIp, rateLimitResponse } from "@/lib/rate-limit";
+import { processPositionForTrips } from "@/lib/trips";
 
 export async function POST(request: Request) {
   // Rate limit: 100 requests/minute per IP
@@ -120,6 +121,15 @@ export async function POST(request: Request) {
     }),
   );
   emitPositionUpdates(updates);
+
+  // Trip detection — open/close trips based on new positions for each vehicle
+  await Promise.all(
+    Array.from(latestByVehicle.keys()).map((vehicleId) =>
+      processPositionForTrips(supabase, vehicleId).catch((err) => {
+        console.error(`Trip detection failed for vehicle ${vehicleId}:`, err);
+      }),
+    ),
+  );
 
   return NextResponse.json({
     accepted: validPositions.length,
