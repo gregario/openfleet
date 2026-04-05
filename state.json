@@ -1,7 +1,7 @@
 {
   "project": "openfleet-v2",
-  "status": "ready-for-final-review",
-  "current_state": "waiting-for-human",
+  "status": "complete",
+  "current_state": "complete",
   "current_milestone": null,
   "current_story": null,
   "milestones": [
@@ -1409,5 +1409,6 @@
   "promoted_milestones": [
     "vehicle-registry"
   ],
-  "paused_from_state": "story-building"
+  "paused_from_state": "story-building",
+  "completed_at": "2026-04-05T23:05:09.705Z"
 }
