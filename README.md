@@ -21,6 +21,8 @@ Built with [The Rouge](https://github.com/gregario/the-rouge) — an autonomous 
 ## Setup
 
 ```bash
+git clone https://github.com/gregario/openfleet.git
+cd openfleet
 npm install
 cp .env.example .env
 # Fill in your Supabase credentials in .env
